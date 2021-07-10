@@ -1,0 +1,5994 @@
+,,,,public,Long,getIdazienda(),{,,,,,,,,,,,,
+return,idazienda,;
+}
+/**
+*
+*,@param,idazienda
+*/
+public,void,setIdazienda(Long,idazienda),{
+this.idazienda,=,idazienda,;
+}
+/**
+*
+*,@return
+*/
+public,String,getRagionesociale(),{
+return,ragionesociale,;
+}
+/**
+*
+*,@param,ragionesociale
+*/
+public,void,setRagionesociale(String,ragionesociale),{
+this.ragionesociale,=,ragionesociale,;
+}
+/**
+*
+*,@return
+*/
+public,String,getPiva(),{
+return,piva,;
+}
+/**
+*
+*,@param,piva
+*/
+public,void,setPiva(String,piva),{
+this.piva,=,piva,;
+}
+/**
+*
+*,@return
+*/
+public,String,getTelefono(),{
+return,telefono,;
+}
+/**
+*
+*,@param,telefono
+*/
+public,void,setTelefono(String,telefono),{
+this.telefono,=,telefono,;
+}
+/**
+*
+*,@return
+*/
+public,String,getPrefisso(),{
+return,prefisso,;
+}
+/**
+*
+*,@param,prefisso
+*/
+public,void,setPrefisso(String,prefisso),{
+this.prefisso,=,prefisso,;
+}
+/**
+*
+*,@return
+*/
+public,String,getEmail(),{
+return,email,;
+}
+/**
+*
+*,@param,email
+*/
+public,void,setEmail(String,email),{
+this.email,=,email,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCitta(),{
+return,citta,;
+}
+/**
+*
+*,@param,citta
+*/
+public,void,setCitta(String,citta),{
+this.citta,=,citta,;
+}
+/**
+*
+*,@return
+*/
+public,String,getIndirizzo(),{
+return,indirizzo,;
+}
+/**
+*
+*,@param,indirizzo
+*/
+public,void,setIndirizzo(String,indirizzo),{
+this.indirizzo,=,indirizzo,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCap(),{
+return,cap,;
+}
+/**
+*
+*,@param,cap
+*/
+public,void,setCap(String,cap),{
+this.cap,=,cap,;
+}
+/**
+*
+*,@return
+*/
+public,List<Utente>,getUtenti(),{
+if,(utenti,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+AziendaFacade,facade,=,new,AziendaFacade(session),;
+utenti,=,facade.getUtenti(this),;
+},catch,(Exception,e),{
+}
+}
+return,utenti,;
+}
+/**
+*
+*,@param,utenteList
+*/
+public,void,setUtenti(List<Utente>,utenteList),{
+this.utenti,=,utenteList,;
+}
+/**
+*
+*,@return
+*/
+public,Contratto,getContratto(),{
+if,(contratto,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+ContrattoFacade,facade,=,new,ContrattoFacade(session),;
+contratto,=,facade.readContratto(this),;
+},catch,(Exception,e),{
+}
+}
+return,contratto,;
+}
+/**
+*
+*,@param,contratto
+*/
+public,void,setContratto(Contratto,contratto),{
+this.contratto,=,contratto,;
+}
+/**
+*
+*,@return
+*/
+public,Utente,getAdmin(),{
+if,(admin,==,null),{
+try,{
+List<Utente>,utentiAzienda,=,getUtenti(),;
+for,(Utente,utente,:,utentiAzienda),{
+if,(utente.isAdmin()),{
+admin,=,utente,;
+break,;
+}
+}
+},catch,(Exception,e),{
+admin,=,null,;
+}
+}
+return,admin,;
+}
+/**
+*
+*,@param,admin
+*/
+public,void,setAdmin(Utente,admin),{
+this.admin,=,admin,;
+}
+@Override
+public,int,hashCode(),{
+int,hash,=,0,;
+hash,+=,(idazienda,!=,null,?,idazienda.hashCode(),:,0),;
+return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+if,(!(object,instanceof,Azienda)),{
+return,false,;
+}
+Azienda,other,=,(Azienda),object,;
+if,((this.idazienda,==,null,&&,other.idazienda,!=,null),||,(this.idazienda,!=,null,&&,!this.idazienda.equals(
+other.idazienda))),{
+return,false,;
+}
+return,true,;
+}
+@Override
+public,String,toString(),{
+return,(new,Formatter()).format(
+"{\"idazienda\":\"%s\","
++,"\"ragionesociale\":\"%s\","
++,"\"piva\":%s,"
++,"\"indirizzo\":%s,"
++,"\"cap\":\"%s\","
++,"\"citta\":\"%s\","
++,"\"email\":\"%s\","
++,"\"prefisso\":\"%s\","
++,"\"telefono\":\"%s\"}",
+this.idazienda,
+this.ragionesociale,
+this.piva,
+this.indirizzo,
+this.cap,
+this.citta,
+this.email,
+this.prefisso,
+this.telefono).toString(),;
+}
+}
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.AziendaFacade,;
+import,com.serandp.datarise.profiling.facade.RuoloFacade,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,com.serandp.datarise.profiling.type.RuoloType,;
+import,java.io.Serializable,;
+import,java.util.Date,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Contratto,implements,Serializable,{
+private,Long,idcontratto,;
+private,String,nomedbfederato,;
+private,String,nomedbrepository,;
+private,Date,dataattivazione,;
+private,Date,datascadenza,;
+private,short,abilitato,;
+private,int,naccountconn,;
+private,int,naccountintegr,;
+private,int,naccountclean,;
+private,int,naccountest,;
+private,int,naccountconnexist,;
+private,int,naccountintegrexist,;
+private,int,naccountcleanexist,;
+private,int,naccountestexist,;
+private,Azienda,azienda,;
+private,String,sessionId,;
+private,String,nomedbcleansing,;
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+	this.sessionId,=,sessionId,;
+}
+/**
+*
+*/
+public,Contratto(),{
+}
+/**
+*
+*,@param,idcontratto
+*/
+public,Contratto(Long,idcontratto),{
+	this.idcontratto,=,idcontratto,;
+}
+/**
+*
+*,@param,idcontratto
+*,@param,nomedbfederato
+*,@param,nomedbrepository
+*,@param,nomedbcleansing
+*,@param,dataattivazione
+*,@param,datascadenza
+*,@param,abilitato
+*,@param,naccountconn
+*,@param,naccountintegr
+*,@param,naccountclean
+*,@param,naccountest
+*/
+public,Contratto(Long,idcontratto,,String,nomedbfederato,,String,nomedbrepository,,String,nomedbcleansing,,Date,dataattivazione,,Date,datascadenza,,short,abilitato,,int,naccountconn,,int,naccountintegr,,int,naccountclean,,int,naccountest),{
+	this.idcontratto,=,idcontratto,;
+	this.nomedbfederato,=,nomedbfederato,;
+	this.nomedbrepository,=,nomedbrepository,;
+	this.nomedbcleansing,=,nomedbcleansing,;
+	this.dataattivazione,=,dataattivazione,;
+	this.datascadenza,=,datascadenza,;
+	this.abilitato,=,abilitato,;
+	this.naccountconn,=,naccountconn,;
+	this.naccountintegr,=,naccountintegr,;
+	this.naccountclean,=,naccountclean,;
+	this.naccountest,=,naccountest,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdcontratto(),{
+	return,idcontratto,;
+}
+/**
+*
+*,@param,idcontratto
+*/
+public,void,setIdcontratto(Long,idcontratto),{
+	this.idcontratto,=,idcontratto,;
+}
+/**
+*
+*,@return
+*/
+public,String,getNomedbcleansing(),{
+	return,nomedbcleansing,;
+}
+/**
+*
+*,@param,nomedbcleansing
+*/
+public,void,setNomedbcleansing(String,nomedbcleansing),{
+	this.nomedbcleansing,=,nomedbcleansing,;
+}
+/**
+*
+*,@return
+*/
+public,String,getNomedbfederato(),{
+	return,nomedbfederato,;
+}
+/**
+*
+*,@param,nomedbfederato
+*/
+public,void,setNomedbfederato(String,nomedbfederato),{
+	this.nomedbfederato,=,nomedbfederato,;
+}
+/**
+*
+*,@return
+*/
+public,String,getNomedbrepository(),{
+	return,nomedbrepository,;
+}
+/**
+*
+*,@param,nomedbrepository
+*/
+public,void,setNomedbrepository(String,nomedbrepository),{
+	this.nomedbrepository,=,nomedbrepository,;
+}
+/**
+*
+*,@return
+*/
+public,Date,getDataattivazione(),{
+	return,dataattivazione,;
+}
+/**
+*
+*,@param,dataattivazione
+*/
+public,void,setDataattivazione(Date,dataattivazione),{
+	this.dataattivazione,=,dataattivazione,;
+}
+/**
+*
+*,@return
+*/
+public,Date,getDatascadenza(),{
+	return,datascadenza,;
+}
+/**
+*
+*,@param,datascadenza
+*/
+public,void,setDatascadenza(Date,datascadenza),{
+	this.datascadenza,=,datascadenza,;
+}
+/**
+*
+*,@return
+*/
+public,short,getAbilitato(),{
+	return,abilitato,;
+}
+/**
+*
+*,@param,abilitato
+*/
+public,void,setAbilitato(short,abilitato),{
+	this.abilitato,=,abilitato,;
+}
+/**
+*
+*,@return
+*/
+public,int,getNaccountconn(),{
+	return,naccountconn,;
+}
+/**
+*
+*,@param,naccountconn
+*/
+public,void,setNaccountconn(int,naccountconn),{
+	this.naccountconn,=,naccountconn,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,int,getNaccountconnexist(),throws,Exception,{
+	try,{
+	,,,,UserSession,session,=,UserSession.getUserSession(sessionId),;
+	,,,,RuoloFacade,facade,=,new,RuoloFacade(session),;
+	,,,,naccountconnexist,=,facade.getNumRuoli(getAzienda().getIdazienda(),,RuoloType.OPCONN.getId()),;
+	},catch,(Exception,ex),{
+	,,,,throw,ex,;
+	}
+	return,naccountconnexist,;
+}
+/**
+*
+*,@return
+*/
+public,int,getNaccountintegr(),{
+	return,naccountintegr,;
+}
+/**
+*
+*,@param,naccountintegr
+*/
+public,void,setNaccountintegr(int,naccountintegr),{
+	this.naccountintegr,=,naccountintegr,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,int,getNaccountintegrexist(),throws,Exception,{
+	try,{
+	,,,,UserSession,session,=,UserSession.getUserSession(sessionId),;
+	,,,,RuoloFacade,facade,=,new,RuoloFacade(session),;
+	,,,,naccountintegrexist,=,facade.getNumRuoli(getAzienda().getIdazienda(),,RuoloType.OPINTEG.getId()),;
+	},catch,(Exception,ex),{
+	,,,,throw,ex,;
+	}
+	return,naccountintegrexist,;
+}
+/**
+*
+*,@return
+*/
+public,int,getNaccountclean(),{
+	return,naccountclean,;
+}
+/**
+*
+*,@param,naccountclean
+*/
+public,void,setNaccountclean(int,naccountclean),{
+	this.naccountclean,=,naccountclean,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,int,getNaccountcleanexist(),throws,Exception,{
+	try,{
+	,,,,UserSession,session,=,UserSession.getUserSession(sessionId),;
+	,,,,RuoloFacade,facade,=,new,RuoloFacade(session),;
+	,,,,naccountcleanexist,=,facade.getNumRuoli(getAzienda().getIdazienda(),,RuoloType.OPCLEAN.getId()),;
+	},catch,(Exception,ex),{
+	,,,,throw,ex,;
+	}
+	return,naccountcleanexist,;
+}
+/**
+*
+*,@return
+*/
+public,int,getNaccountest(),{
+	return,naccountest,;
+}
+/**
+*
+*,@param,naccountest
+*/
+public,void,setNaccountest(int,naccountest),{
+	this.naccountest,=,naccountest,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,int,getNaccountestexist(),throws,Exception,{
+	try,{
+	,,,,UserSession,session,=,UserSession.getUserSession(sessionId),;
+	,,,,RuoloFacade,facade,=,new,RuoloFacade(session),;
+	,,,,naccountestexist,=,facade.getNumRuoli(getAzienda().getIdazienda(),,RuoloType.EXTUSER.getId()),;
+	},catch,(Exception,ex),{
+	,,,,throw,ex,;
+	}
+	return,naccountestexist,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,Azienda,getAzienda(),throws,Exception,{
+	if,(azienda,==,null),{
+	,,,,try,{
+		UserSession,session,=,UserSession.getUserSession(sessionId),;
+		AziendaFacade,facade,=,new,AziendaFacade(session),;
+		azienda,=,facade.getAzienda(this.idcontratto),;
+	,,,,},catch,(Exception,ex),{
+		throw,ex,;
+	,,,,}
+	}
+	return,azienda,;
+}
+/**
+*
+*,@param,azienda
+*/
+public,void,setAzienda(Azienda,azienda),{
+	this.azienda,=,azienda,;
+}
+@Override
+public,int,hashCode(),{
+	int,hash,=,0,;
+	hash,+=,(idcontratto,!=,null,?,idcontratto.hashCode(),:,0),;
+	return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+	//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+	if,(!(object,instanceof,Contratto)),{
+	,,,,return,false,;
+	}
+	Contratto,other,=,(Contratto),object,;
+	if,((this.idcontratto,==,null,&&,other.idcontratto,!=,null),||,(this.idcontratto,!=,null,&&,!this.idcontratto.equals(other.idcontratto))),{
+	,,,,return,false,;
+	}
+	return,true,;
+}
+@Override
+public,String,toString(),{
+	return,"com.serandp.datarise.profiling.entity.Contratto[,idazienda=",+,idcontratto,+,",]",;
+}
+}
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.RuoloFacade,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,java.io.Serializable,;
+import,java.util.List,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Funzionalita,implements,Serializable,{
+private,Long,idfunzionalita,;
+private,String,nome,;
+private,String,xul,;
+private,List<Ruolo>,ruoloList,;
+private,String,sessionId,;
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+	this.sessionId,=,sessionId,;
+}
+/**
+*
+*/
+public,Funzionalita(),{
+}
+/**
+*
+*,@param,idfunzionalita
+*/
+public,Funzionalita(Long,idfunzionalita),{
+	this.idfunzionalita,=,idfunzionalita,;
+}
+/**
+*
+*,@param,idfunzionalita
+*,@param,nome
+*,@param,xul
+*/
+public,Funzionalita(Long,idfunzionalita,,String,nome,,String,xul),{
+	this.idfunzionalita,=,idfunzionalita,;
+	this.nome,=,nome,;
+	this.xul,=,xul,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdfunzionalita(),{
+	return,idfunzionalita,;
+}
+/**
+*
+*,@param,idfunzionalita
+*/
+public,void,setIdfunzionalita(Long,idfunzionalita),{
+	this.idfunzionalita,=,idfunzionalita,;
+}
+/**
+*
+*,@return
+*/
+public,String,getNome(),{
+	return,nome,;
+}
+/**
+*
+*,@param,nome
+*/
+public,void,setNome(String,nome),{
+	this.nome,=,nome,;
+}
+/**
+*
+*,@return
+*/
+public,String,getXul(),{
+	return,xul,;
+}
+/**
+*
+*,@param,xul
+*/
+public,void,setXul(String,xul),{
+	this.xul,=,xul,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,List<Ruolo>,getRuoloList(),throws,Exception,{
+	if,(ruoloList,==,null),{
+	,,,,try,{
+		UserSession,session,=,UserSession.getUserSession(sessionId),;
+		RuoloFacade,facade,=,new,RuoloFacade(session),;
+		ruoloList,=,facade.getRuoli(this.idfunzionalita),;
+	,,,,},catch,(Exception,ex),{
+		throw,ex,;
+	,,,,}
+	}
+	return,ruoloList,;
+}
+/**
+*
+*,@param,ruoloList
+*/
+public,void,setRuoloList(List<Ruolo>,ruoloList),{
+	this.ruoloList,=,ruoloList,;
+}
+@Override
+public,int,hashCode(),{
+	int,hash,=,0,;
+	hash,+=,(idfunzionalita,!=,null,?,idfunzionalita.hashCode(),:,0),;
+	return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+	//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+	if,(!(object,instanceof,Funzionalita)),{
+	,,,,return,false,;
+	}
+	Funzionalita,other,=,(Funzionalita),object,;
+	if,((this.idfunzionalita,==,null,&&,other.idfunzionalita,!=,null),||,(this.idfunzionalita,!=,null,&&,!this.idfunzionalita.equals(other.idfunzionalita))),{
+	,,,,return,false,;
+	}
+	return,true,;
+}
+@Override
+public,String,toString(),{
+	return,"com.serandp.datarise.profiling.entity.Funzionalita[,idfunzionalita=",+,idfunzionalita,+,",]",;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.FunzionalitaFacade,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,com.serandp.datarise.profiling.facade.UtenteFacade,;
+import,java.io.Serializable,;
+import,java.util.List,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Ruolo,implements,Serializable,{
+private,Long,idruolo,;
+private,String,ruolo,;
+private,List<Utente>,utenteList,;
+private,List<Funzionalita>,funzionalitaList,;
+private,String,sessionId,;
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+	this.sessionId,=,sessionId,;
+}
+/**
+*
+*/
+public,Ruolo(),{
+}
+/**
+*
+*,@param,idruolo
+*/
+public,Ruolo(Long,idruolo),{
+	this.idruolo,=,idruolo,;
+}
+/**
+*
+*,@param,idruolo
+*,@param,ruolo
+*/
+public,Ruolo(Long,idruolo,,String,ruolo),{
+	this.idruolo,=,idruolo,;
+	this.ruolo,=,ruolo,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdruolo(),{
+	return,idruolo,;
+}
+/**
+*
+*,@param,idruolo
+*/
+public,void,setIdruolo(Long,idruolo),{
+	this.idruolo,=,idruolo,;
+}
+/**
+*
+*,@return
+*/
+public,String,getRuolo(),{
+	return,ruolo,;
+}
+/**
+*
+*,@param,ruolo
+*/
+public,void,setRuolo(String,ruolo),{
+	this.ruolo,=,ruolo,;
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+public,List<Utente>,getUtenteList(long,idAzienda),throws,Exception,{
+	if,(utenteList,==,null),{
+	,,,,try,{
+		UserSession,session,=,UserSession.getUserSession(sessionId),;
+		UtenteFacade,facade,=,new,UtenteFacade(session),;
+		utenteList,=,facade.getUtentiRuolo(this.idruolo,,idAzienda),;
+	,,,,},catch,(Exception,ex),{
+		throw,ex,;
+	,,,,}
+	}
+	return,utenteList,;
+}
+/**
+*
+*,@param,utenteList
+*/
+public,void,setUtenteList(List<Utente>,utenteList),{
+	this.utenteList,=,utenteList,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,List<Funzionalita>,getFunzionalitaList(),throws,Exception,{
+	if,(funzionalitaList,==,null),{
+	,,,,try,{
+		UserSession,session,=,UserSession.getUserSession(sessionId),;
+		FunzionalitaFacade,facade,=,new,FunzionalitaFacade(session),;
+		funzionalitaList,=,facade.getFunzionalitaRuolo(this),;
+	,,,,},catch,(Exception,ex),{
+		throw,ex,;
+	,,,,}
+	}
+	return,funzionalitaList,;
+}
+/**
+*
+*,@param,funzionalitaList
+*/
+public,void,setFunzionalitaList(List<Funzionalita>,funzionalitaList),{
+	this.funzionalitaList,=,funzionalitaList,;
+}
+@Override
+public,int,hashCode(),{
+	int,hash,=,0,;
+	hash,+=,(idruolo,!=,null,?,idruolo.hashCode(),:,0),;
+	return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+	//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+	if,(!(object,instanceof,Ruolo)),{
+	,,,,return,false,;
+	}
+	Ruolo,other,=,(Ruolo),object,;
+	if,((this.idruolo,==,null,&&,other.idruolo,!=,null),||,(this.idruolo,!=,null,&&,!this.idruolo.equals(other.idruolo))),{
+	,,,,return,false,;
+	}
+	return,true,;
+}
+@Override
+public,String,toString(),{
+	return,"com.serandp.datarise.profiling.entity.Ruolo[,idruolo=",+,idruolo,+,",]",;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.AnagrafeFacade,;
+import,com.serandp.datarise.profiling.facade.AziendaFacade,;
+import,com.serandp.datarise.profiling.facade.FunzionalitaFacade,;
+import,com.serandp.datarise.profiling.facade.RuoloFacade,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,com.serandp.datarise.profiling.facade.UtenteFacade,;
+import,com.serandp.datarise.profiling.type.RuoloType,;
+import,java.io.Serializable,;
+import,java.util.ArrayList,;
+import,java.util.Date,;
+import,java.util.List,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Utente,implements,Serializable,,Comparable<Utente>,{
+private,Long,id,;
+private,String,username,;
+private,String,password,;
+private,Date,dataattivazione,;
+private,Date,datascadenza,;
+private,Short,abilitato,;
+private,List<Ruolo>,ruoloList,;
+private,Anagrafe,anagrafe,;
+private,List<UtenteTabella>,utenteTabellaList,;
+private,List<String>,funzionalitaNegate,;
+private,Azienda,azienda,;
+private,String,sessionId,;
+/**
+*
+*/
+public,Utente(),{
+}
+/**
+*
+*,@param,id
+*/
+public,Utente(Long,id),{
+this.id,=,id,;
+}
+/**
+*
+*,@param,id
+*,@param,username
+*,@param,password
+*/
+public,Utente(Long,id,,String,username,,String,password),{
+this.id,=,id,;
+this.username,=,username,;
+this.password,=,password,;
+}
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+this.sessionId,=,sessionId,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getId(),{
+return,id,;
+}
+/**
+*
+*,@param,id
+*/
+public,void,setId(Long,id),{
+this.id,=,id,;
+}
+/**
+*
+*,@return
+*/
+public,String,getUsername(),{
+return,username,;
+}
+/**
+*
+*,@param,username
+*/
+public,void,setUsername(String,username),{
+this.username,=,username,;
+}
+/**
+*
+*,@return
+*/
+public,String,getPassword(),{
+return,password,;
+}
+/**
+*
+*,@param,password
+*/
+public,void,setPassword(String,password),{
+this.password,=,password,;
+}
+/**
+*
+*,@return
+*/
+public,Date,getDataattivazione(),{
+return,dataattivazione,;
+}
+/**
+*
+*,@param,dataattivazione
+*/
+public,void,setDataattivazione(Date,dataattivazione),{
+this.dataattivazione,=,dataattivazione,;
+}
+/**
+*
+*,@return
+*/
+public,Date,getDatascadenza(),{
+return,datascadenza,;
+}
+/**
+*
+*,@param,datascadenza
+*/
+public,void,setDatascadenza(Date,datascadenza),{
+this.datascadenza,=,datascadenza,;
+}
+/**
+*
+*,@return
+*/
+public,Short,getAbilitato(),{
+return,abilitato,;
+}
+/**
+*
+*,@param,abilitato
+*/
+public,void,setAbilitato(Short,abilitato),{
+this.abilitato,=,abilitato,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,List<Ruolo>,getRuoloList(),throws,Exception,{
+if,(ruoloList,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+RuoloFacade,facade,=,new,RuoloFacade(session),;
+ruoloList,=,facade.getRuoliUtente(this.id),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+return,ruoloList,;
+}
+/**
+*
+*,@param,ruoloList
+*/
+public,void,setRuoloList(List<Ruolo>,ruoloList),{
+this.ruoloList,=,ruoloList,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,List<UtenteTabella>,getUtenteTabellaList(),throws,Exception,{
+if,(utenteTabellaList,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+UtenteFacade,facade,=,new,UtenteFacade(session),;
+utenteTabellaList,=,facade.getTabelleUtente(this),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+return,utenteTabellaList,;
+}
+/**
+*
+*,@return,Lista,degli,id,dei,nodi,del,file,menubar.xul,delle,funzionalità
+*,non,accessibili,dall'utente.
+*,@throws,Exception
+*/
+public,List<String>,getFunzionalitaNegate(),throws,Exception,{
+if,(funzionalitaNegate,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+FunzionalitaFacade,facade,=,new,FunzionalitaFacade(session),;
+funzionalitaNegate,=,facade.getFunzionalitaNegate(this),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+return,funzionalitaNegate,;
+}
+/**
+*
+*,@param,utenteTabellaList
+*/
+public,void,setUtenteTabellaList(List<UtenteTabella>,utenteTabellaList),{
+this.utenteTabellaList,=,utenteTabellaList,;
+}
+/**
+*
+*,@return
+*/
+public,Anagrafe,getAnagrafe(),{
+if,(anagrafe,==,null),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+AnagrafeFacade,facade,=,new,AnagrafeFacade(session),;
+anagrafe,=,facade.getAnagrafe(this),;
+},catch,(Exception,ex),{
+anagrafe,=,null,;
+}
+}
+return,anagrafe,;
+}
+/**
+*
+*,@param,anagrafe
+*/
+public,void,setAnagrafe(Anagrafe,anagrafe),{
+this.anagrafe,=,anagrafe,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,Azienda,getAzienda(),throws,Exception,{
+if,(azienda,==,null,&&,!this.isSysAdmin()),{
+try,{
+UserSession,session,=,UserSession.getUserSession(sessionId),;
+AziendaFacade,facade,=,new,AziendaFacade(session),;
+azienda,=,facade.getAziendaUtente(this),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+return,azienda,;
+}
+/**
+*
+*,@param,azienda
+*/
+public,void,setAzienda(Azienda,azienda),{
+this.azienda,=,azienda,;
+}
+@Override
+public,int,hashCode(),{
+int,hash,=,0,;
+hash,+=,(id,!=,null,?,id.hashCode(),:,0),;
+return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+if,(!(object,instanceof,Utente)),{
+return,false,;
+}
+Utente,other,=,(Utente),object,;
+return,!((this.id,==,null,&&,other.id,!=,null),||,(this.id,!=,null,&&,!this.id.equals(
+other.id))),;
+}
+@Override
+public,String,toString(),{
+return,"com.serandp.datarise.profiling.entity.Utente[,idutente=",+,id,+,",]",;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isSysAdmin(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.SYSADMIN.getId())),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isAdmin(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.ADMIN.getId())),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isOpConn(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.OPCONN.getId())),;
+}
+/**
+*
+*,@param,is
+*,@throws,Exception
+*/
+public,void,setOpConn(boolean,is),throws,Exception,{
+if,(is),{
+if,(ruoloList,==,null),{
+ruoloList,=,new,ArrayList<>(),;
+}
+ruoloList.add(new,Ruolo((long),RuoloType.OPCONN.getId())),;
+}
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isOpInteg(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.OPINTEG.getId())),;
+}
+/**
+*
+*,@param,is
+*,@throws,Exception
+*/
+public,void,setOpInteg(boolean,is),throws,Exception,{
+if,(is),{
+if,(ruoloList,==,null),{
+ruoloList,=,new,ArrayList<>(),;
+}
+ruoloList.add(new,Ruolo((long),RuoloType.OPINTEG.getId())),;
+}
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isOpClean(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.OPCLEAN.getId())),;
+}
+/**
+*
+*,@param,is
+*,@throws,Exception
+*/
+public,void,setOpClean(boolean,is),throws,Exception,{
+if,(is),{
+if,(ruoloList,==,null),{
+ruoloList,=,new,ArrayList<>(),;
+}
+ruoloList.add(new,Ruolo((long),RuoloType.OPCLEAN.getId())),;
+}
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,boolean,isExtUser(),throws,Exception,{
+return,this.getRuoloList().contains(new,Ruolo(
+(long),RuoloType.EXTUSER.getId())),;
+}
+/**
+*
+*,@param,is
+*,@throws,Exception
+*/
+public,void,setExtUser(boolean,is),throws,Exception,{
+if,(is),{
+if,(ruoloList,==,null),{
+ruoloList,=,new,ArrayList<>(),;
+}
+ruoloList.add(new,Ruolo((long),RuoloType.EXTUSER.getId())),;
+}
+}
+@Override
+public,int,compareTo(Utente,t),{
+try,{
+return,t.getAnagrafe().compareTo(this.getAnagrafe()),;
+},catch,(Exception,ex),{
+return,-1,;
+}
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.entity,;
+import,java.io.Serializable,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,UtenteTabella,implements,Serializable,{
+private,static,final,long,serialVersionUID,=,1L,;
+private,Long,idTabellaUtente,;
+private,String,tabella,;
+private,boolean,selected,;
+private,Utente,utente,;
+/**
+*
+*/
+public,UtenteTabella(),{
+}
+/**
+*
+*,@param,idTabellaUtente
+*/
+public,UtenteTabella(Long,idTabellaUtente),{
+	this.idTabellaUtente,=,idTabellaUtente,;
+}
+/**
+*
+*,@param,idTabellaUtente
+*,@param,tabella
+*,@param,selected
+*/
+public,UtenteTabella(Long,idTabellaUtente,,String,tabella,,boolean,selected),{
+	this.idTabellaUtente,=,idTabellaUtente,;
+	this.tabella,=,tabella,;
+	this.selected,=,selected,;
+}
+/**
+*
+*,@return
+*/
+public,boolean,isSelected(),{
+	return,selected,;
+}
+/**
+*
+*,@param,selected
+*/
+public,void,setSelected(boolean,selected),{
+	this.selected,=,selected,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdTabellaUtente(),{
+	return,idTabellaUtente,;
+}
+/**
+*
+*,@param,idTabellaUtente
+*/
+public,void,setIdTabellaUtente(Long,idTabellaUtente),{
+	this.idTabellaUtente,=,idTabellaUtente,;
+}
+/**
+*
+*,@return
+*/
+public,String,getTabella(),{
+	return,tabella,;
+}
+/**
+*
+*,@param,tabella
+*/
+public,void,setTabella(String,tabella),{
+	this.tabella,=,tabella,;
+}
+/**
+*
+*,@return
+*/
+public,Utente,getUtente(),{
+	return,utente,;
+}
+/**
+*
+*,@param,utente
+*/
+public,void,setUtente(Utente,utente),{
+	this.utente,=,utente,;
+}
+@Override
+public,int,hashCode(),{
+	int,hash,=,0,;
+	hash,+=,(idTabellaUtente,!=,null,?,idTabellaUtente.hashCode(),:,0),;
+	return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+	//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+	if,(!(object,instanceof,UtenteTabella)),{
+	,,,,return,false,;
+	}
+	UtenteTabella,other,=,(UtenteTabella),object,;
+	if,((this.idTabellaUtente,==,null,&&,other.idTabellaUtente,!=,null),||,(this.idTabellaUtente,!=,null,&&,!this.idTabellaUtente.equals(other.idTabellaUtente))),{
+	,,,,return,false,;
+	}
+	return,true,;
+}
+@Override
+public,String,toString(),{
+	return,"com.serandp.datarise.profiling.entity.UtenteTabella[,idTabellaUtente=",+,idTabellaUtente,+,",]",;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.profiling.database.mapper.AnagrafeMapper,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.UserStateType,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.validator.routines.RegexValidator,;
+/**
+*
+*,@author,Mario
+*/
+public,class,AnagrafeFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,AnagrafeFacade(UserSession,session),{
+	this.session,=,session,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+public,Anagrafe,getAnagrafe(Utente,utente),throws,Exception,{
+	AnagrafeMapper,mapper,=,new,AnagrafeMapper(UserSession.config,,session.getUserSessionId()),;
+	Anagrafe,ana,=,mapper.getAnagrafe(utente),;
+	return,ana,;
+}
+/**
+*
+*,@param,anagrafe
+*,@throws,Exception
+*/
+public,void,createAnagrafe(Anagrafe,anagrafe),throws,Exception,{
+	AnagrafeMapper,mapper,=,new,AnagrafeMapper(UserSession.config,,session.getUserSessionId()),;
+	mapper.insert(anagrafe),;
+}
+/**
+*
+*,@param,anagrafe
+*,@throws,Exception
+*/
+public,void,updateAnagrafe(Anagrafe,anagrafe),throws,Exception,{
+	AnagrafeMapper,mapper,=,new,AnagrafeMapper(UserSession.config,,session.getUserSessionId()),;
+	mapper.update(anagrafe),;
+}
+/**
+*
+*,@param,anagrafe
+*,@param,idAzienda
+*,@throws,Exception
+*/
+public,void,checkUpdateAnagrafe(Anagrafe,anagrafe,,Long,idAzienda),throws,Exception{
+	checkAnagrafe(anagrafe,,true,,idAzienda),;
+}
+/**
+*
+*,@param,anagrafe
+*,@param,idAzienda
+*,@throws,Exception
+*/
+public,void,checkNewAnagrafe(Anagrafe,anagrafe,,Long,idAzienda),throws,Exception{
+	checkAnagrafe(anagrafe,,false,,idAzienda),;
+}
+private,void,checkAnagrafe(Anagrafe,anagrafe,,boolean,modifica,,Long,idAzienda),throws,Exception{
+	RegexValidator,valCap,=,new,RegexValidator("^[0-9]{5}$",false),;
+	if(!valCap.isValid(anagrafe.getCap())),{
+	,,,,throw,new,Exception("Il,Cap,non,\u00e8,valido."),;
+	}
+	if,(modifica){
+	,,,,checkEmail(anagrafe.getEmail(),,anagrafe.getUtente().getId(),,idAzienda),;
+checkCodFis(anagrafe.getCodfiscale(),,anagrafe.getUtente().getId(),,idAzienda),;
+},else{
+checkEmail(anagrafe.getEmail(),,idAzienda),;
+checkCodFis(anagrafe.getCodfiscale(),,idAzienda),;
+}
+}
+/**
+*,controllo,per,creazione
+*,@param,email
+*,@throws,Exception
+*/
+private,void,checkEmail(String,email,,Long,idAzienda),throws,Exception,{
+checkEmail(email,,-1L,,idAzienda),;
+}
+/**
+*,controllo,per,modifica
+*,@param,email
+*,@param,idUtente
+*,@throws,Exception
+*/
+private,void,checkEmail(String,email,,Long,idUtente,,Long,idAzienda),throws,Exception,{
+	RegexValidator,val,=,new,RegexValidator("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",false),;
+	if(val.isValid(email)),{
+	,,,,AnagrafeMapper,mapper,=,new,AnagrafeMapper(UserSession.config,,session.getUserSessionId()),;
+	,,,,try,{
+		List<Anagrafe>,anagrafeTrovate,=,mapper.getAnagrafeByEmail(email,idAzienda,UserStateType.ABILITATO),;
+		for,(Anagrafe,anagrafeTrovata,:,anagrafeTrovate),{
+		,,,,if,(anagrafeTrovata!=null,&&,(idUtente.equals(-1L),||,!anagrafeTrovata.getIdAnagrafe().equals(idUtente))),{
+			throw,new,Exception("Email,gi\u00e0,in,uso,da,un,altro,utente."),;
+		,,,,}
+		}
+	,,,,},catch,(Exception,e),{
+		UserSession.logger.log(Level.SEVERE,,null,,e),;
+		throw,e,;
+	,,,,}
+	},else,{
+	,,,,throw,new,Exception("L'indirizzo,email,non,\u00e8,corretto."),;
+	}
+}
+/**
+*,controllo,per,creazione
+*,@param,codFis
+*,@throws,Exception
+*/
+private,void,checkCodFis(String,codFis,,Long,idAzienda),throws,Exception,{
+checkCodFis(codFis,,-1L,,idAzienda),;
+}
+/**
+*,controllo,per,modifica
+*,@param,codFis
+*,@param,idUtente
+*,@throws,Exception
+*/
+private,void,checkCodFis(String,codFis,,Long,idUtente,,Long,idAzienda),throws,Exception,{
+RegexValidator,val,=,new,RegexValidator("^[A-Z]{6}[A-Z0-9]{2}[A-Z][A-Z0-9]{2}[A-Z][A-Z0-9]{3}[A-Z]$",false),;
+	if,(val.isValid(codFis)),{
+	,,,,AnagrafeMapper,mapper,=,new,AnagrafeMapper(UserSession.config,,session.getUserSessionId()),;
+	,,,,try,{
+		List<Anagrafe>,anagrafeTrovate,=,mapper.getAnagrafeByCodFis(codFis,idAzienda,UserStateType.ABILITATO),;
+		for,(Anagrafe,anagrafeTrovata,:,anagrafeTrovate),{
+		,,,,if,(anagrafeTrovata!=null,&&,(idUtente.equals(-1L),||,!anagrafeTrovata.getIdAnagrafe().equals(idUtente))),{
+			throw,new,Exception("Codice,Fiscale,gi\u00e0,in,uso,da,un,altro,utente."),;
+		,,,,}
+		}
+	,,,,},catch,(Exception,e),{
+		UserSession.logger.log(Level.SEVERE,,null,,e),;
+		throw,e,;
+	,,,,}
+	},else,{
+	,,,,throw,new,Exception("Il,Codice,Fiscale,non,\u00e8,corretto."),;
+	}
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.facade.FederationFacade,;
+import,com.serandp.datarise.facade.FederationSession,;
+import,com.serandp.datarise.facade.MetadataFacade,;
+import,com.serandp.datarise.facade.MetadataSession,;
+import,com.serandp.datarise.profiling.database.mapper.AziendaMapper,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.RuoloType,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,org.apache.commons.lang.RandomStringUtils,;
+/**
+*
+*,@author,Mario
+*/
+public,class,AziendaFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,AziendaFacade(UserSession,session),{
+this.session,=,session,;
+}
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+public,void,createAzienda(Azienda,azienda),throws,Exception,{
+//controlli
+Contratto,contratto,=,azienda.getContratto(),;
+contratto.setNomedbrepository(
+azienda.getContratto().getNomedbfederato(),+,"_R"),;
+//	contratto.setNomedbcleansing(azienda.getContratto().getNomedbfederato()+"_C"),;
+Utente,admin,=,azienda.getAdmin(),;
+Anagrafe,anagAdmin,=,azienda.getAdmin().getAnagrafe(),;
+checkAzienda(azienda,,false),;
+ContrattoFacade,contrattoFacade,=,new,ContrattoFacade(session),;
+UtenteFacade,utenteFacade,=,new,UtenteFacade(session),;
+AnagrafeFacade,anaFacade,=,new,AnagrafeFacade(session),;
+contrattoFacade.checkContratto(contratto,,false),;
+utenteFacade.checkNewUtente(admin),;
+anaFacade.checkNewAnagrafe(anagAdmin,,azienda.getIdazienda()),;
+if,(admin.getDatascadenza().after(contratto.getDatascadenza())),{
+throw,new,Exception(
+"Scadenza,Ammnistratore,posteriore,a,scadenza,contratto"),;
+}
+MetadataSession,metaSession,=,new,MetadataSession(
+contratto.getNomedbrepository(),,session.getHttpSessionId()),;
+FederationSession,fedSession,=,new,FederationSession(
+contratto.getNomedbfederato(),,session.getHttpSessionId()),;
+try,{
+//salvataggio,azienda
+insertAzienda(azienda),;
+//salvataggio,contratto
+contratto.setIdcontratto(azienda.getIdazienda()),;
+contrattoFacade.createContratto(contratto),;
+//salvataggio,Amministratore,di,servizio
+admin.setPassword(RandomStringUtils.randomAlphanumeric(8)),;
+admin.setAzienda(azienda),;
+ArrayList<Ruolo>,ruoli,=,new,ArrayList<>(),;
+ruoli.add(new,Ruolo((long),RuoloType.ADMIN.ordinal())),;
+ruoli.add(new,Ruolo((long),RuoloType.OPCONN.ordinal())),;
+ruoli.add(new,Ruolo((long),RuoloType.OPINTEG.ordinal())),;
+ruoli.add(new,Ruolo((long),RuoloType.OPCLEAN.ordinal())),;
+anagAdmin.setIdAnagrafe(admin.getId()),;
+utenteFacade.createUtente(admin,,anagAdmin,,ruoli,,azienda,,false),;
+MetadataFacade,schemaFacade,=,new,MetadataFacade(metaSession),;
+FederationFacade,federationFacade,=,new,FederationFacade(fedSession),;
+schemaFacade.createMetadataRepository(
+contratto.getNomedbrepository()),;
+try,{
+federationFacade.createFDB(contratto.getNomedbfederato()),;
+},catch,(Exception,e),{
+schemaFacade.deleteMetadataRepository(
+contratto.getNomedbrepository()),;
+throw,e,;
+}
+},catch,(Exception,e),{
+if,(azienda.getIdazienda(),!=,null),{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+mapper.delete(azienda.getIdazienda()),;
+}
+throw,e,;
+}
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+//,public,Azienda,getAzienda(long,idAzienda),throws,Exception,{
+//,AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+//,session.getUserSessionId()),;
+//,Azienda,azienda,=,mapper.getAzienda(idAzienda),;
+//,if,(azienda,!=,null),{
+//,return,azienda,;
+//,},else,{
+//,throw,new,Exception("L'azienda,non,esiste."),;
+//,}
+//,}
+/**
+*
+*,@return,@throws,Exception
+*/
+public,List<Azienda>,readAllAziende(),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+List<Azienda>,list,=,mapper.getAll(),;
+return,list,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+public,Azienda,getAziendaUtente(Utente,utente),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+Azienda,azienda,=,mapper.getAziendaByUtente(utente),;
+return,azienda,;
+}
+/**
+*
+*,@param,azienda
+*,@param,contratto
+*,@param,admin
+*,@param,anagAdmin
+*,@throws,Exception
+*/
+public,void,updateAzienda(Azienda,azienda,,Contratto,contratto,,Utente,admin,
+Anagrafe,anagAdmin),throws,Exception,{
+//controlli
+ContrattoFacade,contrattoFacade,=,new,ContrattoFacade(session),;
+UtenteFacade,utenteFacade,=,new,UtenteFacade(session),;
+AnagrafeFacade,anaFacade,=,new,AnagrafeFacade(session),;
+checkAzienda(azienda,,true),;
+contrattoFacade.checkContratto(contratto,,true),;
+utenteFacade.checkUpdateUtente(admin),;
+anaFacade.checkUpdateAnagrafe(anagAdmin,,azienda.getIdazienda()),;
+//salvataggio,azienda
+updateAzienda(azienda,,false),;
+//salvataggio,contratto
+contratto.setIdcontratto(azienda.getIdazienda()),;
+contrattoFacade.updateContratto(contratto),;
+//salvataggio,Amministratore,di,servizio
+admin.setAzienda(azienda),;
+ArrayList<Ruolo>,ruoli,=,new,ArrayList<>(),;
+ruoli.add(new,Ruolo((long),RuoloType.ADMIN.ordinal())),;
+anagAdmin.setIdAnagrafe(admin.getId()),;
+utenteFacade.updateUtente(admin,,anagAdmin,,ruoli,,false,,""),;
+}
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+public,void,updateAzienda(Azienda,azienda),throws,Exception,{
+updateAzienda(azienda,,true),;
+}
+private,void,updateAzienda(Azienda,azienda,,boolean,check),throws,Exception,{
+if,(check),{
+checkAzienda(azienda,,true),;
+}
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+try,{
+if,(!mapper.update(azienda)),{
+throw,new,Exception("Errore,durante,la,modifica,dell'azienda"),;
+}
+},catch,(Exception,ex),{
+throw,new,Exception("Errore,durante,la,modifica,dell'azienda"),;
+}
+}
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+public,void,deleteAzienda(Azienda,azienda),throws,Exception,{
+String,dbFederato,=,azienda.getContratto().getNomedbfederato(),;
+String,dbMetadati,=,azienda.getContratto().getNomedbrepository(),;
+MetadataSession,metaSession,=,new,MetadataSession(dbMetadati,
+session.getHttpSessionId()),;
+FederationSession,fedSession,=,new,FederationSession(dbFederato,
+session.getHttpSessionId()),;
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+try,{
+if,(!mapper.delete(azienda.getIdazienda())),{
+throw,new,Exception("idAzienda,non,valido"),;
+}
+MetadataFacade,schemaFacade,=,new,MetadataFacade(metaSession),;
+FederationFacade,federationFacade,=,new,FederationFacade(fedSession),;
+federationFacade.deleteFDB(dbFederato),;
+schemaFacade.deleteMetadataRepository(dbMetadati),;
+},catch,(Exception,ex),{
+Logger.getLogger(AziendaFacade.class.getName()).log(Level.SEVERE,
+null,,ex),;
+//	,,,,throw,ex,;
+}
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+public,Utente,getAdmin(Azienda,azienda),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+Utente,utente,=,mapper.getAdmin(azienda),;
+return,utente,;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+public,List<Utente>,getUtenti(Azienda,azienda),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+List<Utente>,list,=,mapper.getUtenti(azienda),;
+return,list,;
+}
+private,void,insertAzienda(Azienda,azienda),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+mapper.insert(azienda),;
+}
+/**
+*,Controlli,sui,dati,dell'azienda
+*
+*,@param,azienda
+*,@param,modifica,true,in,caso,di,modifica,dell'azienda
+*,@throws,Exception
+*/
+private,void,checkAzienda(Azienda,azienda,,boolean,modifica),throws,Exception,{
+if,(modifica),{
+checkEmail(azienda.getEmail(),,azienda.getIdazienda()),;
+checkPIva(azienda.getPiva(),,azienda.getIdazienda()),;
+},else,{
+checkEmail(azienda.getEmail()),;
+checkPIva(azienda.getPiva()),;
+}
+}
+/**
+*,Nell'operazione,di,creazione,,ontrolla,che,la,partita,iva,non,sia,già
+*,presente
+*
+*,@param,pIva
+*,@throws,Exception
+*/
+private,void,checkPIva(String,pIva),throws,Exception,{
+checkPIva(pIva,,-1),;
+}
+/**
+*,Nell'operazione,di,modifica,,controlla,che,la,partita,iva,non,sia,già
+*,presente
+*
+*,@param,pIva
+*,@param,idAzienda
+*,@throws,Exception
+*/
+private,void,checkPIva(String,pIva,,long,idAzienda),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+Azienda,aziendaTrovata,=,mapper.getAziendaByPiva(pIva),;
+if,(aziendaTrovata,!=,null,&&,(idAzienda,==,-1,||,aziendaTrovata.getIdazienda(),!=,idAzienda)),{
+throw,new,Exception(
+"Un,azienda,con,la,partita,iva,specificata,esiste,gi&agrave,;."),;
+}
+}
+/**
+*,Nell'operazione,di,creazione,,controlla,che,la,partita,iva,non,sia,già
+*,presente
+*
+*,@param,pIva
+*,@throws,Exception
+*/
+private,void,checkEmail(String,email),throws,Exception,{
+checkEmail(email,,-1),;
+}
+/**
+*,Nell'operazione,di,modifica,,controlla,che,la,partita,iva,non,sia,già
+*,presente
+*
+*,@param,pIva
+*,@param,idAzienda
+*,@throws,Exception
+*/
+private,void,checkEmail(String,email,,long,idAzienda),throws,Exception,{
+AziendaMapper,mapper,=,new,AziendaMapper(UserSession.config,
+session.getUserSessionId()),;
+Azienda,aziendaTrovata,=,mapper.getAziendaByEmail(email),;
+if,(aziendaTrovata,!=,null,&&,(idAzienda,==,-1,||,aziendaTrovata.getIdazienda(),!=,idAzienda)),{
+throw,new,SQLException(
+"Un,azienda,con,l'email,specificata,esiste,gi&agrave,;."),;
+}
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.profiling.database.mapper.ContrattoMapper,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+/**
+*
+*,@author,Mario
+*/
+public,class,ContrattoFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,ContrattoFacade(UserSession,session),{
+	this.session,=,session,;
+}
+/**
+*
+*,@param,contratto
+*,@throws,Exception
+*/
+public,void,createContratto(Contratto,contratto),throws,Exception,{
+	ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,session.getUserSessionId()),;
+	mapper.insert(contratto),;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+public,Contratto,readContratto(Azienda,azienda),throws,Exception{
+	ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,session.getUserSessionId()),;
+	Contratto,con,=,mapper.getContratto(azienda),;
+	return,con,;
+}
+/**
+*
+*,@param,contratto
+*,@throws,Exception
+*/
+public,void,updateContratto(Contratto,contratto),throws,Exception,{
+	ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,session.getUserSessionId()),;
+	try,{
+mapper.update(contratto),;
+},catch,(Exception,ex),{
+throw,new,Exception("Errore,durante,la,modifica,dell'account"),;
+}
+}
+/**
+*
+*,@param,contratto
+*,@param,modifica
+*,@throws,Exception
+*/
+public,void,checkContratto(Contratto,contratto,,boolean,modifica),throws,Exception,{
+	if,(modifica),{
+checkNomeDbFederato(contratto.getNomedbfederato(),,contratto.getIdcontratto()),;
+},else,{
+checkNomeDbFederato(contratto.getNomedbfederato()),;
+}
+}
+/**
+*,check,per,creazione
+*,@param,nomeDb
+*,@throws,Exception
+*/
+private,void,checkNomeDbFederato(String,nomeDb),throws,Exception,{
+checkNomeDbFederato(nomeDb,,-1),;
+}
+/**
+*,check,per,modifica
+*,@param,nomeDb
+*,@param,idContratto
+*,@throws,Exception
+*/
+private,void,checkNomeDbFederato(String,nomeDb,,long,idContratto),throws,Exception,{
+ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,session.getUserSessionId()),;
+	Contratto,contrattoTrovato,=,mapper.getContratto(nomeDb),;
+	if,(contrattoTrovato!=null,&&,(idContratto,==,-1,||,contrattoTrovato.getIdcontratto(),!=,idContratto)),{
+	,,,,throw,new,Exception("Nome,Database,Federato,gi&agrave,;,in,uso,,controllare,nel,FDBMS"),;
+	}
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.profiling.database.mapper.FunzionalitaMapper,;
+import,com.serandp.datarise.profiling.entity.Funzionalita,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.util.List,;
+/**
+*
+*,@author,Mario
+*/
+public,class,FunzionalitaFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,FunzionalitaFacade(UserSession,session),{
+	this.session,=,session,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+public,List<String>,getFunzionalitaNegate(Utente,utente),throws,Exception,{
+FunzionalitaMapper,mapper,=,new,FunzionalitaMapper(UserSession.config,,session.getUserSessionId()),;
+	List<String>,list,=,mapper.getFunzionalitaNegate(utente),;
+	return,list,;
+}
+/**
+*
+*,@param,ruolo
+*,@return
+*,@throws,Exception
+*/
+public,List<Funzionalita>,getFunzionalitaRuolo(Ruolo,ruolo),throws,Exception,{
+FunzionalitaMapper,mapper,=,new,FunzionalitaMapper(UserSession.config,,session.getUserSessionId()),;
+	List<Funzionalita>,,list,=,mapper.getFunzionalitaRuolo(ruolo),;
+	return,list,;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,java.io.Serializable,;
+/**
+*
+*,@author,Mario
+*/
+public,class,NomiDb,implements,Serializable,{
+private,String,nomeFDB,,nomeRepository,,cleansing,;
+/**
+*
+*/
+public,NomiDb(),{
+}
+/**
+*
+*,@param,nomeFDB
+*,@param,nomeRepository
+*,@param,cleansing
+*/
+public,NomiDb(String,nomeFDB,String,nomeRepository,,String,cleansing){
+this.nomeFDB,=,nomeFDB,;
+this.nomeRepository,=,nomeRepository,;
+this.cleansing,=,cleansing,;
+}
+/**
+*
+*,@param,cleansing
+*/
+public,void,setCleansing(String,cleansing),{
+	this.cleansing,=,cleansing,;
+}
+/**
+*
+*,@param,nomeFDB
+*/
+public,void,setNomeFDB(String,nomeFDB),{
+	this.nomeFDB,=,nomeFDB,;
+}
+/**
+*
+*,@param,nomeRepository
+*/
+public,void,setNomeRepository(String,nomeRepository),{
+	this.nomeRepository,=,nomeRepository,;
+}
+/**
+*,@return,the,nomeFDB
+*/
+public,String,getNomeFDB(),{
+return,nomeFDB,;
+}
+/**
+*,@return,the,nomeRepository
+*/
+public,String,getNomeRepository(),{
+return,nomeRepository,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCleansing(),{
+	return,cleansing,;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.profiling.database.mapper.RuoloMapper,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.RuoloType,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,Mario
+*/
+public,class,RuoloFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,RuoloFacade(UserSession,session),{
+	this.session,=,session,;
+}
+/**
+*,Verifica
+*,il
+*,superamento
+*,del
+*,numero
+*,massimo
+*,di
+*,utenti
+*,appartenenti
+*,ad
+*,un
+*,dato
+*,ruolo.
+*
+*,@param
+*,ruolifgdfg
+*,@param
+*,utente
+*,@param
+*,modifica
+*,@throws
+*,Exception
+*/
+private,void,checkRuoli(List<Ruolo>,ruoli,,Utente,utente,,boolean,modifica),throws,Exception,{
+	UtenteFacade,utenteFacade,=,new,UtenteFacade(session),;
+	Contratto,contratto,=,utente.getAzienda().getContratto(),;
+	RuoloType,ruoloConst,=,null,;
+	int,num,;
+	List<Ruolo>,newRuoli,=,new,ArrayList<Ruolo>(ruoli),;
+	if,(modifica),{
+	,,,,newRuoli.removeAll(utenteFacade.getUtente(utente.getId()).getRuoloList()),;
+	}
+	for,(Ruolo,ruolo,:,newRuoli),{
+	,,,,num,=,getNumRuoli(contratto.getIdcontratto(),,ruolo.getIdruolo()),;
+	,,,,ruoloConst,=,RuoloType.values()[Integer.parseInt(ruolo.getIdruolo().toString())],;
+	,,,,switch,(ruoloConst),{
+		case,OPCONN:
+		,,,,if,(num,>=,contratto.getNaccountconn()),{
+			throw,new,Exception("E',stato,superato,il,limite,massimo,di,account,per,il,ruolo,",+,ruolo.getRuolo()),;
+		,,,,}
+		,,,,break,;
+		case,OPINTEG:
+		,,,,if,(num,>=,contratto.getNaccountintegr()),{
+			throw,new,Exception("E',stato,superato,il,limite,massimo,di,account,per,il,ruolo,",+,ruolo.getRuolo()),;
+		,,,,}
+		,,,,break,;
+		case,OPCLEAN:
+		,,,,if,(num,>=,contratto.getNaccountclean()),{
+			throw,new,Exception("E',stato,superato,il,limite,massimo,di,account,per,il,ruolo,",+,ruolo.getRuolo()),;
+		,,,,}
+		,,,,break,;
+		case,EXTUSER:
+		,,,,if,(num,>=,contratto.getNaccountest()),{
+			throw,new,Exception("E',stato,superato,il,limite,massimo,di,account,per,il,ruolo,",+,ruolo.getRuolo()),;
+		,,,,}
+		,,,,break,;
+	,,,,}
+	}
+}
+/**
+*
+*,@param,ruoli
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,checkUpdateRuoli(List<Ruolo>,ruoli,,Utente,utente),throws,Exception,{
+	checkRuoli(ruoli,,utente,,true),;
+}
+/**
+*
+*,@param,ruoli
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,checkNewRuoli(List<Ruolo>,ruoli,,Utente,utente),throws,Exception,{
+	checkRuoli(ruoli,,utente,,false),;
+}
+/**
+*
+*,@param,idAzienda
+*,@param,idRuolo
+*,@return
+*,@throws,Exception
+*/
+public,int,getNumRuoli(long,idAzienda,,long,idRuolo),throws,Exception,{
+	RuoloMapper,mapper,=,new,RuoloMapper(UserSession.config,,session.getUserSessionId()),;
+	int,num,=,mapper.getNumRuoli(idAzienda,,idRuolo),;
+	return,num,;
+}
+/**
+*
+*,@param,idFunzionalita
+*,@return
+*,@throws,Exception
+*/
+public,List<Ruolo>,getRuoli(long,idFunzionalita),throws,Exception,{
+	RuoloMapper,mapper,=,new,RuoloMapper(UserSession.config,,session.getUserSessionId()),;
+	List<Ruolo>,list,=,mapper.getRuoliFunzionalita(idFunzionalita),;
+	return,list,;
+}
+/**
+*
+*,@param,idUtente
+*,@return
+*,@throws,Exception
+*/
+public,List<Ruolo>,getRuoliUtente(long,idUtente),throws,Exception,{
+	RuoloMapper,mapper,=,new,RuoloMapper(UserSession.config,,session.getUserSessionId()),;
+	List<Ruolo>,list,=,mapper.getRuoliUtente(idUtente),;
+	return,list,;
+}
+}
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.database.mapper.DataMapper,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,org.apache.commons.configuration.Configuration,;
+import,org.apache.commons.configuration.ConfigurationException,;
+import,org.apache.commons.configuration.PropertiesConfiguration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,UserSession,{
+protected,static,Configuration,config,;
+protected,static,final,Logger,logger,=,Logger.getLogger(
+"DataRise.Profilazione.Facade"),;
+static,{
+try,{
+config,=,new,PropertiesConfiguration("UsersDBConfig.properties"),;
+},catch,(ConfigurationException,ex),{
+Logger.getLogger(UserSession.class.getName()).log(Level.SEVERE,,null,
+ex),;
+config,=,null,;
+}
+}
+/**
+*
+*,@param,sessionId
+*,@return
+*/
+public,static,UserSession,getUserSession(String,sessionId),{
+return,new,UserSession(sessionId.substring(0,,sessionId.length(),-,1)),;
+}
+private,String,sessionId,=,null,;
+/**
+*
+*,@param,httpSessionId
+*/
+public,UserSession(String,httpSessionId),{
+this.sessionId,=,httpSessionId,;
+}
+/**
+*
+*,@return
+*/
+public,String,getUserSessionId(),{
+return,sessionId,+,"U",;
+}
+/**
+*
+*,@return
+*/
+public,String,getHttpSessionId(),{
+return,sessionId,;
+}
+/**
+*
+*/
+public,void,end(),{
+DataMapper.disconnect(config,,getUserSessionId()),;
+}
+}
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.facade.FederationFacade,;
+import,com.serandp.datarise.facade.FederationSession,;
+import,com.serandp.datarise.facade.MetadataFacade,;
+import,com.serandp.datarise.facade.MetadataSession,;
+import,com.serandp.datarise.metadata.model.connection.DataTableMeta,;
+import,com.serandp.datarise.profiling.database.mapper.IRuoloMapper,;
+import,com.serandp.datarise.profiling.database.mapper.IUtenteMapper,;
+import,com.serandp.datarise.profiling.database.mapper.RuoloMapper,;
+import,com.serandp.datarise.profiling.database.mapper.UtenteMapper,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.entity.UtenteTabella,;
+import,java.util.ArrayList,;
+import,java.util.LinkedList,;
+import,java.util.List,;
+import,org.apache.commons.lang.StringUtils,;
+/**
+*
+*,@author,Mario
+*/
+public,class,UtenteFacade,{
+private,UserSession,session,;
+/**
+*
+*,@param,session
+*/
+public,UtenteFacade(UserSession,session),{
+this.session,=,session,;
+}
+/**
+*
+*,@param,utente
+*,@param,ruoli
+*,@param,azienda
+*,@throws,Exception
+*/
+public,void,createUtente(Utente,utente,,List<Ruolo>,ruoli,
+Azienda,azienda),throws,Exception,{
+createUtente(utente,,utente.getAnagrafe(),,ruoli,,azienda,,true),;
+}
+/**
+*
+*,@param,utente
+*,@param,anagrafe
+*,@param,ruoli
+*,@param,azienda
+*,@param,check
+*,@throws,Exception
+*/
+public,void,createUtente(Utente,utente,,Anagrafe,anagrafe,,List<Ruolo>,ruoli,
+Azienda,azienda,,boolean,check),throws,Exception,{
+utente.setAzienda(azienda),;
+AnagrafeFacade,anaFacade,=,new,AnagrafeFacade(session),;
+RuoloFacade,ruoloFacade,=,new,RuoloFacade(session),;
+if,(check),{
+//controlli
+checkNewUtente(utente),;
+anaFacade.checkNewAnagrafe(anagrafe,,azienda.getIdazienda()),;
+ruoloFacade.checkNewRuoli(ruoli,,utente),;
+}
+//salvataggio
+utente.setRuoloList(ruoli),;
+createUtente(utente),;
+anagrafe.setIdAnagrafe(utente.getId()),;
+anagrafe.setUtente(utente),;
+try,{
+anaFacade.createAnagrafe(anagrafe),;
+//,PARTE,COMMENTATA,la,creazione,utente,esterno,prevede,la,definizione,di,un,utente,SOLO,in,DB2
+if,(utente.isExtUser()),{
+this.createUtenteTeiid(utente),;
+this.saveUserTable(utente),;
+}
+},catch,(Exception,e),{
+deleteUtente(utente),;
+throw,new,Exception("L'utente,non,è,stato,creato."),;
+}
+}
+private,void,createUtente(Utente,utente),throws,Exception,{
+IUtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+mapper.insert(utente),;
+IRuoloMapper,mapperR,=,new,RuoloMapper(UserSession.config,
+session.getUserSessionId()),;
+mapperR.setRuoliUtente(utente.getRuoloList(),,utente.getId()),;
+}
+private,void,createUtenteTeiid(Utente,utente),throws,Exception,{
+IUtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+mapper.insertTeiid(utente),;
+}
+private,void,deleteUtenteTeiid(Utente,utente),throws,Exception,{
+IUtenteMapper,mapper,=,new,UtenteMapper(
+UserSession.config,
+session.getUserSessionId()
+),;
+mapper.deleteTeiid(utente),;
+}
+//,,,,private,void,updateUtenteTeiid(String,Username,,String,Password),throws,Exception,{
+//,,,,,,,,IUtenteMapper,mapper,=,new,UtenteMapper(
+//,,,,,,,,,,,,UserSession.config,
+//,,,,,,,,,,,,session.getUserSessionId()
+//,,,,,,,,),;
+//,,,,,,,,mapper.updateTeiid(Username,,Password),;
+//,,,,}
+//,,,,public,Utente,getUtentiRuolo(String,userKey),throws,Exception,{
+//
+//
+//	UtenteMapper,mapper,=,new,UtenteMapper(),;
+//,,,,,,,,Utente,utente,=,mapper.getUtentebyToken(userKey),;
+//,,,,,,,,if,(utente,==,null),{
+//,,,,,,,,,,,,throw,new,Exception("User,key,non,valida"),;
+//,,,,,,,,}
+//,,,,,,,,return,utente,;
+//,,,,}
+/**
+*
+*,@param,idUtente
+*,@return
+*,@throws,Exception
+*/
+public,Utente,getUtente(long,idUtente),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+Utente,utente,=,mapper.getUtente(idUtente),;
+if,(utente,==,null),{
+throw,new,Exception("idUtente,non,valido"),;
+}
+return,utente,;
+}
+/**
+*
+*,@param,idRuolo
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+public,List<Utente>,getUtentiRuolo(long,idRuolo,,long,idAzienda),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+List<Utente>,list,=,mapper.getUtentiRuolo(idRuolo,,idAzienda),;
+return,list,;
+}
+/**
+*
+*,@param,admin
+*,@return
+*,@throws,Exception
+*/
+public,List<Utente>,getAllUtenti(Utente,admin),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+List<Utente>,utenti,=,mapper.getAll(admin.getAzienda().getIdazienda()),;
+utenti.remove(admin),;
+return,utenti,;
+}
+/**
+*,Aggiornamento,del,profilo,eseguito,dall'amministartore
+*
+*,@param,utente
+*,@param,newAnagrafe
+*,@param,oldPassword
+*,@param,newRuoli
+*,@param,oldUsername
+*,@throws,Exception
+*/
+public,void,updateUtente(Utente,utente,,Anagrafe,newAnagrafe,
+String,oldPassword,,List<Ruolo>,newRuoli,,String,oldUsername),throws,Exception,{
+utente.setPassword(oldPassword),;
+updateUtente(utente,,newAnagrafe,,newRuoli,,true,,oldUsername),;
+}
+/**
+*,Aggiornamento,del,profilo,eseguito,dall'utente
+*
+*,@param,utente
+*,@param,newAnagrafe
+*,@param,oldPassword
+*,@param,oldUsername
+*,@throws,Exception
+*/
+public,void,updateUtente(Utente,utente,,Anagrafe,newAnagrafe,
+String,oldPassword,,String,oldUsername),throws,Exception,{
+if,(StringUtils.isEmpty(utente.getPassword())),{
+utente.setPassword(oldPassword),;
+}
+updateUtente(utente,,newAnagrafe,,null,,false,,oldUsername),;
+}
+/**
+*
+*,@param,utente
+*,@param,anagrafe
+*,@param,ruoli
+*,@param,checkRules
+*,@param,oldPassword
+*,@param,oldUsername
+*,@throws,Exception
+*/
+public,void,updateUtente(Utente,utente,,Anagrafe,anagrafe,,List<Ruolo>,ruoli,
+boolean,checkRules,,String,oldUsername),throws,Exception,{
+AnagrafeFacade,anaFacade,=,new,AnagrafeFacade(session),;
+RuoloFacade,ruoloFacade,=,new,RuoloFacade(session),;
+checkUpdateUtente(utente),;
+anaFacade.checkUpdateAnagrafe(anagrafe,
+utente.getAzienda().getIdazienda()),;
+if,(checkRules),{
+ruoloFacade.checkUpdateRuoli(ruoli,,utente),;
+utente.setRuoloList(ruoli),;
+}
+anagrafe.setUtente(utente),;
+utente.setAnagrafe(anagrafe),;
+deleteUtenteTeiid(utente),;
+if,(utente.isExtUser()),{
+//utente,disabilitato
+if,(utente.getAbilitato(),==,2),{
+utente.setPassword("dge4658bfeu8f8w7ye"),;
+},else,{
+createUtenteTeiid(utente),;
+}
+}
+saveUserTable(utente),;
+updateUtente(utente),;
+anaFacade.updateAnagrafe(anagrafe),;
+}
+private,void,updateUtente(Utente,utente),throws,Exception,{
+//checkUtente(utente,,true),;
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+IRuoloMapper,mapperR,=,new,RuoloMapper(UserSession.config,
+session.getUserSessionId()),;
+try,{
+mapper.update(utente),;
+mapperR.setRuoliUtente(utente.getRuoloList(),,utente.getId()),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+/**
+*
+*,@param,utente
+*,@return,Restituisce,la,lista,delle,tabelle,esterne,a,cui,l'utente,ha,i
+*,permessi,di,accesso.
+*,@throws,Exception
+*/
+public,List<UtenteTabella>,getTabelleUtente(Utente,utente),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+return,mapper.getTabelleUtente(utente),;
+}
+/**
+*
+*,@param,user
+*,@return,Restituisce,la,lista,di,tutte,le,tabelle,esterne,,con
+*,l'indicazione,di,quali,sono,associate,all'utente
+*,@throws,Exception
+*/
+public,List<UtenteTabella>,getTabelleEsterne(Utente,user),throws,Exception,{
+String,tableName,;
+long,idTable,;
+boolean,selected,;
+List<UtenteTabella>,selTables,=,new,LinkedList<>(),;
+List<UtenteTabella>,userTables,=,user.getUtenteTabellaList(),;
+UtilFacade,utilFacade,=,new,UtilFacade(session),;
+MetadataSession,metaSession,=,new,MetadataSession(
+utilFacade.getNomiDb(user).getNomeRepository(),
+session.getHttpSessionId()
+),;
+MetadataFacade,schemaFacade,=,new,MetadataFacade(metaSession),;
+List<DataTableMeta>,tables,=,schemaFacade.getFederatedTable(),;
+for,(DataTableMeta,table,:,tables),{
+idTable,=,0,;
+selected,=,false,;
+tableName,=,table.getName(),;
+for,(UtenteTabella,uTables,:,userTables),{
+if,(uTables.getTabella().equalsIgnoreCase(tableName)),{
+idTable,=,uTables.getIdTabellaUtente(),;
+selected,=,true,;
+break,;
+}
+}
+selTables.add(new,UtenteTabella(idTable,,tableName,,selected)),;
+}
+return,selTables,;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,saveUserTable(Utente,utente),throws,Exception,{
+List<String>,userTables,=,new,ArrayList<>(),;
+List<UtenteTabella>,it,=,utente.getUtenteTabellaList(),;
+it.stream().filter(t,->,t.isSelected(),==,true).forEach((it1),->,{
+userTables.add(it1.getTabella()),;
+}),;
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+FederationSession,fedSession,=,new,FederationSession(
+utente.getAzienda().getContratto().getNomedbfederato(),
+session.getHttpSessionId()),;
+try,{
+FederationFacade,federationFacade,=,new,FederationFacade(fedSession),;
+federationFacade.createUser(utente.getUsername(),,userTables),;
+mapper.setTabelleUtente(utente.getId(),,userTables),;
+},catch,(Exception,ex),{
+throw,new,Exception("idUtente,non,valido"),;
+}
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,disableUtente(Utente,utente),throws,Exception,{
+utente.setAbilitato(Short.valueOf("2")),;
+utente.setUtenteTabellaList(new,ArrayList<>()),;
+updateUtente(utente,,utente.getAnagrafe(),,utente.getPassword(),
+utente.getUsername()),;
+}
+private,void,deleteUtente(Utente,utente),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+try,{
+mapper.delete(utente),;
+},catch,(Exception,ex),{
+throw,ex,;
+}
+}
+/**
+*,Controlli,sui,dati,dell'azienda
+*
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,checkUpdateUtente(Utente,utente),throws,Exception,{
+checkUsername(utente.getUsername(),,utente.getId()),;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+public,void,checkNewUtente(Utente,utente),throws,Exception,{
+checkUsername(utente.getUsername()),;
+}
+private,void,checkUsername(String,username),throws,Exception,{
+checkUsername(username,,-1),;
+}
+private,void,checkUsername(String,username,,long,idUtente),throws,Exception,{
+UtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,
+session.getUserSessionId()),;
+try,{
+Utente,utenteTrovato,=,mapper.getUtente(username),;
+if,(utenteTrovato,!=,null),{
+if,(utenteTrovato.getAbilitato(),!=,2,&&,(idUtente,==,-1,||,(utenteTrovato.getId(),!=,idUtente,&&,utenteTrovato.getAbilitato(),<,2))),{
+throw,new,Exception("Username,non,disponibile"),;
+}
+}
+},catch,(Exception,e),{
+throw,e,;
+}
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.facade,;
+import,com.serandp.datarise.profiling.database.mapper.ContrattoMapper,;
+import,com.serandp.datarise.profiling.database.mapper.IUtenteMapper,;
+import,com.serandp.datarise.profiling.database.mapper.UtenteMapper,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.sql.SQLException,;
+import,java.util.Date,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,org.apache.commons.configuration.ConfigurationException,;
+/**
+*
+*,@author,Mario
+*/
+public,class,UtilFacade,{
+private,UserSession,session,;
+protected,static,final,Logger,logger,=,Logger.getLogger("com.serandp.datarise.profiling.facade"),;
+/**
+*
+*,@param,session
+*/
+public,UtilFacade(UserSession,session),{
+	this.session,=,session,;
+}
+/**
+*,Verifica,se,le,credenziali,fornite,apparte
+*,@param,username
+*,@param,password
+*,@return,true,if,credential,are,valid,,false,elsewhere
+*,@throws,java.lang.Exception
+*/
+public,boolean,validateUser(String,username,,String,password),throws,Exception,{
+boolean,loggedIn,;
+	IUtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,,session.getUserSessionId()),;
+	try,{
+	,,,,loggedIn,=,mapper.logIn(username,,password),;
+	},catch,(SQLException,ex),{
+	,,,,loggedIn,=,false,;
+	,,,,Logger.getLogger(UtilFacade.class.getName()).log(Level.SEVERE,,null,,ex),;
+	},catch,(ConfigurationException,ce),{
+	,,,,loggedIn,=,false,;
+	,,,,logger.log(Level.SEVERE,,null,,ce),;
+	}
+	return,loggedIn,;
+}
+/**
+*
+*,@param,email
+*,@return
+*,@throws,Exception
+*/
+public,Utente,getUserByEmail(String,email),throws,Exception,{
+Utente,utente,=,null,;
+	IUtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,,session.getUserSessionId()),;
+try,{
+	,,,,utente,=,mapper.getUtentebyEmail(email),;
+},catch,(Exception,e),{
+	,,,,logger.log(Level.SEVERE,,null,,e),;
+throw,e,;
+}
+	return,utente,;
+}
+/**
+*,login,da,web
+*,@param,username
+*,@param,password
+*,@return,Utente
+*,@throws,Exception
+*/
+public,Utente,login(String,username,,String,password),throws,Exception,{
+Utente,utente,=,null,;
+	String,message,=,"Le,credenziali,non,sono,corrette.",;
+	IUtenteMapper,mapper,=,new,UtenteMapper(UserSession.config,,session.getUserSessionId()),;
+try,{
+	,,,,utente,=,mapper.getUtente(username,,password),;
+Date,now,=,new,Date(),;
+Date,scadenzaUtente,=,utente.getDatascadenza()!=,null,?,utente.getDatascadenza():,new,Date(Long.MAX_VALUE),,;
+if,(!utente.isSysAdmin()),{
+if,(now.after(scadenzaUtente),||,now.after(utente.getAzienda().getContratto().getDatascadenza())),{
+message,=,"Utente,scaduto",;
+		,,,,throw,new,Exception(message),;
+}
+		if,(utente.getAbilitato()==0,||,utente.getAzienda().getContratto().getAbilitato()==0),{
+message,=,"Utente,disabilitato",;
+		,,,,throw,new,Exception(message),;
+		}
+}
+//mapper.update(utente),;
+},catch,(Exception,e),{
+	,,,,logger.log(Level.SEVERE,,null,,e),;
+throw,new,Exception(message),;
+}
+return,utente,;
+}
+/**
+*,Chiamata,per,la,reportistica
+*,@return,Lista,dei,nomi,di,tutti,i,db,federati
+*,@throws,java.lang.Exception
+*/
+static,public,List<String>,getNomiDbFederati(),throws,Exception,{
+	List<String>,nomiDbFederati,=,null,;
+	ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,"AnalisideiDati"),;
+	try,{
+	,,,,nomiDbFederati,=,mapper.getDatabaseFederati(),;
+},catch,(Exception,ex),{
+nomiDbFederati,=,null,;
+}
+	return,nomiDbFederati,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+static,public,List<NomiDb>,getNomiDbFederatiObj(),throws,Exception,{
+	List<NomiDb>,nomiDbFederati,=,null,;
+	ContrattoMapper,mapper,=,new,ContrattoMapper(UserSession.config,,"AnalisideiDati"),;
+	try,{
+	,,,,nomiDbFederati,=,mapper.getDatabaseFederatiObj(),;
+},catch,(Exception,ex),{
+nomiDbFederati,=,null,;
+}
+	return,nomiDbFederati,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+public,NomiDb,getNomiDb(Utente,utente),throws,Exception,{
+try,{
+String,nomeFDB,=,utente.getAzienda().getContratto().getNomedbfederato(),;
+String,nomeRepository,=,utente.getAzienda().getContratto().getNomedbrepository(),;
+String,cleansing,=,utente.getAzienda().getContratto().getNomedbcleansing(),;
+NomiDb,nomiDb,=,new,NomiDb(nomeFDB,,nomeRepository,cleansing),;
+return,nomiDb,;
+},catch,(Exception,ex),{
+	,,,,logger.log(Level.SEVERE,,null,,ex),;
+return,null,;
+}
+}
+}
+///*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.ldap,;
+import,com.novell.ldap.*,;
+import,java.io.UnsupportedEncodingException,;
+import,java.util.ArrayList,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,org.apache.commons.configuration.Configuration,;
+import,org.apache.commons.configuration.ConfigurationException,;
+import,org.apache.commons.configuration.PropertiesConfiguration,;
+///**
+*
+*,@author
+*,dcardone
+*/
+public,class,UtenteLDAP,{
+static,int,ldapPort,,,,,,=,LDAPConnection.DEFAULT_PORT,;
+static,int,ldapVersion,,,=,LDAPConnection.LDAP_V3,;
+static,String,,,ldapHost,=,"10.0.0.103",;
+static,String,,,loginDN,,=,"cn=Administrator,dc=datarise,dc=lan",;
+static,String,,,passwordDN,=,"datariseLDAP4dmin",;
+protected,static,final,Logger,logger,=,Logger.getLogger("com.serandp.datarise.profiling.ldap.UtenteLDAP"),;
+static,{
+	Configuration,config,=,null,;
+	try,{
+	,,,,config,=,new,PropertiesConfiguration("LDAPConfig.properties"),;
+	,,,,ldapPort,=,config.getInt("ldapPort"),;
+	,,,,ldapVersion,=,config.getInt("ldapVersion"),;
+	,,,,ldapHost,=,config.getString("ldapHost"),;
+	,,,,loginDN,=,config.getString("loginDN"),;
+	,,,,passwordDN,=,config.getString("passwordDN"),;
+},catch,(ConfigurationException,ex),{
+logger.log(Level.SEVERE,,null,,ex),;
+}
+}
+private,static,String,getUserDistName(String,userName),{
+	return,"uid=",+,userName,+,",ou=users,dc=datarise,dc=lan",;
+}
+public,static,boolean,newUser(String,userName,String,password,,String,cognome,,String,nome),{
+	LDAPAttributeSet,attributeSet,=,new,LDAPAttributeSet(),;
+attributeSet.add(,new,LDAPAttribute("objectclass",,"inetOrgPerson")),;
+	attributeSet.add(,new,LDAPAttribute("uid",,userName)),;
+	attributeSet.add(,new,LDAPAttribute("cn",,cognome,+,",",+,nome)),;
+attributeSet.add(,new,LDAPAttribute("givenname",,nome)),;
+attributeSet.add(,new,LDAPAttribute("sn",,cognome)),;
+attributeSet.add(,new,LDAPAttribute("userPassword",,password)),;
+String,dn,=,getUserDistName(userName),;
+LDAPEntry,newEntry,=,new,LDAPEntry(,dn,,attributeSet,),;
+	try,{
+	,,,,LDAPConnection,lc,=,new,LDAPConnection(),;
+lc.connect(ldapHost,,ldapPort),;
+lc.bind(ldapVersion,,loginDN,,passwordDN.getBytes("UTF8"),),;
+	,,,,LDAPSearchResults,search,=,lc.search(dn,,LDAPConnection.SCOPE_BASE,,null,,null,,true),;
+	,,,,if,(search.getCount()==0),{
+		lc.add(newEntry),;
+	,,,,}
+lc.disconnect(),;
+}
+catch(LDAPException,e),{
+	,,,,System.out.println(e.getMessage()),;
+return,false,;
+}
+catch(UnsupportedEncodingException,e),{
+	,,,,System.out.println(e.getMessage()),;
+	,,,,return,false,;
+}
+	return,true,;
+}
+public,static,boolean,deleteUser(String,userName),{
+	String,dn,=,getUserDistName(userName),;
+try,{
+	,,,,LDAPConnection,lc,=,new,LDAPConnection(),;
+lc.connect(ldapHost,,ldapPort),;
+lc.bind(ldapVersion,,loginDN,,passwordDN.getBytes("UTF8"),),;
+	,,,,LDAPSearchResults,search,=,lc.search(dn,,LDAPConnection.SCOPE_BASE,,null,,null,,true),;
+	,,,,if,(search.getCount()>0),{
+		lc.delete(dn),;
+	,,,,}
+lc.disconnect(),;
+}
+catch(LDAPException,e),{
+	,,,,System.out.println(e.getMessage()),;
+return,false,;
+}
+catch(UnsupportedEncodingException,e),{
+	,,,,System.out.println(e.getMessage()),;
+	,,,,return,false,;
+}
+	return,true,;
+}
+public,static,boolean,updateUser(String,userName,String,password,,String,oldPassword,,String,cognome,,String,nome),{
+	ArrayList<LDAPModification>,modList,=,new,ArrayList<LDAPModification>(),;
+modList.add(,new,LDAPModification(LDAPModification.REPLACE,,new,LDAPAttribute("cn",,cognome,+,",",+,nome))),;
+modList.add(,new,LDAPModification(LDAPModification.REPLACE,,new,LDAPAttribute("givenname",,nome))),;
+modList.add(,new,LDAPModification(LDAPModification.REPLACE,,new,LDAPAttribute("sn",,cognome))),;
+modList.add(,new,LDAPModification(LDAPModification.DELETE,,new,LDAPAttribute("userPassword",,oldPassword))),;
+modList.add(,new,LDAPModification(LDAPModification.ADD,,new,LDAPAttribute("userPassword",,password))),;
+	LDAPModification[],mods,=,new,LDAPModification[modList.size()],;
+mods,=,(LDAPModification[])modList.toArray(mods),;
+	String,dn,=,getUserDistName(userName),;
+	try,{
+	,,,,LDAPConnection,lc,=,new,LDAPConnection(),;
+lc.connect(ldapHost,,ldapPort),;
+lc.bind(ldapVersion,,loginDN,,passwordDN.getBytes("UTF8"),),;
+	,,,,LDAPSearchResults,search,=,lc.search(dn,,LDAPConnection.SCOPE_BASE,,null,,null,,true),;
+	,,,,if,(search.getCount()>0),{
+		lc.modify(,dn,,mods),;
+	,,,,}
+lc.disconnect(),;
+}
+catch(LDAPException,e),{
+	,,,,System.out.println(e.getMessage()),;
+return,false,;
+}
+catch(UnsupportedEncodingException,e),{
+	,,,,System.out.println(e.getMessage()),;
+	,,,,return,false,;
+}
+	return,true,;
+}
+//}
+/*
+*,To,change,this,template{,@Override,public,int,getId(),{,return,this.ordinal()+1,;},},,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.type,;
+import,com.serandp.datarise.metadata.type.StatisticsType,;
+/**
+*
+*,@author,Mario
+*/
+public,enum,RuoloType,{
+/**
+*
+*/
+SYSADMIN,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},,//Amministratore,di,sistema,id,=,0
+/**
+*
+*/
+ADMIN,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},,//Amministratore,di,servizio,id,=,1
+/**
+*
+*/
+OPCONN,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},,//Operatore,connesisone,id,=,2
+/**
+*
+*/
+OPINTEG,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},,//Operatore,integrazione,id,=,3
+/**
+*
+*/
+OPCLEAN,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},,//Operatore,cleansing,id,=,4
+/**
+*
+*/
+EXTUSER,{,@Override,public,int,getId(),{,return,this.ordinal(),;},},;,,//,Utente,FDB,id,=,5//,Utente,FDB,id,=,5
+/**
+*
+*,@return
+*/
+public,abstract,int,getId(),;
+/**
+*
+*,@param,id
+*,@return
+*/
+public,static,String,getTypeById(int,id),{
+	return,StatisticsType.values()[id].toString(),;
+}
+}
+package,com.serandp.datarise.profiling.type,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,enum,UserStateType,{
+/**
+*
+*/
+DISABILITATO,
+/**
+*
+*/
+ABILITATO,
+/**
+*
+*/
+CANCELLATO
+}
+package,com.learn.javatest,;
+public,class,HelloWorld,{
+public,static,void,,main(String,args[]){
+	System.out.print("First,time"),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.util,;
+import,java.util.concurrent.Semaphore,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.apache.logging.log4j.Logger,;
+/**
+*,This,class,objective,is,to,create,a,critical,area,around,the,application,in
+*,order,to,stop,that,two,what,ever,threads,access,the,area,if,other,is,in,it.
+*,
+*,A,semaphore,initialized,to,one,,and,which,is,used,such,that,it,only,has,at
+*,most,one,permit,available,,can,serve,as,a,mutual,exclusion,lock.,This,is,more
+*,commonly,known,as,a,binary,semaphore,,because,it,only,has,two,states:,one
+*,permit,available,,or,zero,permits,available.,When,used,in,this,way,,the
+*,binary,semaphore,has,the,property,(unlike,many,Lock,implementations),,that
+*,the,"lock",can,be,released,by,a,thread,other,than,the,owner,(as,semaphores
+*,have,no,notion,of,ownership).
+*,
+*,@author,javiercasal
+*/
+public,class,PollSynchronizer,{
+	private,static,final,int,MAX_PERMITS_NUMBER,=,1,;
+	private,static,final,Logger,log,=,LogManager.getLogger(PollSynchronizer.class),;
+	
+	private,Semaphore,semaphore,;
+	public,void,lock(),{
+		try,{
+			getLock().acquire(),;
+		},catch,(InterruptedException,e),{
+			log.error(e.getCause(),,e),;
+		}
+	}
+	
+	public,void,unlock(),{
+		getLock().release(),;
+	}
+	public,Semaphore,getLock(),{
+		if,(semaphore,==,null),{
+			this.semaphore,=,new,Semaphore(MAX_PERMITS_NUMBER),;
+		}
+		
+		return,this.semaphore,;
+	}
+}/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.util.Date,;
+import,java.util.Properties,;
+import,org.junit.Rule,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+import,org.mule.tck.junit4.rule.DynamicPort,;
+/**
+*,This,is,the,base,test,class,for,Anypoint,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,class,AbstractTemplateTestCase,extends,FunctionalTestCase,{
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+	@Rule
+	public,DynamicPort,port,=,new,DynamicPort("http.port"),;
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+					"Could,not,find,mule-deploy.properties,file,on,classpath.,Please,add,any,of,those,files,or,override,the,getConfigResources(),method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName().endsWith("xml")),{
+					resources.append(",").append(TEST_FLOWS_FOLDER_PATH).append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},else,{
+			return,"",;
+		}
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,String,buildUniqueName(String,templateName,,String,name),{
+		String,timeStamp,=,new,Long(new,Date().getTime()).toString(),;
+		StringBuilder,builder,=,new,StringBuilder(),;
+		builder.append(name),;
+		builder.append(templateName),;
+		builder.append(timeStamp),;
+		return,builder.toString(),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.apache.logging.log4j.Logger,;
+import,org.joda.time.DateTimeZone,;
+import,org.joda.time.format.DateTimeFormat,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.MuleException,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+import,com.sforce.soap.partner.SaveResult,;
+/**
+*,The,objective,of,this,class,is,to,validate,the,correct,behavior,of,the,flows
+*,for,this,Anypoint,Tempalte,that,make,calls,to,external,systems.
+*,
+*/
+public,class,BusinessLogicFromSalesforceToSapIT,extends,AbstractTemplateTestCase,{
+	
+	private,static,final,Logger,log,=,LogManager.getLogger(BusinessLogicFromSalesforceToSapIT.class),;
+	
+	protected,static,final,String,TEMPLATE_NAME,=,"customer-bidirectional-sync",;
+	protected,static,final,int,TIMEOUT_SEC,=,120,;
+	private,BatchTestHelper,helper,;
+	private,static,final,String,A_INBOUND_FLOW_NAME,=,"triggerSyncFromSapFlow",;
+	private,static,final,String,B_INBOUND_FLOW_NAME,=,"triggerSyncFromSalesforceFlow",;
+	
+	protected,SubflowInterceptingChainLifecycleWrapper,createAccountSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,createAccountSalesforceFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,deleteAccountFromSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveAccountFromSalesforceFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveAccountFromSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,deleteAccountFromSalesforceFlow,;
+	
+	private,String,existingCustomerNameInSap,=,"Nelson,Tax,&,Associates",;
+	Map<String,,Object>,sfAccount,;
+	Map<String,,Object>,sapAccount,;
+	
+	@BeforeClass
+	public,static,void,beforeTestClass(),{
+		//,Set,default,water-mark,expression,to,current,time
+		DateTimeFormatter,formatter,=,DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(DateTimeZone.UTC),;
+		System.setProperty("watermark.default.expression",,formatter.print(System.currentTimeMillis(),-,60000)),;,//,one,minute,ago
+	}
+	
+	@Before
+	public,void,setUp(),throws,Exception,{
+		stopAutomaticPollTriggering(),;
+		helper,=,new,BatchTestHelper(muleContext),;
+		
+		createAccountSapFlow,=,getSubFlow("createAccountSapFlow"),;
+		createAccountSapFlow.initialise(),;
+		createAccountSalesforceFlow,=,getSubFlow("createAccountSalesforceFlow"),;
+		createAccountSalesforceFlow.initialise(),;
+		
+		deleteAccountFromSapFlow,=,getSubFlow("deleteAccountFromSapFlow"),;
+		deleteAccountFromSapFlow.initialise(),;
+		
+		retrieveAccountFromSalesforceFlow,=,getSubFlow("retrieveAccountFromSalesforceFlow"),;
+		retrieveAccountFromSalesforceFlow.initialise(),;
+		retrieveAccountFromSapFlow,=,getSubFlow("retrieveAccountFromSapFlow"),;
+		retrieveAccountFromSapFlow.initialise(),;
+		
+		deleteAccountFromSalesforceFlow,=,getSubFlow("deleteAccountFromSalesforceFlow"),;
+		deleteAccountFromSalesforceFlow.initialise(),;
+		
+		//createSapTestData(),;
+		createSalesforceTestData(),;
+	}
+	@After
+	public,void,tearDown(),throws,MuleException,,Exception,{
+		deleteSapTestData(),;
+		deleteSalesforceTestData(),;
+	}
+	@Test
+	public,void,testMainFlow(),throws,Exception,{
+		log.info("running,flow"),;
+		executeWaitAndAssertBatchJob(B_INBOUND_FLOW_NAME),;
+		
+		Map<String,,Object>,sapResponse,=,(Map<String,,Object>),retrieveAccountFromSapFlow.process(getTestEvent(sfAccount,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+		log.info("SAP,response:,",+,sapResponse),;
+		Assert.assertEquals(sfAccount.get("Name"),,sapResponse.get("Name")),;
+	}
+	
+	private,void,stopAutomaticPollTriggering(),throws,MuleException,{
+		stopFlowSchedulers(B_INBOUND_FLOW_NAME),;
+		stopFlowSchedulers(A_INBOUND_FLOW_NAME),;
+	}
+	
+	private,void,executeWaitAndAssertBatchJob(String,flowConstructName)
+			throws,Exception,{
+		//,Execute,synchronization
+		runSchedulersOnce(flowConstructName),;
+		//,Wait,for,the,batch,job,execution,to,finish
+		helper.awaitJobTermination(TIMEOUT_SEC,*,1000,,500),;
+		helper.assertJobWasSuccessful(),;
+	}
+	
+	private,void,createSalesforceTestData(),throws,MuleException,,Exception{
+		String,uniqueSuffix,=,""+System.currentTimeMillis(),;
+		sfAccount,=,new,HashMap<String,,Object>(),;
+		sfAccount.put("Name",,"Bidi_",+,uniqueSuffix),;
+		sfAccount.put("BillingCity",,"San,francesco"),;
+		List<Map<String,,Object>>,createdAccountInSalesforce,=,new,ArrayList<Map<String,,Object>>(),;
+		createdAccountInSalesforce.add(sfAccount),;
+		MuleEvent,event,=,createAccountSalesforceFlow.process(getTestEvent(createdAccountInSalesforce,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		List<SaveResult>,payloadAfterExecution,=,(List<SaveResult>)event.getMessage().getPayload(),;
+		sfAccount.put("Id",,payloadAfterExecution.get(0).getId()),;
+		log.info("saved,sf,account,",+,payloadAfterExecution.get(0).getId()),;
+	}
+	
+	private,void,createSapTestData(),throws,MuleException,,Exception{
+		String,uniqueSuffix,=,""+System.currentTimeMillis(),;
+		
+		sapAccount,=,new,HashMap<String,,Object>(),;
+		sapAccount.put("Name",,"Bidi",+,uniqueSuffix),;
+		sapAccount.put("BillingCity",,"San,francesco"),;
+		List<Map<String,,Object>>,createdAccountInSap,=,new,ArrayList<Map<String,,Object>>(),;
+		createdAccountInSap.add(sapAccount),;
+	
+		MuleEvent,event,=,createAccountSapFlow.process(getTestEvent(createdAccountInSap,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		log.info("SAP,response:,",+,event.getMessage().getPayload()),;
+	}
+	private,void,deleteSapTestData(){
+		
+	}
+	private,void,deleteSalesforceTestData(),throws,MuleException,,Exception{
+		List<String>,idList,=,new,ArrayList<String>(),;
+		idList.add((String)sfAccount.get("Id")),;
+		MuleEvent,event,=,deleteAccountFromSalesforceFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.apache.logging.log4j.Logger,;
+import,org.joda.time.DateTimeZone,;
+import,org.joda.time.format.DateTimeFormat,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.MuleException,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+/**
+*,The,objective,of,this,class,is,to,validate,the,correct,behavior,of,the,flows
+*,for,this,Anypoint,Tempalte,that,make,calls,to,external,systems.
+*,
+*/
+public,class,BusinessLogicFromSapToSalesforceIT,extends,AbstractTemplateTestCase,{
+	
+	private,static,final,Logger,log,=,LogManager.getLogger(BusinessLogicFromSapToSalesforceIT.class),;
+	protected,static,final,String,TEMPLATE_NAME,=,"customer-bidirectional-sync",;
+	protected,static,final,int,TIMEOUT_SEC,=,120,;
+	private,BatchTestHelper,helper,;
+	private,static,final,String,A_INBOUND_FLOW_NAME,=,"triggerSyncFromSapFlow",;
+	private,static,final,String,B_INBOUND_FLOW_NAME,=,"triggerSyncFromSalesforceFlow",;
+	
+	protected,SubflowInterceptingChainLifecycleWrapper,createAccountSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,createAccountSalesforceFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,deleteAccountFromSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveAccountFromSalesforceFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveAccountFromSapFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,deleteAccountFromSalesforceFlow,;
+	
+	Map<String,,Object>,sfAccount,;
+	Map<String,,Object>,sapAccount,;
+	
+	@BeforeClass
+	public,static,void,beforeTestClass(),{
+		//,Set,default,water-mark,expression,to,current,time
+		DateTimeFormatter,formatter,=,DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(DateTimeZone.UTC),;
+		System.setProperty("watermark.default.expression",,formatter.print(System.currentTimeMillis(),-,60000)),;,//,one,minute,ago
+	}
+	
+	@Before
+	public,void,setUp(),throws,Exception,{
+		stopAutomaticPollTriggering(),;
+		helper,=,new,BatchTestHelper(muleContext),;
+		
+		createAccountSapFlow,=,getSubFlow("createAccountSapFlow"),;
+		createAccountSapFlow.initialise(),;
+		createAccountSalesforceFlow,=,getSubFlow("createAccountSalesforceFlow"),;
+		createAccountSalesforceFlow.initialise(),;
+		
+		deleteAccountFromSapFlow,=,getSubFlow("deleteAccountFromSapFlow"),;
+		deleteAccountFromSapFlow.initialise(),;
+		
+		retrieveAccountFromSalesforceFlow,=,getSubFlow("retrieveAccountFromSalesforceFlow"),;
+		retrieveAccountFromSalesforceFlow.initialise(),;
+		retrieveAccountFromSapFlow,=,getSubFlow("retrieveAccountFromSapFlow"),;
+		retrieveAccountFromSapFlow.initialise(),;
+		
+		deleteAccountFromSalesforceFlow,=,getSubFlow("deleteAccountFromSalesforceFlow"),;
+		deleteAccountFromSalesforceFlow.initialise(),;
+		
+		createSapTestData(),;
+	}
+	@After
+	public,void,tearDown(),throws,MuleException,,Exception,{
+		deleteSapTestData(),;
+		deleteSalesforceTestData(),;
+	}
+	@Test
+	public,void,testMainFlow(),throws,Exception,{
+		log.info("running,flow"),;
+		executeWaitAndAssertBatchJob(A_INBOUND_FLOW_NAME),;
+		log.info("finished"),;
+		Thread.sleep(5000),;
+		Map<String,,Object>,sapResponse,=,(Map<String,,Object>),retrieveAccountFromSalesforceFlow.process(getTestEvent(sapAccount,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+		log.info("SAP,response:,",+,sapResponse),;
+		sfAccount,=,sapResponse,;
+		
+		Assert.assertNotNull(sfAccount),;
+		Assert.assertEquals(sfAccount.get("Name"),,sapAccount.get("Name")),;
+	}
+	
+	private,void,stopAutomaticPollTriggering(),throws,MuleException,{
+		stopFlowSchedulers(A_INBOUND_FLOW_NAME),;
+		stopFlowSchedulers(B_INBOUND_FLOW_NAME),;
+	}
+	
+	private,void,executeWaitAndAssertBatchJob(String,flowConstructName)
+			throws,Exception,{
+		//,Execute,synchronization
+		runSchedulersOnce(flowConstructName),;
+		//,Wait,for,the,batch,job,execution,to,finish
+		helper.awaitJobTermination(TIMEOUT_SEC,*,1000,,500),;
+		helper.assertJobWasSuccessful(),;
+	}
+	
+	private,void,createSapTestData(),throws,MuleException,,Exception{
+		String,uniqueSuffix,=,""+System.currentTimeMillis(),;
+		
+		sapAccount,=,new,HashMap<String,,Object>(),;
+		sapAccount.put("Name",,"Bidi",+,uniqueSuffix),;
+		sapAccount.put("BillingCity",,"San,francesco"),;
+		List<Map<String,,Object>>,createdAccountInSap,=,new,ArrayList<Map<String,,Object>>(),;
+		createdAccountInSap.add(sapAccount),;
+	
+		MuleEvent,event,=,createAccountSapFlow.process(getTestEvent(createdAccountInSap,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+	private,void,deleteSapTestData(){
+		
+	}
+	private,void,deleteSalesforceTestData(),throws,MuleException,,Exception{
+		List<String>,idList,=,new,ArrayList<String>(),;
+		if(sfAccount,!=,null,&&,sfAccount.get("Id"),!=,null)
+			idList.add((String)sfAccount.get("Id")),;
+		MuleEvent,event,=,deleteAccountFromSalesforceFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.util,;
+import,org.apache.commons.lang.Validate,;
+import,org.joda.time.DateTime,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.joda.time.format.ISODateTimeFormat,;
+/**
+*,The,function,of,this,class,is,provide,date,comparation,an,transformation
+*,functionality.
+*,
+*,@author,damiansima,,MartinZdila
+*/
+public,class,DateUtils,{
+	/**
+	,*,Validate,which,date,is,older.
+	,*,
+	,*,@param,dateA
+	,*,,,,,,,,,,,,a,string,representing,a,date
+	,*,@param,dateB
+	,*,,,,,,,,,,,,a,string,representing,a,date
+	,*,@return,true,if,the,date,A,is,after,the,date,B
+	,*/
+	public,static,boolean,isAfter(String,dateA,,String,dateB,,long,offsetBetweenAandB),{
+		Validate.notEmpty(dateA,,"The,date,A,should,not,be,null,or,empty"),;
+		Validate.notEmpty(dateB,,"The,date,B,should,not,be,null,or,empty"),;
+		DateTimeFormatter,formatter,=,ISODateTimeFormat.dateOptionalTimeParser(),;
+		DateTime,lastModifiedDateOfA,=,formatter.parseDateTime(dateA),;
+		
+		DateTime,lastModifiedDateOfB,=,formatter.parseDateTime(dateB),;
+		return,lastModifiedDateOfA.isAfter(lastModifiedDateOfB.getMillis(),+,offsetBetweenAandB),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.util,;
+import,java.util.concurrent.Semaphore,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.apache.logging.log4j.Logger,;
+/**
+*,This,class,objective,is,to,create,a,critical,area,around,the,application,in
+*,order,to,stop,that,two,what,ever,threads,access,the,area,if,other,is,in,it.
+*,
+*,A,semaphore,initialized,to,one,,and,which,is,used,such,that,it,only,has,at
+*,most,one,permit,available,,can,serve,as,a,mutual,exclusion,lock.,This,is,more
+*,commonly,known,as,a,binary,semaphore,,because,it,only,has,two,states:,one
+*,permit,available,,or,zero,permits,available.,When,used,in,this,way,,the
+*,binary,semaphore,has,the,property,(unlike,many,Lock,implementations),,that
+*,the,"lock",can,be,released,by,a,thread,other,than,the,owner,(as,semaphores
+*,have,no,notion,of,ownership).
+*,
+*,@author,javiercasal
+*/
+public,class,PollSynchronizer,{
+	private,static,final,int,MAX_PERMITS_NUMBER,=,1,;
+	private,static,final,Logger,log,=,LogManager.getLogger(PollSynchronizer.class),;
+	
+	private,Semaphore,semaphore,=,new,Semaphore(MAX_PERMITS_NUMBER),;
+	public,void,lock(),{
+		try,{
+			getLock().acquire(),;
+		},catch,(InterruptedException,e),{
+			log.error(e.getCause(),,e),;
+		}
+	}
+	
+	public,void,unlock(),{
+		getLock().release(),;
+	}
+	protected,Semaphore,getLock(),{
+		return,this.semaphore,;
+	}
+}/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.util.Properties,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.construct.Flow,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+/**
+*,This,is,the,base,test,class,for,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,class,AbstractTemplatesTestCase,extends,FunctionalTestCase,{
+	
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+//	@BeforeClass
+//	public,static,void,beforeClass(),{
+//		System.setProperty("mule.env",,"test"),;
+//	}
+//
+//	@AfterClass
+//	public,static,void,afterClass(),{
+//		System.getProperties().remove("mule.env"),;
+//	}
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+				"Could,not,find,mule-deploy.properties,file,on,classpath.,",+
+				"Please,add,any,of,those,files,or,override,the,getConfigResources(),",+
+				"method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName().endsWith("xml")),{
+					resources.append(",")
+								.append(TEST_FLOWS_FOLDER_PATH)
+								.append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},
+		return,"",;
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,Flow,getFlow(String,flowName),{
+		return,(Flow),muleContext.getRegistry().lookupObject(flowName),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.joda.time.DateTimeZone,;
+import,org.joda.time.format.DateTimeFormat,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleException,;
+import,org.mule.api.lifecycle.InitialisationException,;
+import,org.mule.construct.Flow,;
+import,org.mule.templates.AbstractTemplatesTestCase,;
+import,org.mule.transport.NullPayload,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+/**
+*,The,objective,of,this,class,is,validating,the,correct,behavior,of,the,flows
+*,for,this,Mule,Anypoint,Template
+*,
+*/
+@SuppressWarnings("unchecked")
+public,class,BusinessLogicIT,extends,AbstractTemplatesTestCase,{
+	private,static,final,String,SAP2SFDC_INBOUND_FLOW_NAME,=,"fromSapToSalesforceFlow",;
+	private,static,final,int,TIMEOUT_MILLIS,=,120,;
+	private,static,final,int,OFFSET_BETWEEN_SFDC_AND_SAP,=,(-,6,*,60,*,60000),-,60000,;,//,-,six,hours,and,one,minute
+	private,List<String>,productsCreatedInSalesforce,;
+	private,List<String>,productsCreatedInSap,;
+	
+	private,Flow,deleteProductFromSalesforceFlow,;
+	private,Flow,deleteProductFromSapFlow,;
+	private,Flow,createProductInSapFlow,;
+	private,Flow,queryProductFromSalesforceFlow,;
+	private,Flow,queryProductFromSapFlow,;
+	private,BatchTestHelper,batchTestHelper,;
+	@BeforeClass
+	public,static,void,beforeTestClass(),{
+		//,Set,default,water-mark,,expression,to,current,time
+		DateTimeFormatter,formatter,=,DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(DateTimeZone.UTC),;
+		System.setProperty("watermark.default.expression",,formatter.print(System.currentTimeMillis(),+,OFFSET_BETWEEN_SFDC_AND_SAP)),;
+	}
+	@Before
+	public,void,setUp(),throws,MuleException,{
+		productsCreatedInSalesforce,=,new,ArrayList<String>(),;
+		productsCreatedInSap,=,new,ArrayList<String>(),;
+		
+		getAndInitializeFlows(),;
+		
+		batchTestHelper,=,new,BatchTestHelper(muleContext),;
+	}
+	@After
+	public,void,tearDown(),throws,MuleException,,Exception,{
+		cleanUpSandboxesByRemovingTestProducts(),;
+		productsCreatedInSalesforce,=,null,;
+		productsCreatedInSap,=,null,;
+	}
+	private,void,getAndInitializeFlows(),throws,InitialisationException,{
+		//,Flow,for,creating,products,in,Sap
+		createProductInSapFlow,=,getFlow("createProductsInSapFlow"),;
+		//,Flow,for,deleting,products,in,Salesforce
+		deleteProductFromSalesforceFlow,=,getFlow("deleteProductsFromSalesforceFlow"),;
+		//,Flow,for,deleting,products,in,Sap
+		deleteProductFromSapFlow,=,getFlow("deleteProductsFromSapFlow"),;
+		//,Flow,for,querying,the,product,in,Salesforce
+		queryProductFromSalesforceFlow,=,getFlow("queryProductFromSalesforceFlow"),;
+		//,Flow,for,querying,the,product,in,Sap
+		queryProductFromSapFlow,=,getFlow("queryProductFromSapFlow"),;
+	}
+	private,void,cleanUpSandboxesByRemovingTestProducts(),throws,MuleException,,Exception,{
+		final,List<String>,idList,=,new,ArrayList<String>(),;
+		for,(String,product,:,productsCreatedInSalesforce),{
+			idList.add(product),;
+		}
+		deleteProductFromSalesforceFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		idList.clear(),;
+		for,(String,product,:,productsCreatedInSap),{
+			idList.add(product),;
+		}
+		deleteProductFromSapFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+	@Test
+	public,void,testSapToSalesforceUpdate()
+			throws,MuleException,,Exception,{
+		final,Map<String,,Object>,product,=,createTestProducts(),;
+		//,Execution
+		executeWaitAndAssertBatchJob(SAP2SFDC_INBOUND_FLOW_NAME),;
+		compareProducts(product),;
+	}
+	private,Map<String,,Object>,createTestProducts(),throws,Exception,{
+		//,Build,test,products
+		final,HashMap<String,,Object>,product,=,new,HashMap<String,,Object>(),;
+		String,uniqueSuffix,=,Long.toString(System.currentTimeMillis(),,Character.MAX_RADIX).toUpperCase(),;
+		product.put("ProductCode",,"S2S_PBS-",+,uniqueSuffix),;
+		final,Map<String,,Object>,sapProduct,=,(Map<String,,Object>),product.clone(),;
+		sapProduct.put("Name",,"BATTERY-sap2sfdc-prod-migration-"+,uniqueSuffix),;
+		//,Create,products,in,sand-boxes,and,keep,track,of,them,for,posterior,cleaning,up
+		//,note,that,product,in,target,instance,doesn't,need,to,exist,-,other,tests,could,test,that,too
+		productsCreatedInSap.add(createTestProductsInSapSandbox(sapProduct,,createProductInSapFlow)),;
+		return,sapProduct,;
+	}
+	private,void,compareProducts(Map<String,,Object>,product),throws,Exception,{
+		//,Assertions
+		Map<String,,String>,retrievedProductFromSalesforce,=,(Map<String,,String>),queryProduct(product,,queryProductFromSalesforceFlow),;
+		
+		Object,product2,=,queryProduct(product,,queryProductFromSapFlow),;
+		Assert.assertFalse("Product,from,SAP,is,null",,product2,instanceof,NullPayload),;
+		Map<String,,String>,retrievedProductFromSap,=,(Map<String,,String>),product2,;
+		
+		Assert.assertEquals("Some,products,are,not,synchronized,between,systems.",
+				retrievedProductFromSalesforce.get("Name"),
+				retrievedProductFromSap.get("Name")),;
+	}
+	private,Object,queryProduct(Map<String,,Object>,product,,Flow,queryProductFlow)
+			throws,Exception,{
+		return,queryProductFlow.process(getTestEvent(product,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+	}
+	private,String,createTestProductsInSapSandbox(Map<String,,Object>,product,,Flow,createProductFlow)
+			throws,Exception,{
+		List<Map<String,,Object>>,salesforceProducts,=,new,ArrayList<Map<String,,Object>>(),;
+		salesforceProducts.add(product),;
+		createProductFlow.process(getTestEvent(salesforceProducts,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+		return,(String),product.get("ProductCode"),;,//,((CreateResult),payloadAfterExecution.get(0)).getCreatedObjects().get(0),;
+	}
+	private,void,executeWaitAndAssertBatchJob(String,flowConstructName),throws,Exception,{
+		//,Execute,synchronization
+		runFlow(flowConstructName),;
+		//,Wait,for,the,batch,job,execution,to,finish
+		batchTestHelper.awaitJobTermination(TIMEOUT_MILLIS,*,1000,,500),;
+		batchTestHelper.assertJobWasSuccessful(),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates,;
+import,java.util.Date,;
+import,java.util.GregorianCalendar,;
+import,com.workday.hr.EmployeeGetType,;
+import,com.workday.hr.EmployeeReferenceType,;
+import,com.workday.hr.ExternalIntegrationIDReferenceDataType,;
+import,com.workday.hr.IDType,;
+/**
+*,Represents,the,workday,request,for,employee,by,external,reference,ID.
+*,@author,Vlado,Andoga
+*/
+public,class,WorkersRequest,{
+	
+	public,static,EmployeeGetType,createEmployeeRequest(String,value,,String,systemId),throws,Exception{
+		final,GregorianCalendar,gcalendar,=,new,GregorianCalendar(),;
+		gcalendar.setTime(new,Date()),;
+		final,EmployeeGetType,employeeGetType,=,new,EmployeeGetType(),;
+		final,EmployeeReferenceType,employeeReferenceType,=,new,EmployeeReferenceType(),;
+		final,ExternalIntegrationIDReferenceDataType,extIdReference,=,new,ExternalIntegrationIDReferenceDataType(),;
+		
+		final,IDType,idType,=,new,IDType(),;
+		idType.setSystemID(systemId),;
+		idType.setValue(value),;
+		
+		extIdReference.setID(idType),;
+		employeeReferenceType.setIntegrationIDReference(extIdReference),;
+		employeeGetType.setEmployeeReference(employeeReferenceType),;
+		return,employeeGetType,;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.util.Date,;
+import,java.util.Map,;
+import,java.util.Properties,;
+import,org.junit.Rule,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+import,org.mule.tck.junit4.rule.DynamicPort,;
+import,org.mule.transport.NullPayload,;
+/**
+*,This,is,the,base,test,class,for,Anypoint,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,class,AbstractTemplateTestCase,extends,FunctionalTestCase,{
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+	protected,static,final,String,TEMPLATE_NAME,=,"opportunity-aggregation",;
+	@Rule
+	public,DynamicPort,port,=,new,DynamicPort("http.port"),;
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+					"Could,not,find,mule-deploy.properties,file,on,classpath.,Please,add,any,of,those,files,or,override,the,getConfigResources(),method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName().endsWith("xml")),{
+					resources.append(",").append(TEST_FLOWS_FOLDER_PATH).append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},else,{
+			return,"",;
+		}
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,String,buildUniqueName(String,templateName,,String,name),{
+		String,timeStamp,=,new,Long(new,Date().getTime()).toString(),;
+		StringBuilder,builder,=,new,StringBuilder(),;
+		builder.append(name),;
+		builder.append(templateName),;
+		builder.append(timeStamp),;
+		return,builder.toString(),;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected,Map<String,,Object>,invokeRetrieveFlow(
+			SubflowInterceptingChainLifecycleWrapper,flow,
+			Map<String,,Object>,payload),throws,Exception,{
+		MuleEvent,event,=,flow.process(getTestEvent(payload,
+				MessageExchangePattern.REQUEST_RESPONSE)),;
+		Object,resultPayload,=,event.getMessage().getPayload(),;
+		if,(resultPayload,instanceof,NullPayload),{
+			return,null,;
+		},else,{
+			return,(Map<String,,Object>),resultPayload,;
+		}
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.io.FileInputStream,;
+import,java.util.HashMap,;
+import,java.util.Map,;
+import,java.util.Properties,;
+import,org.apache.log4j.LogManager,;
+import,org.apache.log4j.Logger,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.lifecycle.InitialisationException,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+/**
+*,The,objective,of,this,class,is,to,validate,the,correct,behavior,of,the,flows
+*,for,this,Anypoint,Template,that,make,calls,to,external,systems.
+*,
+*/
+public,class,BusinessLogicIT,extends,AbstractTemplateTestCase,{
+	private,static,final,long,TIMEOUT_MILLIS,=,300000,;
+	private,static,final,long,DELAY_MILLIS,=,500,;
+	private,static,final,Logger,LOGGER,=,LogManager.getLogger(BusinessLogicIT.class),;
+	private,static,final,String,PATH_TO_TEST_PROPERTIES,=,"./src/test/resources/mule.test.properties",;
+	private,BatchTestHelper,helper,;
+	private,static,SubflowInterceptingChainLifecycleWrapper,createSapEmployeeSubflow,;
+	private,static,SubflowInterceptingChainLifecycleWrapper,queryWorkdayEmployeeSubflow,;
+	
+	private,Map<String,,Object>,createdEmployee,=,null,;
+	
+	@Before
+	public,void,setUp(),throws,Exception,{
+		final,Properties,props,=,new,Properties(),;
+	try,{
+		props.load(new,FileInputStream(PATH_TO_TEST_PROPERTIES)),;
+	},catch,(Exception,e),{
+	,,,logger.error("Error,occured,while,reading,mule.test.properties",,e),;
+	},
+	initializeSubFlows(),;
+	createTestDataInSandBox(),;
+	helper,=,new,BatchTestHelper(muleContext),;
+	}
+	@Test
+	public,void,testMainFlow(),throws,Exception,{		
+		Thread.sleep(3000),;
+		runFlow("triggerFlow"),;
+		Thread.sleep(120000),;		
+		
+		//,Find,migrated,employee,by,ID
+		Object,response,=,queryWorkdayEmployeeSubflow.process(getTestEvent(createdEmployee,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;	
+		Assert.assertNotNull(response),;
+	}
+	/*
+	,*,Creates,employee,in,Workday,suitable,for,a,migration.
+	,*/
+	private,void,createTestDataInSandBox(),throws,Exception,{
+			createdEmployee,=,new,HashMap<String,,Object>(),;
+			createdEmployee.put("FirstName",,"Amy"),;
+			createdEmployee.put("LastName",,"Evans",+,System.currentTimeMillis()),;
+			
+			String,response,=,(String),createSapEmployeeSubflow.process(getTestEvent(createdEmployee,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;	
+			LOGGER.info("CreateTestDataInSandBox,response:,",+,response),;
+			createdEmployee.put("PersonalNumber",,response),;
+	}
+	
+	private,void,initializeSubFlows(),throws,InitialisationException,{
+		createSapEmployeeSubflow,=,getSubFlow("createSapEmployeeSubflow"),;
+		createSapEmployeeSubflow.initialise(),;
+		queryWorkdayEmployeeSubflow,=,getSubFlow("queryWorkdayEmployeeSubflow"),;
+		queryWorkdayEmployeeSubflow.initialise(),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.util,;
+import,org.apache.commons.lang.Validate,;
+import,org.joda.time.DateTime,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.joda.time.format.ISODateTimeFormat,;
+/**
+*,The,function,of,this,class,is,provide,date,comparation,an,transformation
+*,functionality.
+*,
+*,@author,damiansima,,MartinZdila
+*/
+public,class,DateUtils,{
+	/**
+	,*,Validate,which,date,is,older.
+	,*,
+	,*,@param,dateA
+	,*,,,,,,,,,,,,a,string,representing,a,date
+	,*,@param,dateB
+	,*,,,,,,,,,,,,a,string,representing,a,date
+	,*,@return,true,if,the,date,A,is,after,the,date,B
+	,*/
+	public,static,boolean,isAfter(String,dateA,,String,dateB,,long,offsetBetweenAandB),{
+		Validate.notEmpty(dateA,,"The,date,A,should,not,be,null,or,empty"),;
+		Validate.notEmpty(dateB,,"The,date,B,should,not,be,null,or,empty"),;
+		DateTimeFormatter,formatter,=,ISODateTimeFormat.dateOptionalTimeParser(),;
+		DateTime,lastModifiedDateOfA,=,formatter.parseDateTime(dateA),;
+		
+		DateTime,lastModifiedDateOfB,=,formatter.parseDateTime(dateB),;
+		return,lastModifiedDateOfA.isAfter(lastModifiedDateOfB.getMillis(),+,offsetBetweenAandB),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.util,;
+import,java.util.concurrent.Semaphore,;
+import,org.apache.log4j.Logger,;
+/**
+*,This,class,objective,is,to,create,a,critical,area,around,the,application,in
+*,order,to,stop,that,two,what,ever,threads,access,the,area,if,other,is,in,it.
+*,
+*,A,semaphore,initialized,to,one,,and,which,is,used,such,that,it,only,has,at
+*,most,one,permit,available,,can,serve,as,a,mutual,exclusion,lock.,This,is,more
+*,commonly,known,as,a,binary,semaphore,,because,it,only,has,two,states:,one
+*,permit,available,,or,zero,permits,available.,When,used,in,this,way,,the
+*,binary,semaphore,has,the,property,(unlike,many,Lock,implementations),,that
+*,the,"lock",can,be,released,by,a,thread,other,than,the,owner,(as,semaphores
+*,have,no,notion,of,ownership).
+*,
+*,@author,javiercasal
+*/
+public,class,PollSynchronizer,{
+	private,static,final,int,MAX_PERMITS_NUMBER,=,1,;
+	private,static,final,Logger,LOGGER,=,Logger.getLogger(PollSynchronizer.class),;
+	
+	private,Semaphore,semaphore,=,new,Semaphore(MAX_PERMITS_NUMBER),;
+	public,void,lock(),{
+		try,{
+			getLock().acquire(),;
+		},catch,(InterruptedException,e),{
+			LOGGER.error(e.getCause(),,e),;
+		}
+	}
+	
+	public,void,unlock(),{
+		getLock().release(),;
+	}
+	protected,Semaphore,getLock(),{
+		return,this.semaphore,;
+	}
+}/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.util.Properties,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.construct.Flow,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+/**
+*,This,is,the,base,test,class,for,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,class,AbstractTemplatesTestCase,extends,FunctionalTestCase,{
+	
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+//	@BeforeClass
+//	public,static,void,beforeClass(),{
+//		System.setProperty("mule.env",,"test"),;
+//	}
+//
+//	@AfterClass
+//	public,static,void,afterClass(),{
+//		System.getProperties().remove("mule.env"),;
+//	}
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+				"Could,not,find,mule-deploy.properties,file,on,classpath.,",+
+				"Please,add,any,of,those,files,or,override,the,getConfigResources(),",+
+				"method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName().endsWith("xml")),{
+					resources.append(",")
+								.append(TEST_FLOWS_FOLDER_PATH)
+								.append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},
+		return,"",;
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,Flow,getFlow(String,flowName),{
+		return,(Flow),muleContext.getRegistry().lookupObject(flowName),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.joda.time.DateTimeZone,;
+import,org.joda.time.format.DateTimeFormat,;
+import,org.joda.time.format.DateTimeFormatter,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleException,;
+import,org.mule.api.lifecycle.InitialisationException,;
+import,org.mule.construct.Flow,;
+import,org.mule.templates.AbstractTemplatesTestCase,;
+import,org.mule.transport.NullPayload,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+import,com.sforce.soap.partner.SaveResult,;
+/**
+*,The,objective,of,this,class,is,validating,the,correct,behavior,of,the,flows
+*,for,this,Mule,Anypoint,Template
+*,
+*/
+@SuppressWarnings("unchecked")
+public,class,BidirectionalProductSyncTestIT,extends,AbstractTemplatesTestCase,{
+	private,static,final,String,SFDC2SAP_INBOUND_FLOW_NAME,=,"fromSalesforceToSapFlow",;
+	private,static,final,String,SAP2SFDC_INBOUND_FLOW_NAME,=,"fromSapToSalesforceFlow",;
+	private,static,final,int,TIMEOUT_MILLIS,=,60,;
+	private,List<String>,productsCreatedInSalesforce,;
+	private,List<String>,productsCreatedInSap,;
+	
+	private,Flow,deleteProductFromSalesforceFlow,;
+	private,Flow,deleteProductFromSapFlow,;
+	private,Flow,createProductInSalesforceFlow,;
+	private,Flow,createProductInSapFlow,;
+	private,Flow,queryProductFromSalesforceFlow,;
+	private,Flow,queryProductFromSapFlow,;
+	private,BatchTestHelper,batchTestHelper,;
+	@BeforeClass
+	public,static,void,beforeTestClass(),{
+		//,Set,default,water-mark,expression,to,current,time
+		DateTimeFormatter,formatter,=,DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(DateTimeZone.UTC),;
+		System.setProperty("watermark.default.expression",,formatter.print(System.currentTimeMillis(),-,60000,*,60,*,6)),;
+	}
+	@Before
+	public,void,setUp(),throws,MuleException,{
+		productsCreatedInSalesforce,=,new,ArrayList<String>(),;
+		productsCreatedInSap,=,new,ArrayList<String>(),;
+		
+		stopAutomaticPollTriggering(),;
+		getAndInitializeFlows(),;
+		
+		batchTestHelper,=,new,BatchTestHelper(muleContext),;
+	}
+	@After
+	public,void,tearDown(),throws,MuleException,,Exception,{
+		cleanUpSandboxesByRemovingTestProducts(),;
+		productsCreatedInSalesforce,=,null,;
+		productsCreatedInSap,=,null,;
+	}
+	private,void,stopAutomaticPollTriggering(),throws,MuleException,{
+		stopFlowSchedulers(SFDC2SAP_INBOUND_FLOW_NAME),;
+		stopFlowSchedulers(SAP2SFDC_INBOUND_FLOW_NAME),;
+	}
+	private,void,getAndInitializeFlows(),throws,InitialisationException,{
+		//,Flow,for,creating,products,in,Salesforce
+		createProductInSalesforceFlow,=,getFlow("createProductsInSalesforceFlow"),;
+		//,Flow,for,creating,products,in,Sap
+		createProductInSapFlow,=,getFlow("createProductsInSapFlow"),;
+		//,Flow,for,deleting,products,in,Salesforce
+		deleteProductFromSalesforceFlow,=,getFlow("deleteProductsFromSalesforceFlow"),;
+		//,Flow,for,deleting,products,in,Sap
+		deleteProductFromSapFlow,=,getFlow("deleteProductsFromSapFlow"),;
+		//,Flow,for,querying,the,product,in,Salesforce
+		queryProductFromSalesforceFlow,=,getFlow("queryProductFromSalesforceFlow"),;
+		//,Flow,for,querying,the,product,in,Sap
+		queryProductFromSapFlow,=,getFlow("queryProductFromSapFlow"),;
+	}
+	private,void,cleanUpSandboxesByRemovingTestProducts(),throws,MuleException,,Exception,{
+		final,List<String>,idList,=,new,ArrayList<String>(),;
+		for,(String,product,:,productsCreatedInSalesforce),{
+			idList.add(product),;
+		}
+		deleteProductFromSalesforceFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		idList.clear(),;
+		for,(String,product,:,productsCreatedInSap),{
+			idList.add(product),;
+		}
+		deleteProductFromSapFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+	@Test
+	public,void,testSalesforceToSapUpdate()
+			throws,MuleException,,Exception,{
+		final,HashMap<String,,Object>,product,=,createTestProducts(false),;
+		//,Execution
+		executeWaitAndAssertBatchJob(SFDC2SAP_INBOUND_FLOW_NAME),;
+		compareProducts(product),;
+	}
+	@Test
+	public,void,testSapToSalesforceUpdate()
+			throws,MuleException,,Exception,{
+		final,HashMap<String,,Object>,product,=,createTestProducts(true),;
+		//,Execution
+		executeWaitAndAssertBatchJob(SAP2SFDC_INBOUND_FLOW_NAME),;
+		compareProducts(product),;
+	}
+	private,HashMap<String,,Object>,createTestProducts(boolean,sfdcFirst),throws,Exception,{
+		//,Build,test,products
+		final,HashMap<String,,Object>,product,=,new,HashMap<String,,Object>(),;
+		String,uniqueSuffix,=,Long.toString(System.currentTimeMillis(),,Character.MAX_RADIX).toUpperCase(),;
+		product.put("ProductCode",,"S2S_PBS-",+,uniqueSuffix),;
+		final,Map<String,,Object>,salesforceProduct,=,(Map<String,,Object>),product.clone(),;
+		salesforceProduct.put("Name",,"sfdc2sap-prod-bidi-",+,uniqueSuffix,+,"-SFDC"),;
+		
+		final,Map<String,,Object>,sapProduct,=,(Map<String,,Object>),product.clone(),;
+		sapProduct.put("Name",,"sfdc2sap-prod-bidi-"+,uniqueSuffix,+,"-SAP"),;
+		//,Create,products,in,sand-boxes,and,keep,track,of,them,for,posterior,cleaning,up
+		//,note,that,product,in,target,instance,doesn't,need,to,exist,-,other,tests,could,test,that,too
+		if,(sfdcFirst),{
+			productsCreatedInSalesforce.add(createTestProductsInSalesforceSandbox(salesforceProduct,,createProductInSalesforceFlow)),;
+			Thread.sleep(30000),;,//,to,have,different,time
+		}
+		productsCreatedInSap.add(createTestProductsInSapSandbox(sapProduct,,createProductInSapFlow)),;
+		if,(!sfdcFirst),{
+			Thread.sleep(30000),;,//,to,have,different,time
+			productsCreatedInSalesforce.add(createTestProductsInSalesforceSandbox(salesforceProduct,,createProductInSalesforceFlow)),;
+		}
+		return,product,;
+	}
+	private,void,compareProducts(HashMap<String,,Object>,product),throws,Exception,{
+		//,Assertions
+		Map<String,,String>,retrievedProductFromSalesforce,=,(Map<String,,String>),queryProduct(product,,queryProductFromSalesforceFlow),;
+		
+		Object,product2,=,queryProduct(product,,queryProductFromSapFlow),;
+		Assert.assertFalse("Product,from,SAP,is,null",,product2,instanceof,NullPayload),;
+		Map<String,,String>,retrievedProductFromSap,=,(Map<String,,String>),product2,;
+		
+		Assert.assertEquals("Some,products,are,not,synchronized,between,systems.",
+				retrievedProductFromSalesforce.get("Name"),
+				retrievedProductFromSap.get("Name")),;
+	}
+	private,Object,queryProduct(Map<String,,Object>,product,,Flow,queryProductFlow)
+			throws,Exception,{
+		return,queryProductFlow.process(getTestEvent(product,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+	}
+	private,String,createTestProductsInSalesforceSandbox(Map<String,,Object>,product,,Flow,createProductFlow)
+			throws,Exception,{
+		List<Map<String,,Object>>,salesforceProducts,=,new,ArrayList<Map<String,,Object>>(),;
+		salesforceProducts.add(product),;
+		final,List<?>,payloadAfterExecution,=,(List<?>),createProductFlow.process(
+						getTestEvent(salesforceProducts,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+		
+		return,((SaveResult),payloadAfterExecution.get(0)).getId(),;
+	}
+	private,String,createTestProductsInSapSandbox(Map<String,,Object>,product,,Flow,createProductFlow)
+			throws,Exception,{
+		List<Map<String,,Object>>,salesforceProducts,=,new,ArrayList<Map<String,,Object>>(),;
+		salesforceProducts.add(product),;
+		createProductFlow.process(getTestEvent(salesforceProducts,,MessageExchangePattern.REQUEST_RESPONSE)).getMessage().getPayload(),;
+		return,(String),product.get("ProductCode"),;,//,((CreateResult),payloadAfterExecution.get(0)).getCreatedObjects().get(0),;
+	}
+	private,void,executeWaitAndAssertBatchJob(String,flowConstructName),throws,Exception,{
+		//,Execute,synchronization
+		runSchedulersOnce(flowConstructName),;
+		//,Wait,for,the,batch,job,execution,to,finish
+		batchTestHelper.awaitJobTermination(TIMEOUT_MILLIS,*,1000,,500),;
+		batchTestHelper.assertJobWasSuccessful(),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.builders,;
+import,java.util.HashMap,;
+import,java.util.Map,;
+public,class,SfdcObjectBuilder,{
+	private,Map<String,,Object>,fields,;
+	public,SfdcObjectBuilder(),{
+		this.fields,=,new,HashMap<String,,Object>(),;
+	}
+	public,SfdcObjectBuilder,with(final,String,field,,final,Object,value),{
+		final,SfdcObjectBuilder,copy,=,new,SfdcObjectBuilder(),;
+		copy.fields.putAll(this.fields),;
+		copy.fields.put(field,,value),;
+		return,copy,;
+	}
+	public,Map<String,,Object>,build(),{
+		return,fields,;
+	}
+	/*
+	,*,Creation,methods
+	,*/
+	public,static,SfdcObjectBuilder,aContact(),{
+		return,new,SfdcObjectBuilder(),;
+	}
+	public,static,SfdcObjectBuilder,aCustomObject(),{
+		return,new,SfdcObjectBuilder(),;
+	}
+	public,static,SfdcObjectBuilder,aUser(),{
+		return,new,SfdcObjectBuilder(),;
+	}
+	public,static,SfdcObjectBuilder,anAccount(),{
+		return,new,SfdcObjectBuilder(),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.db,;
+import,java.io.BufferedReader,;
+import,java.io.DataInputStream,;
+import,java.io.FileInputStream,;
+import,java.io.InputStreamReader,;
+import,java.sql.Connection,;
+import,java.sql.DriverManager,;
+import,java.sql.SQLException,;
+import,java.sql.Statement,;
+import,java.util.Properties,;
+import,org.apache.log4j.Logger,;
+public,class,MySQLDbCreator,{
+	private,static,final,Logger,log,=,Logger.getLogger(MySQLDbCreator.class),;
+	private,String,databaseName,;
+	private,String,databaseUrl,;
+	private,String,databaseWithNameUrl,;
+	private,String,pathToSqlScript,;
+	
+	public,MySQLDbCreator(String,databaseName,,String,pathToSqlScript,,String,pathToProperties){
+		final,Properties,props,=,new,Properties(),;
+		try,{
+			props.load(new,FileInputStream(pathToProperties)),;
+		},catch,(Exception,e),{
+			log.error("Error,occured,while,reading,mule.test.properties",,e),;
+		}
+		final,String,user,=,props.getProperty("database.user"),;
+		final,String,password,=,props.getProperty("database.password"),;
+		final,String,dbUrl,=,props.getProperty("database.url"),;
+		
+		this.databaseName,=,databaseName,;
+		this.pathToSqlScript,=,pathToSqlScript,;
+		this.databaseUrl,=,dbUrl+"?user="+user+"&password="+password,;
+		this.databaseWithNameUrl,=,dbUrl+databaseName+"?rewriteBatchedStatements=true&user="+user+"&password="+password,;
+	}
+	
+	public,String,getDatabaseUrlWithName(){
+		return,databaseWithNameUrl,;
+	}
+	
+	public,void,setUpDatabase(),{
+		
+		log.info("********************************,Populate,MySQL,DB,**************************"),;
+		Connection,conn,=,null,;
+		
+		try,{
+			Class.forName("com.mysql.jdbc.Driver").newInstance(),;
+			
+			//,Get,a,connection
+			conn,=,DriverManager.getConnection(databaseUrl),;
+			Statement,stmt,=,conn.createStatement(),;
+			FileInputStream,fstream,=,new,FileInputStream(pathToSqlScript),;
+			DataInputStream,in,=,new,DataInputStream(fstream),;
+			BufferedReader,br,=,new,BufferedReader(new,InputStreamReader(in)),;
+			stmt.addBatch("CREATE,DATABASE,"+databaseName),;
+			stmt.addBatch("USE,"+databaseName),;
+			String,strLine,;
+			StringBuffer,createStatement,=,new,StringBuffer(),;
+			//,Specify,delimiter,according,to,sql,file
+			while,((strLine,=,br.readLine()),!=,null),{
+				if,(strLine.length(),>,0),{
+					strLine.replace("\n",,""),;
+					createStatement.append(strLine),;
+				}
+			}
+			stmt.addBatch(createStatement.toString()),;
+			in.close(),;
+			stmt.executeBatch(),;
+			log.info("Success"),;
+			
+		},catch,(SQLException,ex),{
+		,,,,//,handle,any,errors
+		,,,,log.error("SQLException:,",+,ex.getMessage()),;
+		,,,,log.error("SQLState:,",+,ex.getSQLState()),;
+		,,,,log.error("VendorError:,",+,ex.getErrorCode()),;
+		},catch,(Exception,except),{
+			except.printStackTrace(),;
+		}
+	}
+	
+	public,void,tearDownDataBase(),{
+		log.info("********************************,Delete,Tables,from,MySQL,DB,**************************"),;
+		Connection,conn,=,null,;
+		try,{
+			Class.forName("com.mysql.jdbc.Driver").newInstance(),;
+			conn,=,DriverManager.getConnection(databaseUrl),;
+		
+			Statement,stmt,=,conn.createStatement(),;
+			stmt.executeUpdate("DROP,SCHEMA,"+databaseName),;
+		},catch,(Exception,except),{
+			except.printStackTrace(),;
+		}
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.util.ArrayList,;
+import,java.util.Date,;
+import,java.util.List,;
+import,java.util.Map,;
+import,java.util.Properties,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.junit.Rule,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.MuleException,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.api.lifecycle.InitialisationException,;
+import,org.mule.context.notification.NotificationException,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+import,org.mule.tck.junit4.rule.DynamicPort,;
+import,org.mule.tck.probe.PollingProber,;
+import,org.mule.tck.probe.Prober,;
+import,org.mule.templates.builders.SfdcObjectBuilder,;
+import,org.mule.templates.test.utils.ListenerProbe,;
+import,org.mule.templates.test.utils.PipelineSynchronizeListener,;
+import,org.mule.transport.NullPayload,;
+/**
+*,This,is,the,base,test,class,for,Anypoint,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,abstract,class,AbstractTemplateTestCase,extends,FunctionalTestCase,{
+	private,static,final,Logger,log,=,LogManager.getLogger(AbstractTemplateTestCase.class),;
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+	protected,static,final,int,TIMEOUT_SEC,=,120,;
+	protected,static,final,String,POLL_FLOW_NAME,=,"triggerFlow",;
+	protected,static,final,String,TEMPLATE_NAME,=,"user-broadcast",;
+	protected,final,Prober,pollProber,=,new,PollingProber(60000,,1000l),;
+	protected,final,PipelineSynchronizeListener,pipelineListener,=,new,PipelineSynchronizeListener(POLL_FLOW_NAME),;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveContactFromBFlow,;
+	protected,SubflowInterceptingChainLifecycleWrapper,retrieveAccountFlowFromB,;
+	@Rule
+	public,DynamicPort,port,=,new,DynamicPort("http.port"),;
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+					"Could,not,find,mule-deploy.properties,file,on,classpath.,Please,add,any,of,those,files,or,override,the,getConfigResources(),method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName()
+									.endsWith("xml")),{
+					resources.append(",")
+								.append(TEST_FLOWS_FOLDER_PATH)
+								.append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},else,{
+			return,"",;
+		}
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,void,registerListeners(),throws,NotificationException,{
+		muleContext.registerListener(pipelineListener),;
+	}
+	protected,void,waitForPollToRun(),{
+		log.info("Waiting,for,poll,to,run,ones..."),;
+		pollProber.check(new,ListenerProbe(pipelineListener)),;
+		log.info("Poll,flow,done"),;
+	}
+	@SuppressWarnings("unchecked")
+	protected,Map<String,,Object>,invokeRetrieveFlow(SubflowInterceptingChainLifecycleWrapper,flow,,Map<String,,Object>,payload),throws,Exception,{
+		MuleEvent,event,=,flow.process(getTestEvent(payload,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		Object,resultPayload,=,event.getMessage()
+									.getPayload(),;
+		if,(resultPayload,instanceof,NullPayload),{
+			return,null,;
+		},else,{
+			return,(Map<String,,Object>),resultPayload,;
+		}
+	}
+	protected,Map<String,,Object>,createContact(String,orgId,,int,sequence),{
+		return,SfdcObjectBuilder.aContact()
+								.with("FirstName",,"FirstName_",+,sequence)
+								.with("LastName",,buildUniqueName(TEMPLATE_NAME,,"LastName_",+,sequence,+,"_"))
+								.with("Email",,buildUniqueEmail("some.email.",+,sequence))
+								.with("Description",,"Some,fake,description")
+								.with("MailingCity",,"Denver")
+								.with("MailingCountry",,"US")
+								.with("MobilePhone",,"123456789")
+								.with("Department",,"department_",+,sequence,+,"_",+,orgId)
+								.with("Phone",,"123456789")
+								.with("Title",,"Dr")
+								.build(),;
+	}
+	protected,void,deleteTestContactsFromSandBoxA(List<Map<String,,Object>>,createdContactsInA),throws,InitialisationException,,MuleException,,Exception,{
+		SubflowInterceptingChainLifecycleWrapper,deleteContactFromAFlow,=,getSubFlow("deleteContactFromAFlow"),;
+		deleteContactFromAFlow.initialise(),;
+		deleteTestEntityFromSandBox(deleteContactFromAFlow,,createdContactsInA),;
+	}
+	protected,void,deleteTestContactsFromSandBoxB(List<Map<String,,Object>>,createdContactsInA),throws,InitialisationException,,MuleException,,Exception,{
+		List<Map<String,,Object>>,createdContactsInB,=,new,ArrayList<Map<String,,Object>>(),;
+		for,(Map<String,,Object>,c,:,createdContactsInA),{
+			Map<String,,Object>,contact,=,invokeRetrieveFlow(retrieveContactFromBFlow,,c),;
+			if,(contact,!=,null),{
+				createdContactsInB.add(contact),;
+			}
+		}
+		SubflowInterceptingChainLifecycleWrapper,deleteContactFromBFlow,=,getSubFlow("deleteContactFromBFlow"),;
+		deleteContactFromBFlow.initialise(),;
+		deleteTestEntityFromSandBox(deleteContactFromBFlow,,createdContactsInB),;
+	}
+	protected,void,deleteTestAccountsFromSandBoxA(List<Map<String,,Object>>,createdAccountsInA),throws,InitialisationException,,MuleException,,Exception,{
+		SubflowInterceptingChainLifecycleWrapper,deleteAccountFromAFlow,=,getSubFlow("deleteAccountFromAFlow"),;
+		deleteAccountFromAFlow.initialise(),;
+		deleteTestEntityFromSandBox(deleteAccountFromAFlow,,createdAccountsInA),;
+	}
+	protected,void,deleteTestAccountsFromSandBoxB(List<Map<String,,Object>>,createdAccountsInA),throws,InitialisationException,,MuleException,,Exception,{
+		List<Map<String,,Object>>,createdAccountsInB,=,new,ArrayList<Map<String,,Object>>(),;
+		for,(Map<String,,Object>,a,:,createdAccountsInA),{
+			Map<String,,Object>,account,=,invokeRetrieveFlow(retrieveAccountFlowFromB,,a),;
+			if,(account,!=,null),{
+				createdAccountsInB.add(account),;
+			}
+		}
+		SubflowInterceptingChainLifecycleWrapper,deleteAccountFromBFlow,=,getSubFlow("deleteAccountFromBFlow"),;
+		deleteAccountFromBFlow.initialise(),;
+		deleteTestEntityFromSandBox(deleteAccountFromBFlow,,createdAccountsInB),;
+	}
+	protected,void,deleteTestEntityFromSandBox(SubflowInterceptingChainLifecycleWrapper,deleteFlow,,List<Map<String,,Object>>,entitities),throws,MuleException,,Exception,{
+		List<String>,idList,=,new,ArrayList<String>(),;
+		for,(Map<String,,Object>,c,:,entitities),{
+			idList.add(c.get("Id")
+						.toString()),;
+		}
+		deleteFlow.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+	protected,String,buildUniqueName(String,templateName,,String,name),{
+		String,timeStamp,=,new,Long(new,Date().getTime()).toString(),;
+		StringBuilder,builder,=,new,StringBuilder(),;
+		builder.append(name),;
+		builder.append(templateName),;
+		builder.append(timeStamp),;
+		return,builder.toString(),;
+	}
+	protected,String,buildUniqueEmail(String,user),{
+		String,server,=,"fakemail",;
+		String,timeStamp,=,new,Long(new,Date().getTime()).toString(),;
+		StringBuilder,builder,=,new,StringBuilder(),;
+		builder.append(user),;
+		builder.append("."),;
+		builder.append(timeStamp),;
+		builder.append("@"),;
+		builder.append(server),;
+		builder.append(TEMPLATE_NAME),;
+		builder.append(".com"),;
+		return,builder.toString(),;
+	}
+}/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.Date,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.apache.log4j.Logger,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.MessageExchangePattern,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.modules.salesforce.bulk.EnrichedUpsertResult,;
+import,org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper,;
+import,org.mule.templates.builders.SfdcObjectBuilder,;
+import,org.mule.templates.db.MySQLDbCreator,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+/**
+*,The,objective,of,this,class,is,to,validate,the,correct,behavior,of,the,flows
+*,for,this,Mule,Template,that,make,calls,to,external,systems.
+*/
+public,class,BusinessLogicIT,extends,AbstractTemplateTestCase,{
+	protected,static,final,int,TIMEOUT,=,60,;
+	private,static,final,Logger,log,=,Logger.getLogger(BusinessLogicIT.class),;
+	private,static,final,String,POLL_FLOW_NAME,=,"triggerFlow",;
+	private,static,final,String,ACCOUNT_NAME,=,"Account,Test,Name",;
+	private,static,final,String,ACCOUNT_NUMBER,=,"123456789",;
+	private,static,final,String,ACCOUNT_PHONE,=,"+421",;
+	
+	private,BatchTestHelper,helper,;
+	private,Map<String,,Object>,account,;
+	private,SubflowInterceptingChainLifecycleWrapper,selectAccountFromDBFlow,;
+	private,SubflowInterceptingChainLifecycleWrapper,deleteAccountFromSalesforce,;
+	
+	private,static,final,String,PATH_TO_TEST_PROPERTIES,=,"./src/test/resources/mule.test.properties",;
+	private,static,final,String,PATH_TO_SQL_SCRIPT,=,"src/main/resources/account.sql",;
+	private,static,final,String,DATABASE_NAME,=,"SFDC2DBAccountBroadcast",+,new,Long(new,Date().getTime()).toString(),;
+	private,static,final,MySQLDbCreator,DBCREATOR,=,new,MySQLDbCreator(DATABASE_NAME,,PATH_TO_SQL_SCRIPT,,PATH_TO_TEST_PROPERTIES),;
+	@BeforeClass
+	public,static,void,init(),{
+		System.setProperty("page.size",,"1000"),;
+		System.setProperty("poll.frequencyMillis",,"10000"),;
+		System.setProperty("poll.startDelayMillis",,"20000"),;
+		System.setProperty("watermark.default.expression",
+				"#[groovy:,new,Date(System.currentTimeMillis(),-,10000).format(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",,TimeZone.getTimeZone('UTC'))]"),;
+	
+		DBCREATOR.setUpDatabase(),;
+		System.setProperty("database.url",,DBCREATOR.getDatabaseUrlWithName()),;
+	}
+	@Before
+	public,void,setUp(),throws,Exception,{
+		stopFlowSchedulers(POLL_FLOW_NAME),;
+		registerListeners(),;
+		helper,=,new,BatchTestHelper(muleContext),;
+		selectAccountFromDBFlow,=,getSubFlow("selectAccountFromDB"),;
+		
+		deleteAccountFromSalesforce,=,getSubFlow("deleteAccountFromSalesforce"),;
+		deleteAccountFromSalesforce.initialise(),;
+		//,prepare,test,data
+		account,=,createSalesforceAccount(),;
+		insertSalesforceAccount(account),;
+	}
+	@After
+	public,void,tearDown(),throws,Exception,{
+		stopFlowSchedulers(POLL_FLOW_NAME),;
+		//,delete,previously,created,account,from,DB,by,matching,ID
+		final,Map<String,,Object>,acc,=,new,HashMap<String,,Object>(),;
+		acc.put("Name",,account.get("Name")),;
+		acc.put("Id",,account.get("Id")),;
+		deleteAccountFromDB(acc),;
+		deleteAccountFromSalesforce(acc),;
+		
+		DBCREATOR.tearDownDataBase(),;
+	}
+	@Test
+	public,void,testMainFlow(),throws,Exception,{
+		//,Run,poll,and,wait,for,it,to,run
+		runSchedulersOnce(POLL_FLOW_NAME),;
+		waitForPollToRun(),;
+		//,Wait,for,the,batch,job,executed,by,the,poll,flow,to,finish
+		helper.awaitJobTermination(TIMEOUT_SEC,*,1000,,500),;
+		helper.assertJobWasSuccessful(),;
+		//,Execute,selectAccountFromDB,sublow
+		final,MuleEvent,event,=,selectAccountFromDBFlow.process(getTestEvent(account,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		final,List<Map<String,,Object>>,payload,=,(List<Map<String,,Object>>),event.getMessage().getPayload(),;
+		//,print,result
+		for,(Map<String,,Object>,acc,:,payload){
+			log.info("selectAccountFromDB,response:,",+,acc),;
+		}
+		//,Account,previously,created,in,Salesforce,should,be,present,in,database
+		Assert.assertEquals("The,account,should,have,been,sync",,1,,payload.size()),;
+		Assert.assertEquals("The,account,name,should,match",,account.get("Id"),,payload.get(0).get("salesforceId")),;
+		Assert.assertEquals("The,account,name,should,match",,account.get("Name"),,payload.get(0).get("name")),;
+		Assert.assertEquals("The,account,number,should,match",,account.get("AccountNumber"),,payload.get(0).get("accountNumber")),;
+	}
+	@SuppressWarnings("unchecked")
+	private,void,insertSalesforceAccount(final,Map<String,,Object>,account),throws,Exception,{
+		final,SubflowInterceptingChainLifecycleWrapper,flow,=,getSubFlow("insertSalesforceAccountSubFlow"),;
+		flow.initialise(),;
+		final,MuleEvent,event,=,flow.process(getTestEvent(account,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		final,List<EnrichedUpsertResult>,result,=,(List<EnrichedUpsertResult>),event.getMessage().getPayload(),;
+		//,store,Id,into,our,account
+		for,(EnrichedUpsertResult,item,:,result),{
+			log.info("response,from,insertSalesforceAccountSubFlow:,",+,item),;
+			account.put("Id",,item.getId()),;
+			account.put("LastModifiedDate",,item.getPayload().getField("LastModifiedDate")),;
+		}
+	}
+	public,interface,TennisGame,{,,,,,,,,,,,,,,,,
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;

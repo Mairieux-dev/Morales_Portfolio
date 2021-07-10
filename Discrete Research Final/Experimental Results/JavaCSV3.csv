@@ -1,0 +1,5508 @@
+
+		//,Wait,for,the,batch,job,executed,by,the,poll,flow,to,finish,,,,,,,
+		helper.awaitJobTermination(TIMEOUT_SEC,*,1000,,500),;
+		helper.assertJobWasSuccessful(),;
+		//,Execute,selectAccountFromDB,sublow
+		final,MuleEvent,event,=,selectAccountFromDBFlow.process(getTestEvent(account,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		final,List<Map<String,,Object>>,payload,=,(List<Map<String,,Object>>),event.getMessage().getPayload(),;
+		//,print,result
+		for,(Map<String,,Object>,acc,:,payload){
+			log.info("selectAccountFromDB,response:,",+,acc),;
+		}
+		//,Account,previously,created,in,Salesforce,should,be,present,in,database
+		Assert.assertEquals("The,account,should,have,been,sync",,1,,payload.size()),;
+		Assert.assertEquals("The,account,name,should,match",,account.get("Id"),,payload.get(0).get("salesforceId")),;
+		Assert.assertEquals("The,account,name,should,match",,account.get("Name"),,payload.get(0).get("name")),;
+		Assert.assertEquals("The,account,number,should,match",,account.get("AccountNumber"),,payload.get(0).get("accountNumber")),;
+	}
+	@SuppressWarnings("unchecked")
+	private,void,insertSalesforceAccount(final,Map<String,,Object>,account),throws,Exception,{
+		final,SubflowInterceptingChainLifecycleWrapper,flow,=,getSubFlow("insertSalesforceAccountSubFlow"),;
+		flow.initialise(),;
+		final,MuleEvent,event,=,flow.process(getTestEvent(account,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		final,List<EnrichedUpsertResult>,result,=,(List<EnrichedUpsertResult>),event.getMessage().getPayload(),;
+		//,store,Id,into,our,account
+		for,(EnrichedUpsertResult,item,:,result),{
+			log.info("response,from,insertSalesforceAccountSubFlow:,",+,item),;
+			account.put("Id",,item.getId()),;
+			account.put("LastModifiedDate",,item.getPayload().getField("LastModifiedDate")),;
+		}
+	}
+	private,void,deleteAccountFromSalesforce(final,Map<String,,Object>,acc),throws,Exception,{
+		List<Object>,idList,=,new,ArrayList<Object>(),;
+		idList.add(acc.get("Id")),;
+		deleteAccountFromSalesforce.process(getTestEvent(idList,,MessageExchangePattern.REQUEST_RESPONSE)),;
+	}
+	private,void,deleteAccountFromDB(final,Map<String,,Object>,account),throws,Exception,{
+		final,SubflowInterceptingChainLifecycleWrapper,flow,=,getSubFlow("deleteAccountFromDB"),;
+		flow.initialise(),;
+		final,MuleEvent,event,=,flow.process(getTestEvent(account,,MessageExchangePattern.REQUEST_RESPONSE)),;
+		final,Object,result,=,event.getMessage().getPayload(),;
+		log.info("deleteAccountFromDB,result:,",+,result),;
+	}
+	private,Map<String,,Object>,createSalesforceAccount(),{
+		final,SfdcObjectBuilder,builder,=,new,SfdcObjectBuilder(),;
+		final,Map<String,,Object>,account,=,builder
+				.with("Name",,ACCOUNT_NAME,+,System.currentTimeMillis())
+				.with("AccountNumber",,ACCOUNT_NUMBER)
+				.with("Phone",,ACCOUNT_PHONE).build(),;
+		
+		return,account,;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.test.utils,;
+import,org.mule.tck.probe.Probe,;
+/**
+*,This,{@link,Probe},receives,a,{@link,PipelineSynchronizeListener},as,a,parameter,upon,construction.,It,will,check,the,readyToContinue,method,of,the,same,to
+*,validate,if,the,Probe,has,been,completed.
+*,
+*,@author,damiansima
+*/
+public,class,ListenerProbe,implements,Probe,{
+	private,PipelineSynchronizeListener,pipelineListener,;
+	public,ListenerProbe(PipelineSynchronizeListener,pipelineListener),{
+		super(),;
+		this.pipelineListener,=,pipelineListener,;
+	}
+	@Override
+	public,boolean,isSatisfied(),{
+		return,pipelineListener.readyToContinue(),;
+	}
+	@Override
+	public,String,describeFailure(),{
+		return,"The,listener,never,flaged,that,the,notification,of,flow,completion,was,received",;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.test.utils,;
+import,org.apache.commons.lang.Validate,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.MuleMessage,;
+import,org.mule.api.context.notification.PipelineMessageNotificationListener,;
+import,org.mule.context.notification.PipelineMessageNotification,;
+/**
+*,This,listener,checks,notifications,of,flows,finalizations.
+*,
+*,Upon,notification,it,will,check,that,the,flowToCheck,property,matches,the,name,of,the,flow,notifying,its,completion.,Should,the,name,match,it,will,change,the
+*,state,of,readyToContinue,to,true.
+*,
+*,@author,damiansima
+*/
+public,class,PipelineSynchronizeListener,implements,PipelineMessageNotificationListener<PipelineMessageNotification>,{
+	private,String,flowToCheck,;
+	private,boolean,readyToContinue,;
+	private,Object,notificatedPayload,;
+	public,PipelineSynchronizeListener(String,flowToCheck),{
+		super(),;
+		Validate.notEmpty(flowToCheck,,"the,name,of,the,flow,can,not,be,null,nor,empty"),;
+		this.flowToCheck,=,flowToCheck,;
+		this.readyToContinue,=,false,;
+	}
+	@Override
+	public,void,onNotification(PipelineMessageNotification,notification),{
+		MuleEvent,event,=,((MuleEvent),notification.getSource()),;
+		MuleMessage,message,=,event.getMessage(),;
+		if,(notification.getAction(),==,PipelineMessageNotification.PROCESS_END),{
+			if,(flowToCheck.equals(event.getFlowConstruct()
+										.getName())),{
+				readyToContinue,=,true,;
+				notificatedPayload,=,message.getPayload(),;
+			}
+		}
+	}
+	public,boolean,readyToContinue(),{
+		return,readyToContinue,;
+	}
+	public,boolean,resetListener(),{
+		return,readyToContinue,=,false,;
+	}
+	public,Object,getNotificatedPayload(),{
+		return,notificatedPayload,;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*
+*,Copyright,(c),MuleSoft,,Inc.,,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.io.File,;
+import,java.io.FileInputStream,;
+import,java.io.IOException,;
+import,java.io.InputStream,;
+import,java.util.Date,;
+import,java.util.Properties,;
+import,org.apache.commons.io.IOUtils,;
+import,org.junit.Rule,;
+import,org.mule.api.config.MuleProperties,;
+import,org.mule.tck.junit4.FunctionalTestCase,;
+import,org.mule.tck.junit4.rule.DynamicPort,;
+/**
+*,This,is,the,base,test,class,for,Anypoint,Templates,integration,tests.
+*,
+*,@author,damiansima
+*/
+public,class,AbstractTemplateTestCase,extends,FunctionalTestCase,{
+	private,static,final,String,MAPPINGS_FOLDER_PATH,=,"./mappings",;
+	private,static,final,String,TEST_FLOWS_FOLDER_PATH,=,"./src/test/resources/flows/",;
+	private,static,final,String,MULE_DEPLOY_PROPERTIES_PATH,=,"./src/main/app/mule-deploy.properties",;
+	@Rule
+	public,DynamicPort,port,=,new,DynamicPort("http.port"),;
+	@Override
+	protected,String,getConfigResources(),{
+		String,resources,=,"",;
+		try,{
+			Properties,props,=,new,Properties(),;
+			props.load(new,FileInputStream(MULE_DEPLOY_PROPERTIES_PATH)),;
+			resources,=,props.getProperty("config.resources"),;
+		},catch,(Exception,e),{
+			throw,new,IllegalStateException(
+					"Could,not,find,mule-deploy.properties,file,on,classpath.,Please,add,any,of,those,files,or,override,the,getConfigResources(),method,to,provide,the,resources,by,your,own."),;
+		}
+		return,resources,+,getTestFlows(),;
+	}
+	protected,String,getTestFlows(),{
+		StringBuilder,resources,=,new,StringBuilder(),;
+		File,testFlowsFolder,=,new,File(TEST_FLOWS_FOLDER_PATH),;
+		File[],listOfFiles,=,testFlowsFolder.listFiles(),;
+		if,(listOfFiles,!=,null),{
+			for,(File,f,:,listOfFiles),{
+				if,(f.isFile(),&&,f.getName().endsWith("xml")),{
+					resources.append(",").append(TEST_FLOWS_FOLDER_PATH).append(f.getName()),;
+				}
+			}
+			return,resources.toString(),;
+		},else,{
+			return,"",;
+		}
+	}
+	@Override
+	protected,Properties,getStartUpProperties(),{
+		Properties,properties,=,new,Properties(super.getStartUpProperties()),;
+		String,pathToResource,=,MAPPINGS_FOLDER_PATH,;
+		File,graphFile,=,new,File(pathToResource),;
+		properties.put(MuleProperties.APP_HOME_DIRECTORY_PROPERTY,,graphFile.getAbsolutePath()),;
+		return,properties,;
+	}
+	protected,String,buildUniqueName(String,templateName,,String,name),{
+		String,timeStamp,=,new,Long(new,Date().getTime()).toString(),;
+		StringBuilder,builder,=,new,StringBuilder(),;
+		builder.append(name),;
+		builder.append(templateName),;
+		builder.append(timeStamp),;
+		return,builder.toString(),;
+	}
+	
+	protected,static,String,getFileString(String,filePath),throws,IOException,{
+		InputStream,in,=,new,FileInputStream(filePath),;
+		return,IOUtils.toString(in),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.integration,;
+import,java.util.ArrayList,;
+import,java.util.Collections,;
+import,java.util.HashMap,;
+import,java.util.List,;
+import,java.util.Map,;
+import,org.apache.logging.log4j.LogManager,;
+import,org.apache.logging.log4j.Logger,;
+import,org.junit.After,;
+import,org.junit.Assert,;
+import,org.junit.Before,;
+import,org.junit.BeforeClass,;
+import,org.junit.Test,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.context.notification.NotificationException,;
+import,org.mule.modules.salesforce.bulk.EnrichedSaveResult,;
+import,org.mule.tck.probe.PollingProber,;
+import,org.mule.tck.probe.Prober,;
+import,org.mule.templates.test.utils.ListenerProbe,;
+import,org.mule.templates.test.utils.PipelineSynchronizeListener,;
+import,com.mulesoft.module.batch.BatchTestHelper,;
+/**
+*,The,objective,of,this,class,is,to,validate,the,correct,behavior,of,the,flows
+*,for,this,Mule,Template,that,make,calls,to,external,systems.
+*/
+public,class,BusinessLogicIT,extends,AbstractTemplateTestCase,{
+	private,static,final,String,KEY_LAST_MODIFIED_DATE,=,"LastModifiedDate",;
+	private,static,final,String,KEY_ID,=,"Id",;
+	private,static,final,String,KEY_NAME,=,"Name",;
+	
+	private,static,final,String,POLL_FLOW_NAME,=,"triggerFlow",;
+	private,static,final,String,PRODUCT_NAME,=,"Product,Test,Name",;
+	
+	private,static,final,Logger,LOGGER,=,LogManager.getLogger(BusinessLogicIT.class),;
+	
+	private,static,final,int,TIMEOUT_SEC,=,120,;
+	private,final,Prober,pollProber,=,new,PollingProber(60000,,1000),;
+	private,final,PipelineSynchronizeListener,pipelineListener,=,new,PipelineSynchronizeListener(POLL_FLOW_NAME),;
+	private,BatchTestHelper,helper,;
+	private,Map<String,,Object>,product,;
+	
+	@BeforeClass
+	public,static,void,init(),{
+		System.setProperty("watermark.default.expression",
+				"#[groovy:,new,Date(System.currentTimeMillis(),-,10000).format(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",,TimeZone.getTimeZone('UTC'))]"),;
+	}
+	@Before
+	public,void,setUp(),throws,Exception,{
+		stopFlowSchedulers(POLL_FLOW_NAME),;
+		registerListeners(),;
+		helper,=,new,BatchTestHelper(muleContext),;
+		//,prepare,test,data
+		product,=,createSalesforceProduct(),;
+	}
+	@After
+	public,void,tearDown(),throws,Exception,{
+		stopFlowSchedulers(POLL_FLOW_NAME),;
+		//,delete,previously,created,product,from,DB,by,matching,ID
+		final,Map<String,,Object>,acc,=,new,HashMap<String,,Object>(),;
+		acc.put(KEY_NAME,,product.get(KEY_NAME)),;
+		acc.put(KEY_ID,,product.get(KEY_ID)),;
+		deleteMaterialFromSap(acc),;
+		deleteProductFromSalesforce(acc),;
+	}
+	@Test
+	public,void,testMainFlow(),throws,Exception,{
+		//,Run,poll,and,wait,for,it,to,run
+		runSchedulersOnce(POLL_FLOW_NAME),;
+		waitForPollToRun(),;
+		//,Wait,for,the,batch,job,executed,by,the,poll,flow,to,finish
+		helper.awaitJobTermination(TIMEOUT_SEC,*,1000,,500),;
+		helper.assertJobWasSuccessful(),;
+		final,MuleEvent,event,=,runFlow("queryProductFromSapFlow",,product),;
+		final,List<?>,payload,=,(List<?>),event.getMessage().getPayload(),;
+		//,print,result
+		for,(Object,acc,:,payload){
+			LOGGER.info("material,from,SAP,response:,",+,acc),;
+		}
+		Assert.assertEquals("The,product,should,have,been,sync",,1,,payload.size()),;
+		Assert.assertEquals("The,product,name,should,match",,product.get(KEY_NAME),,((Map<?,,?>),payload.get(0)).get(KEY_NAME)),;
+	}
+	private,void,deleteProductFromSalesforce(final,Map<String,,Object>,acc),throws,Exception,{
+		List<Object>,idList,=,new,ArrayList<Object>(),;
+		idList.add(acc.get(KEY_ID)),;
+		runFlow("deleteProductsFromSalesforceFlow",,idList),;
+	}
+	private,void,deleteMaterialFromSap(final,Map<String,,Object>,product),throws,Exception,{
+		final,MuleEvent,event,=,runFlow("deleteProductsFromSapFlow",,product),;
+		final,Object,result,=,event.getMessage().getPayload(),;
+		LOGGER.info("deleteMaterialFromSap,result:,",+,result),;
+	}
+	private,Map<String,,Object>,createSalesforceProduct(),throws,Exception,{
+		final,Map<String,,Object>,product,=,new,HashMap<String,,Object>(),;
+		product.put(KEY_NAME,,PRODUCT_NAME,+,System.currentTimeMillis()),;
+		
+		final,MuleEvent,event,=,runFlow("createProductsInSalesforceFlow",,Collections.singletonList(product)),;
+		final,List<?>,result,=,(List<?>),event.getMessage().getPayload(),;
+		
+		//,store,Id,into,our,product
+		for,(Object,item,:,result),{
+			LOGGER.info("response,from,createProductsInSalesforceFlow:,",+,item),;
+			product.put(KEY_ID,,((EnrichedSaveResult),item).getId()),;
+			product.put(KEY_LAST_MODIFIED_DATE,,((EnrichedSaveResult),item).getPayload().getField(KEY_LAST_MODIFIED_DATE)),;
+		}
+		return,product,;
+	}
+	private,void,registerListeners(),throws,NotificationException,{
+		muleContext.registerListener(pipelineListener),;
+	}
+	private,void,waitForPollToRun(),{
+		LOGGER.info("Waiting,for,poll,to,run,ones..."),;
+		pollProber.check(new,ListenerProbe(pipelineListener)),;
+		LOGGER.info("Poll,flow,done"),;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.test.utils,;
+import,org.mule.tck.probe.Probe,;
+/**
+*,This,{@link,Probe},receives,a,{@link,PipelineSynchronizeListener},as,a,parameter,upon,construction.,It,will,check,the,readyToContinue,method,of,the,same,to
+*,validate,if,the,Probe,has,been,completed.
+*,
+*,@author,damiansima
+*/
+public,class,ListenerProbe,implements,Probe,{
+	private,PipelineSynchronizeListener,pipelineListener,;
+	public,ListenerProbe(PipelineSynchronizeListener,pipelineListener),{
+		super(),;
+		this.pipelineListener,=,pipelineListener,;
+	}
+	@Override
+	public,boolean,isSatisfied(),{
+		return,pipelineListener.readyToContinue(),;
+	}
+	@Override
+	public,String,describeFailure(),{
+		return,"The,listener,never,flaged,that,the,notification,of,flow,completion,was,received",;
+	}
+}
+/**
+*,Mule,Anypoint,Template
+*,Copyright,(c),MuleSoft,,Inc.
+*,All,rights,reserved.,,http://www.mulesoft.com
+*/
+package,org.mule.templates.test.utils,;
+import,org.apache.commons.lang.Validate,;
+import,org.mule.api.MuleEvent,;
+import,org.mule.api.MuleMessage,;
+import,org.mule.api.context.notification.PipelineMessageNotificationListener,;
+import,org.mule.context.notification.PipelineMessageNotification,;
+/**
+*,This,listener,checks,notifications,of,flows,finalizations.
+*,
+*,Upon,notification,it,will,check,that,the,flowToCheck,property,matches,the,name,of,the,flow,notifying,its,completion.,Should,the,name,match,it,will,change,the
+*,state,of,readyToContinue,to,true.
+*,
+*,@author,damiansima
+*/
+public,class,PipelineSynchronizeListener,implements,PipelineMessageNotificationListener<PipelineMessageNotification>,{
+	private,String,flowToCheck,;
+	private,boolean,readyToContinue,;
+	private,Object,notificatedPayload,;
+	public,PipelineSynchronizeListener(String,flowToCheck),{
+		super(),;
+		Validate.notEmpty(flowToCheck,,"the,name,of,the,flow,can,not,be,null,nor,empty"),;
+		this.flowToCheck,=,flowToCheck,;
+		this.readyToContinue,=,false,;
+	}
+	@Override
+	public,void,onNotification(PipelineMessageNotification,notification),{
+		MuleEvent,event,=,((MuleEvent),notification.getSource()),;
+		MuleMessage,message,=,event.getMessage(),;
+		if,(notification.getAction(),==,PipelineMessageNotification.PROCESS_END),{
+			if,(flowToCheck.equals(event.getFlowConstruct()
+										.getName())),{
+				readyToContinue,=,true,;
+				notificatedPayload,=,message.getPayload(),;
+			}
+		}
+	}
+	public,boolean,readyToContinue(),{
+		return,readyToContinue,;
+	}
+	public,boolean,resetListener(),{
+		return,readyToContinue,=,false,;
+	}
+	public,Object,getNotificatedPayload(),{
+		return,notificatedPayload,;
+	}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+package,com.shashankpincha.firstapp,;
+import,android.app.Application,;
+import,android.test.ApplicationTestCase,;
+/**
+*,<a,href="http://d.android.com/tools/testing/testing_android.html">Testing,Fundamentals</a>
+*/
+public,class,ApplicationTest,extends,ApplicationTestCase<Application>,{
+public,ApplicationTest(),{
+super(Application.class),;
+}
+}package,com.shashankpincha.firstapp,;
+import,android.os.Bundle,;
+import,android.support.v7.app.ActionBarActivity,;
+import,android.view.Menu,;
+import,android.view.View,;
+import,android.widget.ArrayAdapter,;
+import,android.widget.Button,;
+import,android.widget.EditText,;
+import,android.widget.ListView,;
+import,android.widget.TextView,;
+import,java.util.ArrayList,;
+public,class,MainActivity,extends,ActionBarActivity,implements,View.OnClickListener,{
+TextView,mainTextView,;
+Button,mainButton,;
+EditText,mainEditText,;
+ListView,mainListView,;
+ArrayAdapter,mArrayAdapter,;
+ArrayList,mNameList,=,new,ArrayList(),;
+@Override
+protected,void,onCreate(Bundle,savedInstanceState),{
+super.onCreate(savedInstanceState),;
+setContentView(R.layout.activity_main),;
+//,1.,Access,the,TextView,defined,in,layout,XML
+//,and,then,set,its,text
+mainTextView,=,(TextView),findViewById(R.id.main_textview),;
+mainTextView.setText("Set,in,Java!"),;
+//,2.,Access,the,Button,defined,in,layout,XML
+//,and,listen,for,it,here
+mainButton,=,(Button),findViewById(R.id.main_button),;
+mainButton.setOnClickListener(this),;
+//,3.,Access,the,EditText,defined,in,layout,XML
+mainEditText,=,(EditText),findViewById(R.id.main_edittext),;
+//,4.,Access,the,ListView
+mainListView,=,(ListView),findViewById(R.id.main_listview),;
+//,Create,an,ArrayAdapter,for,the,ListView
+mArrayAdapter,=,new,ArrayAdapter(this,
+android.R.layout.simple_list_item_1,
+mNameList),;
+//,Set,the,ListView,to,use,the,ArrayAdapter
+mainListView.setAdapter(mArrayAdapter),;
+}
+@Override
+public,boolean,onCreateOptionsMenu(Menu,menu),{
+//,Inflate,the,menu,;,this,adds,items,to,the,action,bar,if,it,is,present.
+getMenuInflater().inflate(R.menu.menu_main,,menu),;
+return,true,;
+}
+@Override
+public,void,onClick(View,v),{
+//,Test,the,Button
+//mainTextView.setText("Button,pressed!"),;
+//,Take,what,was,typed,into,the,EditText
+//,and,use,in,TextView
+mainTextView.setText(mainEditText.getText().toString()
++,",is,learning,Android,development!"),;
+//,Also,add,that,value,to,the,list,shown,in,the,ListView
+mNameList.add(mainEditText.getText().toString()),;
+mArrayAdapter.notifyDataSetChanged(),;
+}
+}
+public,class,HelloWorld,{
+public,static,void,main(String[],args),{
+System.out.println("Hello,,World"),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+/*
+*,To,change,this,license,header,,choose,License,Headers,in,Project,Properties.
+*,To,change,this,template,file,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,kassa_sap,;
+/**
+*
+*,@author,Nikita
+*/
+public,class,CashDeviceConnection,{
+private,static,jp.ne.so_net.ga2.no_ji.jcom.IDispatch,device,;
+/**
+*,method,realize,3,attempts,to,create,connection,to,casher,device,;
+*,@param,port,number,of,serial,port,of,casher,device,;
+*,@param,casherName,name,on,casher,;
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*/
+public,CashDeviceConnection(String,port,,String,casherName),throws,jp.ne.so_net.ga2.no_ji.jcom.JComException{
+if,(casherName.length(),>,37),{
+casherName,=,casherName.substring(0,36),;
+},,,,,,,,
+try,{
+java.util.Locale.setDefault(java.util.Locale.ENGLISH),;,,,,,,,,,,,,
+device,=,new,jp.ne.so_net.ga2.no_ji.jcom.IDispatch(new,jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager(),,"M301Manager.Application"),;
+Object[],varParams_connect,=,new,Object[5],;
+varParams_connect[0],=,port,;
+varParams_connect[1],=,casherName,;
+varParams_connect[2],=,"1111111111",;
+varParams_connect[3],=,"0",;
+varParams_connect[4],=,"kassa",;
+device.put("ShowErrorMessages",,"0"),;
+Integer,errorsCounter,=,0,;
+while,(errorsCounter,<,3),{,,,,,,,,,,,,,,,,
+if,(device.get("Init",,varParams_connect).toString().equals("0")),{
+errorsCounter++,;
+}
+else,{
+break,;
+}
+}
+System.out.println("Number,of,errors,while,connected,to,casher:,",+,errorsCounter),;
+}
+catch,(jp.ne.so_net.ga2.no_ji.jcom.JComException,jce),{
+throw,jce,;
+}
+},
+/**
+*,method,realize,splitting,specified,string,into,substrings,using,specified,splitter
+*,@param,text,which,will,be,splitted,to,substrings,by,specified,splitter
+*,@param,splitter,which,will,split,specified,text,to,substrings
+*,@return,java.io.ArrayList,with,substrings,of,specified,text-string,splitted,by,specified,splitter
+*/
+public,static,java.util.ArrayList<String>,parseStringToSubstrings,(String,text,,String,splitter){
+java.util.ArrayList<String>,parsedString,=,new,java.util.ArrayList<String>(),;
+String[],array,=,text.split(":"),;
+for,(String,member,:,array),{
+parsedString.add(member),;
+},,,,,,,,
+return,parsedString,;
+}
+/**
+*,method,realize,reading,strings,from,specified,file,and,splitting,its,to,substrings,by,specified,splitter
+*,also,this,method,completely,remove,spaces,from,substring,because,conversion,to,integer,from,string,with,spaces,before,number,doesn't,works,correctly
+*,@param,filePath,to,file,,which,content,strings,which,will,be,splitted
+*,@param,splitter,dividing,string,into,substrings
+*,@return,java.io.ArrayList,of,java.io.ArrayList's,,which,contents,resulting,substrings
+*,@throws,java.io.FileNotFoundException
+*,@throws,java.io.IOException
+*,@see,CashDeviceConnection
+*,@see,parseStringToSubstrings
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,readFileWithCheckParameters(String,filePath,,String,splitter),throws,java.io.FileNotFoundException,,java.io.IOException,{
+java.util.ArrayList,stringOfCheckParameters,=,new,java.util.ArrayList<>(),;
+String,sCurrentLine,;
+try,{
+java.io.BufferedReader,bufferedReader1,=,new,java.io.BufferedReader(new,java.io.FileReader(filePath)),;
+while,((sCurrentLine,=,bufferedReader1.readLine()),!=,null),{
+java.util.ArrayList<String>,substrings,=,parseStringToSubstrings(sCurrentLine,,splitter),;
+for,(String,member,:,substrings),{
+substrings.set(substrings.indexOf(member),,member.replaceAll(",",,"")),;
+},,,,,,,,,,,,,,,,
+stringOfCheckParameters.add(substrings),;
+}
+},catch,(java.io.FileNotFoundException,fnfe),{
+throw,fnfe,;
+},catch,(java.io.IOException,ioe),{
+throw,ioe,;
+}
+return,stringOfCheckParameters,;
+}
+/**
+*,method,realize,showing,specified,textg,on,casher,device,display,;
+*,@see,connectToCash,;
+*,@param,textToShow,some,symbols,can,be,unseen,on,display,,because,it,uses,only,10,7-segment,indicators,;
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*,@see,CashDeviceConnection
+*/
+public,void,showTextOnCasherDisplay(String,textToShow),throws,jp.ne.so_net.ga2.no_ji.jcom.JComException,{
+try,{
+if,(textToShow.length(),>,15),{
+textToShow,=,textToShow.substring(0,,14),;
+}
+Object[],displayParameters,=,{
+null,,,,,,,,,,,,,,,,,,,,,
+textToShow
+},;
+device.method("PutToDisplay",,displayParameters),;
+}
+catch,(jp.ne.so_net.ga2.no_ji.jcom.JComException,jce),{
+throw,jce,;
+}
+}
+/**
+*,method,realize,creating,new,check,with,specified,data,;
+*,@see,CashDeviceConnection,;
+*,@param,departament,name,of,departament,longer,than,15,symbols,should,be,cutted,;
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*,@see,CashDeviceConnection
+*/
+public,void,openNewCheck(String,departament),throws,jp.ne.so_net.ga2.no_ji.jcom.JComException,{
+if,(departament.length(),>,15),{
+departament,=,departament.substring(0,,14),;
+}
+try,{
+Object[],openCheckParameters,=,{
+departament
+},;
+device.method("OpenCheck",,openCheckParameters),;
+}
+catch,(jp.ne.so_net.ga2.no_ji.jcom.JComException,jce),{
+throw,jce,;
+}
+}
+/**
+*,method,realize,adding,single,entry,to,check
+*,@see,CashDeviceConnection,;
+*,@param,goodsName,name,of,goods,;
+*,@param,quantity,count,of,goods,;
+*,@param,price,price,per,single,goods,;
+*,@param,Article,article,must,be,unique,per,every,name,of,goods,before,Z-report,will,be,done,;
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*,@see,CashDeviceConnection
+*,@see,readFileWithCheckParameters
+*,@see,parseStringToSubstrings
+*/
+public,void,addSingleArticleToCheck(String,goodsName,,Integer,quantity,,Integer,price,,Integer,Article),throws,jp.ne.so_net.ga2.no_ji.jcom.JComException,{
+try,{
+Object[],checkParameters,=,{
+goodsName,
+quantity.toString(),
+price.toString(),
+"0",
+"0",
+"0",
+Article.toString()
+},;
+device.method("FiscalLine",,checkParameters),;
+},catch,(jp.ne.so_net.ga2.no_ji.jcom.JComException,jce),{
+throw,jce,;
+},,,,,,,,
+}
+/**
+*,method,realize,closing,completed,check
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*,@see,CashDeviceConnection
+*/
+public,void,closeCheck(),throws,jp.ne.so_net.ga2.no_ji.jcom.JComException,{
+try,{
+device.method("CloseCheck",,new,Object[0]),;
+},catch,(jp.ne.so_net.ga2.no_ji.jcom.JComException,jce),{
+throw,jce,;
+},,,,,,,,
+}
+}?/*
+*,To,change,this,license,header,,choose,License,Headers,in,Project,Properties.
+*,To,change,this,template,file,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+//here,can,be,set,up,package
+/**
+*
+*,@author,Nikita
+*/
+public,class,DatabaseConnection,{
+private,static,java.sql.Connection,connection,;
+/**,
+*,method,realize,connection,to,database,selected,in,its,parameters
+*,@return,connection,to,use,it,in,main,method
+*,@param,host,address,of,database,source
+*,@param,port,listener,port,on,database,source
+*,@param,sid,program,identifier,for,database,source
+*,@param,userName,enter,to,log,in,to,use,database
+*,@param,password,enter,to,log,in
+*,@throws,java.sql.SQLException
+*/
+DatabaseConnection(String,userName,,String,password,,String,host,,String,port,,String,sid),throws,java.sql.SQLException,{
+try,{
+java.util.Locale.setDefault(java.util.Locale.ENGLISH),;,,,,,,,,,,,,
+oracle.jdbc.pool.OracleDataSource,ods,=,new,oracle.jdbc.pool.OracleDataSource(),;
+ods.setURL(
+"jdbc:oracle:thin:"
++,userName
++,"/"
++,password
++,"@"
++,host
++,":"
++,port
++,":"
++,sid),;
+connection,=,ods.getConnection(),;,,,,,,,,,,,,
+System.out.println("Connection,has,been,successfully,created."),;
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,transforming,specified,resultSet,to,arraylist,of,arraylists,of,strings
+*,@see,DatabaseConnection()
+*,@see,parseResultSetEntry()
+*,@param,resultSet
+*,@return,arrayList,containing,arraylists,of,string
+*,@throws,java.sql.SQLException
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,parseResultSet(java.sql.ResultSet,resultSet),throws,java.sql.SQLException,{
+try,{
+java.util.ArrayList<java.util.ArrayList<String>>,result,=,new,java.util.ArrayList<java.util.ArrayList<String>>(),;
+while,(resultSet.next()){
+result.add(parseResultSetEntry(resultSet)),;
+}
+return,result,;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,parsing,single,entry,from,resultSet
+*,@see,parseResultSet()
+*,@param,resultSet
+*,@return,arrayList,of,strings
+*,@throws,java.sql.SQLException
+*/,,,,
+public,java.util.ArrayList<String>,parseResultSetEntry(java.sql.ResultSet,resultSet),throws,java.sql.SQLException,{
+try,{
+java.util.ArrayList<String>,resultEntry,=,new,java.util.ArrayList<String>(),;
+for,(int,i,=,1,;,i,<=,resultSet.getMetaData().getColumnCount(),;,i++),{
+resultEntry.add(resultSet.getString(i)),;
+},,,,,,,,,
+return,resultEntry,;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,translates,list,of,strings,to,single,sitrings,withentries,of,list,separated,by,comma
+*,@param,selectedValues
+*,@return,string,of,entries,of,list,selectedValues,separated,by,comma
+*/
+public,String,formStringOfSelectedValuesSeparatedByComma(java.util.ArrayList<String>,selectedValues){
+String,valuesToReturn,=,new,String(),;
+for,(String,value,:,selectedValues),{
+valuesToReturn,+=,value,;
+if,(selectedValues.indexOf(value),<,selectedValues.size(),-,1),{
+valuesToReturn,+=,",,",;
+}
+else,{
+valuesToReturn,+=,",",;
+}
+}
+return,valuesToReturn,;
+}
+/**
+*,method,realize,reading,all,data,from,all,entries,in,specified,table,in,database,,connection,to,which,eas,established,in,method,connectToDB,;
+*,@see,DatabaseConnection()
+*,@see,parseResultSet()
+*,@param,tableName
+*,@param,fieldToOrderBy
+*,@return,result,,containing,table,entries
+*,@throws,java.sql.SQLException
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,readAllData(String,tableName,,String,fieldToOrderBy),throws,java.sql.SQLException,{
+try,{
+java.sql.ResultSet,resultSet,=,connection.prepareStatement("SELECT,*,FROM,",+,tableName,+,",ORDER,BY,",+,fieldToOrderBy,+,",ASC").executeQuery(),;,,,,,,,,,,,,
+return,parseResultSet(resultSet),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,reading,specified,data,from,all,entries,in,table
+*,@see,DatabaseConnection
+*,@see,formStringOfSelectedValuesSeparatedByComma
+*,@see,parseResultSet
+*,@param,tableName
+*,@param,selectedColumns
+*,@param,fieldToOrderBy
+*,@return,list,with,result,of,executing,query
+*,@throws,java.sql.SQLException
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,readAllDataInSpecifiedFields(String,tableName,,java.util.ArrayList<String>,selectedColumns,,String,fieldToOrderBy),throws,java.sql.SQLException,{
+String,fieldsToReturn,=,formStringOfSelectedValuesSeparatedByComma(selectedColumns),;
+try,{
+java.sql.ResultSet,resultSet,=,connection.prepareStatement("SELECT,",+,fieldsToReturn,+,",FROM,",+,tableName,+,",ORDER,BY,",+,fieldToOrderBy,+,",ASC").executeQuery(),;
+return,parseResultSet(resultSet),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,reading,all,entries,from,table,in,DB,,which,matches,with,specified,parameter's,value
+*,@see,DatabaseConnection()
+*,@see,parseResultSet()
+*,@param,tableName
+*,@param,columnsToSelect,which,will,be,pased,into,result
+*,@param,value,of,the,parameter
+*,@param,parameter,which,used,to,select
+*,@return,arrayList,of,arrayLists,containing,strings,from,resulSet
+*,@throws,java.sql.SQLException
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,readEntriesMatchingWithValueOfParameter(String,tableName,,java.util.ArrayList<String>,columnsToSelect,,String,parameter,,String,value),throws,java.sql.SQLException,{
+String,selectedColumns,=,new,String(),;
+for,(String,column,:,columnsToSelect),{
+selectedColumns.concat(column,+,",,"),;
+}
+try,{
+java.sql.ResultSet,resultSet,=,connection.prepareStatement("SELECT,",+,selectedColumns,+,"FROM,",+,tableName,+,",WHERE,",+,parameter,+,",=,",+,value).executeQuery(),;,,,,,,,,,,,,
+return,parseResultSet(resultSet),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+},
+/**
+*,method,realize,inserting,into,table,specified,data
+*,@see,DatabaseConnection()
+*,@param,tableName
+*,@param,fieldsInTable
+*,@param,dataToInsertToTable,matching,to,specified,fields,of,table
+*,@throws,java.sql.SQLException
+*/,,,,
+public,void,insertSingleEntryToTable(String,tableName,,java.util.ArrayList<String>,fieldsInTable,,java.util.ArrayList<String>,dataToInsertToTable),throws,java.sql.SQLException,{
+if,(fieldsInTable.size(),!=,dataToInsertToTable.size()),{
+System.err.println("Amount,of,inserting,data,not,equals,to,amount,of,fields,in,table!"),;
+return,;
+}
+try,{
+String,sqlString,=,new,String("INSERT,INTO,",+,tableName,+,",("),;
+sqlString,+=,formStringOfSelectedValuesSeparatedByComma(fieldsInTable),;
+sqlString,+=,"),VALUES,(",;
+sqlString,+=,formStringOfSelectedValuesSeparatedByComma(dataToInsertToTable),;
+connection.prepareStatement(sqlString,+,")").executeQuery(),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,Delete,selected,row,from,database,table
+*,@see,DatabaseConnection()
+*,@param,tableName
+*,@param,parameter
+*,@param,value
+*,@throws,java.sql.SQLException
+*/
+public,void,deleteEntryMatchingWithSpecifiedParameter(String,tableName,,String,parameter,,String,value),throws,java.sql.SQLException,{
+try,{
+connection.prepareStatement("DELETE,FROM,",+,tableName,+,",WHERE,",+,parameter,+,",=,",+,value).executeQuery(),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+//????????,??????,,?????????????,??????,,?,?????,????????,??????????,????????,????????????,??????,??,???????,?,????,,???????????????,?????????,???????,(???????,?,????,??????),;
+//?,???????????,??,???????,,???,?????????????,?????????,?,?????,????????,?????????????,????????,;
+//?,????????,,?????????????,???????????,??????????,????,????????,,?????,??????????,?????,??????.
+/**
+*,@param,tableName
+*,@param,fieldsOfEntryToReturn
+*,@param,columnToSearch
+*,@param,valueToSearch
+*,@return
+*,@throws,java.sql.SQLException
+*/
+public,java.util.ArrayList<String>,readSpecifiedFieldsInMatchingSingleEntry(String,tableName,,java.util.ArrayList<String>,fieldsOfEntryToReturn,,String,columnToSearch,,String,valueToSearch),throws,java.sql.SQLException,{
+String,fieldsToReturn,=,formStringOfSelectedValuesSeparatedByComma(fieldsOfEntryToReturn),;
+try,{
+java.sql.ResultSet,resultSet,=,connection.prepareStatement(
+"SELECT,",+,fieldsToReturn,+,"FROM,",+,tableName,+,",WHERE,(",+,columnToSearch,+,",=,",+,valueToSearch,+,",AND,rownum,=,1)"
+).executeQuery(),;,,,,,,,,,,,,
+return,parseResultSetEntry(resultSet),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,changing,selected,by,specified,value,of,specified,parameter,entry,in,specified,table
+*,@see,DatabaseConnection
+*,@param,tableName
+*,@param,fieldsToModify
+*,@param,value,of,specified,parameter
+*,@param,modifiedData
+*,@param,parameter,which,used,to,select,values,to,modify
+*,@throws,java.sql.SQLException
+*/
+public,void,modifySelectedEntry(String,tableName,,java.util.ArrayList<String>,fieldsToModify,,java.util.ArrayList<String>,modifiedData,,String,parameter,,String,value),throws,java.sql.SQLException{
+if,(fieldsToModify.size(),!=,modifiedData.size()),{
+System.err.println("Amount,of,modifying,data,not,equals,to,amount,of,fields,in,table,,cpecified,to,modify!"),;
+return,;
+}
+try,{
+String,sqlString,=,new,String("UPDATE,",+,tableName,+,",SET,",+,fieldsToModify.get(0),+,",=,",+,modifiedData.get(0)),;
+for,(int,numberOfEntry,=,1,;,numberOfEntry,<,fieldsToModify.size(),;,numberOfEntry++),{,,,,,,,,,,,,,,,,
+sqlString,+=,",,",+,fieldsToModify.get(numberOfEntry),+,",=,",+,modifiedData.get(numberOfEntry),;
+}
+sqlString,+=,",WHERE,",+,parameter,+,",=,",+,value,;
+System.out.println(sqlString),;
+connection.prepareStatement(sqlString).executeQuery(),;
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,disconnecting,from,database,,connection,to,which,was,established,in,constructor
+*,@see,DatabaseConnection
+*,@throws,java.sql.SQLException
+*/,,,,
+public,void,disconnectFromDB(),throws,java.sql.SQLException,{
+try,{
+connection.close(),;
+System.out.println("Connection,has,been,succesfully,closed."),;
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+}/*
+*,To,change,this,license,header,,choose,License,Headers,in,Project,Properties.
+*,To,change,this,template,file,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,kassa_sap,;
+import,jp.ne.so_net.ga2.no_ji.jcom.*,;
+/**
+*
+*,@author,Nikita
+*/
+public,class,CashDeviceConnection,{
+private,static,IDispatch,device,;
+/**
+*,method,realize,3,attempts,to,create,connection,to,casher,device,;
+*,@param,port,number,of,serial,port,of,casher,device,;
+*,@param,casherName,name,on,casher,;
+*,@throws,JComException
+*/
+public,CashDeviceConnection(String,port,,String,casherName),throws,JComException{
+if,(casherName.length(),>,37),{
+casherName,=,casherName.substring(0,36),;
+},,,,,,,,
+try,{
+java.util.Locale.setDefault(java.util.Locale.ENGLISH),;,,,,,,,,,,,,
+device,=,new,IDispatch(new,ReleaseManager(),,"M301Manager.Application"),;
+Object[],varParams_connect,=,new,Object[5],;
+varParams_connect[0],=,port,;
+varParams_connect[1],=,casherName,;
+varParams_connect[2],=,"1111111111",;
+varParams_connect[3],=,"0",;
+varParams_connect[4],=,"kassa",;
+device.put("ShowErrorMessages",,"0"),;
+Integer,errorsCounter,=,0,;
+while,(errorsCounter,<,3),{,,,,,,,,,,,,,,,,
+if,(device.get("Init",,varParams_connect).toString().equals("0")),{
+errorsCounter++,;
+}
+else,{
+break,;
+}
+}
+System.out.println("Number,of,errors,while,connected,to,casher:,",+,errorsCounter),;
+}
+catch,(JComException,jce),{
+throw,jce,;
+}
+},
+/**
+*,method,realize,splitting,specified,string,into,substrings,using,specified,splitter
+*,@param,text,which,will,be,splitted,to,substrings,by,specified,splitter
+*,@param,splitter,which,will,split,specified,text,to,substrings
+*,@return,java.io.ArrayList,with,substrings,of,specified,text-string,splitted,by,specified,splitter
+*/
+public,static,java.util.ArrayList<String>,parseStringToSubstrings,(String,text,,String,splitter){
+java.util.ArrayList<String>,parsedString,=,new,java.util.ArrayList<String>(),;
+String[],array,=,text.split(":"),;
+for,(String,member,:,array),{
+parsedString.add(member),;
+},,,,,,,,
+return,parsedString,;
+}
+/**
+*,method,realize,reading,strings,from,specified,file,and,splitting,its,to,substrings,by,specified,splitter
+*,@param,filePath,to,file,,which,content,strings,which,will,be,splitted
+*,@param,splitter,dividing,string,into,substrings
+*,@return,java.io.ArrayList,of,java.io.ArrayList's,,which,contents,resulting,substrings
+*,@throws,java.io.FileNotFoundException
+*,@throws,java.io.IOException
+*/
+public,java.util.ArrayList<java.util.ArrayList<String>>,readFileWithCheckParameters(String,filePath,,String,splitter),throws,java.io.FileNotFoundException,,java.io.IOException,{
+java.util.ArrayList,stringOfCheckParameters,=,new,java.util.ArrayList<>(),;
+String,sCurrentLine,;
+try,{
+java.io.BufferedReader,bufferedReader1,=,new,java.io.BufferedReader(new,java.io.FileReader(filePath)),;
+while,((sCurrentLine,=,bufferedReader1.readLine()),!=,null),{,,,,,,,,,,,,,,,,
+System.out.println(sCurrentLine),;
+java.util.ArrayList<String>,substrings,=,parseStringToSubstrings(sCurrentLine,,splitter),;
+java.util.AbstractList<String>,substrings1,=,new,java.util.ArrayList<String>(),;
+for,(String,member,:,substrings),{
+String,member1,=,member.replaceAll(",",,""),;,,,,,,,,,,,,,,,,,,,,
+substrings1.add(member1),;
+}
+for,(String,member1,:,substrings1),{
+System.out.println(member1),;
+}
+stringOfCheckParameters.add(substrings1),;
+}
+},catch,(java.io.FileNotFoundException,fnfe),{
+throw,fnfe,;
+},catch,(java.io.IOException,ioe),{
+throw,ioe,;
+}
+return,stringOfCheckParameters,;
+}
+/**
+*,method,realize,showing,specified,textg,on,casher,device,display,;
+*,@see,connectToCash,;
+*,@param,textToShow,some,symbols,can,be,unseen,on,display,,because,it,uses,only,10,7-segment,indicators,;
+*,@throws,JComException
+*/
+public,void,showTextOnCasherDisplay(String,textToShow),throws,JComException,{
+try,{
+if,(textToShow.length(),>,15),{
+textToShow,=,textToShow.substring(0,,14),;
+}
+Object[],displayParameters,=,{
+null,
+//???????,??????,???????,??-??,????,,???,??,???????,?????,???????,????????,10,????????
+textToShow
+},;
+device.method("PutToDisplay",,displayParameters),;
+}
+catch,(JComException,jce),{
+throw,jce,;
+}
+}
+/**
+*,method,realize,creating,new,check,with,specified,data,;
+*,@see,CashDeviceConnection,;
+*,@param,departament,name,of,departament,longer,than,15,symbols,should,be,cutted,;
+*,@throws,JComException
+*/
+public,void,openNewCheck(String,departament),throws,JComException,{
+if,(departament.length(),>,15),{
+departament,=,departament.substring(0,,14),;
+}
+try,{
+Object[],openCheckParameters,=,{
+departament
+},;
+device.method("OpenCheck",,openCheckParameters),;
+}
+catch,(JComException,jce),{
+throw,jce,;
+}
+}
+/**
+*,method,realize,adding,single,entry,to,check
+*,@see,CashDeviceConnection,;
+*,@param,goodsName,name,of,goods,;
+*,@param,quantity,count,of,goods,;
+*,@param,price,price,per,single,goods,;
+*,@param,Article,article,must,be,unique,per,every,name,of,goods,before,Z-report,will,be,done,;
+*,@throws,JComException
+*/
+public,void,addSingleArticleToCheck(String,goodsName,,Integer,quantity,,Integer,price,,Integer,Article),throws,JComException,{
+Object[],checkParameters,=,{
+goodsName,
+quantity.toString(),
+price.toString(),
+"0",
+"0",
+"0",
+Article.toString()
+},;
+device.method("FiscalLine",,checkParameters),;
+}
+/**
+*,method,realize,closing,completed,check
+*,@throws,jp.ne.so_net.ga2.no_ji.jcom.JComException
+*/
+public,void,closeCheck(),throws,,JComException,{
+try,{
+device.method("CloseCheck",,new,Object[0]),;
+},catch,(JComException,jce),{
+throw,jce,;
+},,,,,,,,
+}
+}/*
+*,To,change,this,license,header,,choose,License,Headers,in,Project,Properties.
+*,To,change,this,template,file,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,kassa_sap,;
+/**
+*
+*,@author,Nikita
+*/
+public,class,DatabaseConnection,{
+private,static,java.sql.Connection,connection,;
+/**,
+*,method,realize,connection,to,database,selected,in,its,parameters
+*,@return,connection,to,use,it,in,main,method
+*,@param,host,address,of,database,source
+*,@param,port,listener,port,on,database,source
+*,@param,sid,program,identifier,for,database,source
+*,@param,userName,enter,to,log,in,to,use,database
+*,@param,password,enter,to,log,in
+*,@throws,SQLException
+*/
+DatabaseConnection(String,userName,,String,password,,String,host,,String,port,,String,sid),throws,java.sql.SQLException,{
+try,{
+java.util.Locale.setDefault(java.util.Locale.ENGLISH),;,,,,,,,,,,,,
+oracle.jdbc.pool.OracleDataSource,ods,=,new,oracle.jdbc.pool.OracleDataSource(),;
+ods.setURL(
+"jdbc:oracle:oci:"
++,userName
++,"/"
++,password
++,"@"
++,host
++,":"
++,port
++,":"
++,sid),;
+connection,=,ods.getConnection(),;,,,,,,,,,,,,
+System.out.println("Connection,has,been,successfully,created."),;
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,reading,all,data,from,all,entries,in,table,in,database,,connection,to,which,was,established,in,method,connectToDB,;
+*,@throws,java.sql.SQLException
+*,@see,DatabaseConnection,;
+*/
+public,void,readAllDataFromTable(),throws,java.sql.SQLException,{
+try,{
+java.sql.ResultSet,resultSet,=,connection.prepareStatement("SELECT,*,FROM,ztest_table_kass").executeQuery(),;
+while,(resultSet.next())
+{,,,,,,,,,,,,,,,,
+System.out.println(resultSet.getInt("ID"),+,"\t"
++,resultSet.getString("FIRST_COLUMN"),+,"\t"
++,resultSet.getString("SECOND_COLUMN"),+,"\t"
++,resultSet.getString("THIRD_COLUMN"),+,"\t"
++,resultSet.getString("FOURTH_COLUMN")),;
+}
+},catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+},,
+/**
+*,method,realize,inserting,10,(from,0,to,9),entries,in,table,in,database,,connection,to,which,was,established,in,method,connectToDB,;
+*,@see,DatabaseConnection,;
+*,@throws,java.sql.SQLException
+*,
+*,don't,use,inserting,to,table,from,java,because,in,SAP,inserted,data,cannot,be,seen,;
+*/
+public,void,insertDataToTable(),throws,java.sql.SQLException,{
+try,{
+for,(int,i,=,0,;,i,<,10,;,i++),{
+connection.prepareStatement("INSERT,INTO,ztest_table_kass,VALUES,(300,",+,i,+,","
++,"'first_column_",+,i,+,"-th_value',"
++,"'second_column_",+,i,+,"-th_value',"
++,"'third_column_",+,i,+,"-th_value',"
++,"'fourth_column_",+,i,+,"-th_value')").executeQuery(),;
+}
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+//????????,??????,,?????????????,??????,,?,?????,????????,??????????,????????,????????????,??????,??,???????,?,????,,???????????????,?????????,???????,(???????,?,????,??????),;
+//?,???????????,??,???????,,??????????,???????,?,?????,????????,?????????????,????????,;
+//?,????????,,?????????????,???????????,??????????,????,????????,,?????,??????????,?????,??????.
+/**
+*,method,realize,creating,ArrayList,with,values,of,result,of,search,;
+*,@throws,java.sql.SQLException
+*,@see,DatabaseConnection,;
+*,@param,columnToSearch,with,next,parameter,used,to,realize,selection,of,specific,data,in,single,entry,;
+*,@param,valueToSearch,with,previous,parameter,used,to,realize,selection,of,specific,data,,in,single,entry,;
+*,@return,ArrayList,of,strings,,every,field,of,which,contains,data,from,result,of,search,;
+*/
+public,java.util.ArrayList<String>,readSingleArticleFromTable(String,columnToSearch,,String,valueToSearch),throws,java.sql.SQLException,{
+try,{
+java.sql.ResultSet,resultSet,=
+connection.prepareStatement(
+"SELECT,*,FROM,ztest_table_kass,WHERE,(,"
++,columnToSearch
++,",=,",
++,valueToSearch
++,",AND,rownum,=,1)").executeQuery(),;
+java.util.ArrayList<String>,result,=,new,java.util.ArrayList<>(),;,,,,,,,,,,,,
+while,(resultSet.next()),{
+result.add(Integer.toString(resultSet.getInt("ID"))),;
+result.add(resultSet.getString("FIRST_COLUMN")),;
+result.add(resultSet.getString("SECOND_COLUMN")),;
+result.add(resultSet.getString("THIRD_COLUMN")),;
+result.add(resultSet.getString("FOURTH_COLUMN")),;,,,,,,,,,,,,,,,,,,
+},,,,,,,,,,,,
+return,result,;
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+/**
+*,method,realize,disconnecting,from,database,,connection,to,which,was,established,in,constructor
+*,@DatabaseConnection
+*,@throws,java.sql.SQLException
+*/,,,,
+public,void,disconnectFromDB(),throws,java.sql.SQLException,{
+try,{
+connection.close(),;
+System.out.println("Connection,has,been,succesfully,closed."),;
+}
+catch,(java.sql.SQLException,sqle),{
+throw,sqle,;
+}
+}
+}/*
+*,To,change,this,license,header,,choose,License,Headers,in,Project,Properties.
+*,To,change,this,template,file,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,kassa_sap,;
+import,jp.ne.so_net.ga2.no_ji.jcom.JComException,;
+/**
+*
+*,@author,Nikita
+*/
+public,class,Kassa_sap,{
+/**
+*,@param,args,the,command,line,arguments
+*/
+public,static,void,main(String[],args),{
+System.out.println("Program,starts,to,work."),;
+System.out.println("Version,of,jre,is:,",+,System.getProperty("java.version")),;,,,,,,,,
+try,{
+java.util.Locale.setDefault(java.util.Locale.ENGLISH),;
+CashDeviceConnection,cashDeviceConnection,=,new,CashDeviceConnection("4",,"Test_casher"),;
+cashDeviceConnection.showTextOnCasherDisplay("Hello"),;,,,,,,,,,,,,
+java.util.ArrayList<java.util.ArrayList<String>>,checkParameters,=,cashDeviceConnection.readFileWithCheckParameters("D:\\Workspace\\File_with_check_parameters.txt",,":"),;,,,,,,,,,,,,
+cashDeviceConnection.openNewCheck("Test_departament"),;
+for,(java.util.ArrayList<String>,newArticle,:,checkParameters),{
+cashDeviceConnection.addSingleArticleToCheck(newArticle.get(0),,Integer.parseInt(newArticle.get(1)),,Integer.parseInt(newArticle.get(2)),,Integer.parseInt(newArticle.get(3))),;
+},,,,,,,,,,,,
+cashDeviceConnection.closeCheck(),;,,,,,,,,,,,,
+},catch,(JComException,jce),{
+System.err.println("It,seems,we,have,some,trouble,with,ECR:,",+,jce.getMessage()),;
+},catch,(java.io.FileNotFoundException,fnfe),{
+System.err.println("It,seems,we,have,some,trouble,with,opening,file:,",,+,fnfe.getMessage()),;
+},catch,(java.io.IOException,ioe),{
+System.err.println("It,seems,we,have,some,troubles,with,reading,file:,",+,ioe.getMessage()),;
+},,,,,,,,
+System.out.println("Program,ends,to,work."),;
+},,,,
+}/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,chchessserver,;
+import,net.silverfoxserver.core.log.LoggerLvl,;
+/**
+*
+*,@author,ACER-FX
+*/
+public,class,Globals,{
+/**
+*,
+*,
+*/
+public,static,String,os,;
+/**,
+*/
+public,static,int,currentLogLvl,=,LoggerLvl.ALL2,;
+/**,
+	,
+*/
+public,static,String,payUser,=,"",;
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,chchessserver,;
+import,System.Console,;
+import,System.ConsoleColor,;
+import,System.Xml.XmlDocument,;
+import,System.IO.Path,;
+import,System.Xml.XmlNode,;
+import,java.io.IOException,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,java.util.Locale,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.Globals,;
+import,net.silverfoxserver.core.filter.FilterWordManager,;
+import,org.jdom2.Document,;
+import,org.jdom2.Element,;
+import,org.jdom2.JDOMException,;
+import,net.silverfoxserver.core.util.SR,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.silverfoxserver.core.model.ITabModel,;
+import,net.silverfoxserver.core.socket.SocketAcceptor,;
+import,net.silverfoxserver.core.socket.SocketConnector,;
+import,net.wdqipai.server.ChChessLogic,;
+import,net.wdqipai.server.ChChessLPU,;
+import,net.wdqipai.server.ChChessRCLogic,;
+import,net.wdqipai.server.extfactory.TabModelFactory,;
+import,net.wdqipai.server.extmodel.TabModelByChChess,;
+import,net.wdqipai.server.handler.ChChessGameClientHandler,;
+import,net.wdqipai.server.handler.ChChessRCClientHandler,;
+import,org.jdom2.output.XMLOutputter,;
+/**
+*
+*,@author,ACER-FX
+*/
+public,class,Program,{
+//??????,???????
+public,static,final,String,GAME_NAME,=,"ChChess",;
+/**
+*,@param,args,the,command,line,arguments
+*/
+public,static,void,main(String[],args),throws,IOException{
+	
+try,{
+//os,,,,,,,,,,,,
+String,os,=,System.getProperty("os.name"),;
+Globals.os,=,os,;,,,,,,,,,,,,
+Console.WriteLine(os),;,,,,,,,,,,,,
+//??,,,,,,,,,,,,,,,,,
+Locale,machine,=,Locale.getDefault(),;
+String,lang,=,machine.getLanguage(),+,"-",+,machine.getCountry(),;//"zh-CN",;,//,System.Globalization.CultureInfo.InstalledUICulture.Name,;
+SR.init(lang),;
+//log
+Log.init(GAME_NAME,0),;
+Console.WriteLine(lang),;,,,,
+//copy,right
+System.out.println("wdmir.net,,,2003-2015"),;
+System.out.println("wdqipai.net,2009-2015"),;
+//ASCII???
+//http://www.network-science.de/ascii/
+System.out.println("-----------------------------------------------"),;
+System.out.println(",ad8888ba,,,88"),;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+System.out.println(",d8\"',,,,`\"8b,88"),;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+System.out.println("d8',,,,,,,,,,,88"),;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+System.out.println("88,,,,,,,,,,,,88,dPPYba,,,,,adPPYba,,,adPPYba,,,adPPYba,"),;,,
+System.out.println("88,,,,,,,,,,,,88P',,,,\"8a,a8P_____88,I8[,,,,\"\",I8[,,,,\"\""),;,,
+System.out.println("Y8,,,,,,,,,,,,88,,,,,,,88,8PP\"\"\"\"\"\"\",,`\"Y8ba,,,,`\"Y8ba,"),;,,,
+System.out.println(",Y8a.,,,,.a8P,88,,,,,,,88,\"8b,,,,,aa,aa,,,,]8I,aa,,,,]8I"),;,,
+System.out.println(",,`\"Y8888Y\"',,88,,,,,,,88,,`\"Ybbd8\"',`\"YbbdP\"',`\"YbbdP\"'"),;
+System.out.println("-----------------------------------------------"),;,,,,,,,,,,,,
+//
+String,configFileName,=,"ChChessServerConfig.xml",;
+//
+String,ApplicationBase,=,"",;//System.getProperty("user.dir"),;
+if(os.equals("Linux"))
+{
+//?Linux???????,????jar?????
+String,javaClassPath,=,System.getProperty("java.class.path"),;
+ApplicationBase,=,javaClassPath.substring(0,
+javaClassPath.lastIndexOf("/")
+),;
+}else{
+ApplicationBase,=,System.getProperty("user.dir"),;
+}
+//,,,,,,,,,,,,
+String,configFileFullPath,=,Path.Combine(ApplicationBase,,configFileName),;
+Console.WriteLine(
+SR.GetString(SR.getLoadFile(),configFileFullPath)
+),;
+XmlDocument,configDoc,=,new,XmlDocument(),;
+configDoc.Load(configFileFullPath),;
+XmlNode,node,=,configDoc.SelectSingleNode("/www.wdmir.net/group/main-server"),;
+XmlNode,rcNode,=,configDoc.SelectSingleNode("/www.wdmir.net/group/main-server/record-server"),;
+if,(null,==,node)
+{
+		System.err.println(SR.GetString(SR.getCan_not_find_node(),,"/www.wdmir.net/group/main-server")),;
+}
+if,(null,==,rcNode)
+{
+System.err.println(SR.GetString(SR.getCan_not_find_node(),"/www.wdmir.net/group/main-server/record-server")),;
+}
+Element[],ChildNodes,=,node.ChildNodes(),;
+String,ipAdr,=,ChildNodes[0].getText(),;
+int,port,=,Integer.parseInt(ChildNodes[1].getText()),;
+//
+Element[],rcChildNodes,=,rcNode.ChildNodes(),;
+String,proof,=,rcChildNodes[2].getText(),;
+java.util.ArrayList<ITabModel>,tabList,=,new,java.util.ArrayList<ITabModel>(),;
+//
+//????
+int,j,=,0,;
+int,k,=,0,;
+int,index,=,2,;,,,,,,,,,,,,,,,,,,,,,
+//for(int,i=2,;i<=6,;i++)
+for,(k,=,0,;k,<,5,;k++),,,
+{
+TabModelByChChess,Tab,=,(TabModelByChChess)TabModelFactory.Create(k),;
+//????
+int,tabRoom,=,ChildNodes[index].getChildren().size(),;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+//????,??????
+if,(0,>=,tabRoom)
+{
+System.out.println(SR.GetString(SR.getRoom_num_zero(),,"Tab",+,String.valueOf(k))),;
+}
+Tab.setRoomCount(tabRoom),;
+//????
+int,tabRoomG,=,Integer.parseInt(ChildNodes[index].getAttributeValue("g")),;
+Tab.setRoomG(tabRoomG),;
+//????
+float,tabRoomCostG,=,Float.parseFloat(ChildNodes[index].getAttributeValue("costG")),;
+if,(1,<=,tabRoomCostG)
+{
+System.out.println(SR.GetString(SR.getRoom_costG_more_than_1(),,"Tab",+,String.valueOf(k))),;
+}
+Tab.setRoomCostG(tabRoomCostG),;,,,,,,,,,,,,,,,
+//
+int,roomCount,=,Tab.getRoomCount(),;
+for,(j,=,0,;,j,<,roomCount,;,j++)
+{
+String,n,=,ChildNodes[index].getChildren().get(j).getAttributeValue("n"),;
+Tab.getRoomName()[j],=,n,;
+}
+tabList.add(Tab),;
+index++,;
+}
+//??
+String,tab4Room,=,(new,XMLOutputter()).outputString(ChildNodes[7]),;//.OuterXml,;,,,,,,,
+//??????
+String,allowPlayerGlessThanZeroOnGameOverStr,=,ChildNodes[8].getText(),;//InnerText,;
+boolean,allowPlayerGlessThanZeroOnGameOver,=,false,;
+if,(allowPlayerGlessThanZeroOnGameOverStr.toLowerCase().equals("no"),||
+allowPlayerGlessThanZeroOnGameOverStr.equals("0")
+)
+{
+allowPlayerGlessThanZeroOnGameOver,=,false,;
+//Console.WriteLine("??:?????????????"),;
+System.out.println(SR.GetString(SR.getAllow_playerG_less_than_zero_on_game_over())),;
+}
+else
+{
+allowPlayerGlessThanZeroOnGameOver,=,true,;
+}
+//cost???????????
+String,costUser,=,ChildNodes[11].getText(),;//InnerText,;
+if,(costUser.equals(""))
+{
+costUser,=,"admin",;
+//Console.WriteLine("??:????????????,????admin"),;
+System.out.println(SR.GetString(SR.getCost_default_set_to_admin())),;
+},,
+//
+String,payUser,=,ChildNodes[12].getText(),;//InnerText,;
+//
+int,reconnectionTime,=,Integer.parseInt((node.ChildNodes()[14].getText())),;
+if,(reconnectionTime,<,30)
+{
+System.out.println(SR.getRoom_reconnection_time_less_than_30()),;
+reconnectionTime,=,30,;
+}
+int,everyDayLogin,=,Integer.parseInt((node.ChildNodes()[15].getText())),;
+//Console.WriteLine("[Load,File],OK"),;
+System.out.println(SR.GetString(SR.getLoadFileSuccess())),;
+//
+//---------------,??????????,begin,---------------,
+XmlDocument,filterWordDoc,=,new,XmlDocument(),;
+String,filterWordFileFullPath,=,Path.Combine(ApplicationBase,,"FilterWordConfig.xml"),;
+filterWordDoc.Load(filterWordFileFullPath),;
+Console.WriteLine(
+SR.GetString(SR.getLoadFile(),filterWordFileFullPath)
+),;
+XmlNode,filterLvl,=,filterWordDoc.SelectSingleNode("/www.wdmir.net/pubmsg-filter-level"),;
+if,(null,==,filterLvl)
+{
+Console.ForegroundColor,=,ConsoleColor.Red,;
+System.out.println(SR.GetString(SR.getCan_not_find_node(),"/www.wdmir.net/pubmsg-filter-level")),;
+Console.ForegroundColor,=,ConsoleColor.Green,;
+}
+XmlNode,filterNode,=,filterWordDoc.SelectSingleNode("/www.wdmir.net/pubmsg-filter-word"),;
+if,(null,==,filterNode)
+{
+Console.ForegroundColor,=,ConsoleColor.Red,;
+System.out.println(SR.GetString(SR.getCan_not_find_node(),,"/www.wdmir.net/pubmsg-filter-word")),;
+Console.ForegroundColor,=,ConsoleColor.Green,;
+}
+XmlNode,filterMakeupNode,=,filterWordDoc.SelectSingleNode("/www.wdmir.net/pubmsg-filter-makeup-word"),;
+if,(null,==,filterMakeupNode)
+{
+Console.ForegroundColor,=,ConsoleColor.Red,;
+System.out.println(SR.GetString(SR.getCan_not_find_node(),,"/www.wdmir.net/pubmsg-filter-makeup-word")),;
+Console.ForegroundColor,=,ConsoleColor.Green,;
+}
+FilterWordManager.init(filterLvl.InnerText(),,
+filterNode.InnerText(),,
+filterMakeupNode.InnerText()),;
+//---------------,??????????,end,---------------,
+System.out.println(SR.GetString(SR.getLoadFileSuccess())),;
+//??????
+ChChessLogic.getInstance().init(node,tabList,costUser,allowPlayerGlessThanZeroOnGameOver,reconnectionTime,,everyDayLogin),;
+ChChessRCLogic.getInstance().init(ChChessLogic.getInstance()),;
+//
+ChChessLPU.getInstance().init(),;
+SocketConnector,connector,=,new,SocketConnector(proof),;
+connector.setHandler(new,ChChessRCClientHandler()),;
+//
+//SocketAcceptor,acceptor,=,new,SocketAcceptor(payUser,,SERVER_NAME,,allowAccessFromDomain,,true),;
+SocketAcceptor,acceptor,=,new,SocketAcceptor(GAME_NAME),;,
+acceptor.setHandler(new,ChChessGameClientHandler(),true),;//VcEnable
+//
+ChChessLogic.getInstance().setRCConnector(connector),;
+ChChessLogic.getInstance().setClientAcceptor(acceptor),;
+//?????????????????
+connector.connect("127.0.0.1",,9500),;
+//????????
+acceptor.bind(port,,false),;
+System.in.read(),;
+},catch,(Exception,exd,),{
+Console.ForegroundColor,=,ConsoleColor.Red,;
+Log.WriteStr2(SR.GetString(SR.getGame_svr_start_failed(),,exd.getMessage())),;
+Console.ForegroundColor,=,ConsoleColor.Green,;
+System.out.println(SR.GetString(SR.getGame_svr_failed_help())),;
+System.out.println("email:mir3@163.com"),;
+System.in.read(),;
+}
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server,;
+import,System.Xml.XmlDocument,;
+import,System.Xml.XmlHelper,;
+import,System.Xml.XmlNode,;
+import,System.Xml.XmlNodeList,;
+import,chchessserver.Program,;
+import,java.io.IOException,;
+import,java.io.UnsupportedEncodingException,;
+import,java.nio.charset.Charset,;
+import,java.time.LocalDate,;
+import,java.time.LocalTime,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.concurrent.ConcurrentHashMap,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.db.DBTypeModel,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.silverfoxserver.core.logic.ToSitDownStatus,;
+import,net.silverfoxserver.core.model.IChairModel,;
+import,net.silverfoxserver.core.model.ILookChairModel,;
+import,net.silverfoxserver.core.model.IRoomModel,;
+import,net.silverfoxserver.core.model.ITabModel,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,net.silverfoxserver.core.protocol.ClientAction,;
+import,net.silverfoxserver.core.protocol.RCClientAction,;
+import,net.silverfoxserver.core.protocol.ServerAction,;
+import,net.silverfoxserver.core.server.GameLPU,;
+import,net.silverfoxserver.core.server.GameLogicServer,;
+import,net.silverfoxserver.core.service.MailService,;
+import,net.silverfoxserver.core.socket.AppSession,;
+import,net.silverfoxserver.core.socket.SessionMessage,;
+import,net.silverfoxserver.core.socket.SocketAcceptor,;
+import,net.silverfoxserver.core.socket.SocketConnector,;
+import,net.silverfoxserver.core.socket.XmlInstruction,;
+//import,net.wdqipai.core.util.MD5ByJava,;
+import,net.silverfoxserver.core.util.SR,;
+import,net.silverfoxserver.core.service.Mail,;
+import,net.silverfoxserver.core.util.MD5ByJava,;
+import,net.silverfoxserver.core.util.RandomUtil,;
+import,net.wdqipai.server.extfactory.RoomModelFactory,;
+import,net.wdqipai.server.extfactory.UserModelFactory,;
+import,net.wdqipai.server.extmodel.AutoMatchRoomModel,;
+import,net.wdqipai.server.extmodel.QiziMoveRecord,;
+import,net.wdqipai.server.extmodel.QiziName,;
+import,net.wdqipai.server.extmodel.RoomModelByChChess,;
+import,net.wdqipai.server.extmodel.RoomStatusByChChess,;
+import,net.wdqipai.server.extmodel.RvarsStatus,;
+import,org.jboss.netty.buffer.ChannelBuffer,;
+import,org.jboss.netty.buffer.ChannelBuffers,;
+import,org.jboss.netty.channel.MessageEvent,;
+import,org.jdom2.Element,;
+import,org.jdom2.JDOMException,;
+import,org.jdom2.output.XMLOutputter,;
+/**
+*
+*,@author,FUX
+*/
+public,final,class,ChChessLogic,extends,GameLogicServer,{
+/**
+*,
+*/
+public,final,String,CLASS_NAME,=,ChChessLogic.class.getName(),;,
+/**
+*,??
+*,
+*/
+private,static,ChChessLogic,_instance,=,null,;
+public,static,ChChessLogic,getInstance()
+{
+if(null,==,_instance)
+{
+_instance,=,new,ChChessLogic(),;
+}
+return,_instance,;
+},,,,,,,
+/**
+*,
+*,@param,node
+*,@param,costUser
+*,@param,allowGlessThanZero
+*,@throws,org.jdom2.JDOMException
+*,@throws,java.io.IOException
+*/
+public,void,init(XmlNode,node,
+java.util.ArrayList<ITabModel>,tabList_,
+String,costUser,,
+boolean,allowGlessThanZero,
+int,reconnectionTime,,
+int,everyDayLogin),throws,JDOMException,,IOException
+{
+allowPlayerGlessThanZeroOnGameOver,=,allowGlessThanZero,;
+//
+initTabList(tabList_),;
+initRoomList(node,costUser,,reconnectionTime,,everyDayLogin),;
+}
+public,void,initTabList(java.util.ArrayList<ITabModel>,tabList_)
+{
+int,tabNum,=,tabList_.size(),;
+//
+if,(null,==,tabList)
+{
+tabList,=,new,ConcurrentHashMap(),;,
+}
+//
+for,(int,i,=,0,;,i,<,tabNum,;,i++)
+{
+tabList.put(tabList_.get(i).getId(),,tabList_.get(i)),;
+}
+}
+/**,
+	,???????
+??????????
+*/
+public,void,initRoomList(XmlNode,node,
+String,costUser,,
+int,reconnectionTime,,
+int,everyDayLogin),throws,JDOMException,,IOException
+{
+try
+{
+if,(null,==,roomList)
+{
+//
+roomList,=,new,ConcurrentHashMap(),;,
+}
+//-------------------------------------------
+int[],tabIndexList,=,{0,0,0,0,0},;
+//
+Element[],ChildNodes,=,node.ChildNodes(),;
+int,roomG,=,1,;
+float,roomCostG,=,0.0f,;,//??cost???0.0f
+String,roomCostU,=,costUser,;
+String,roomCostUid,=,costUser.equals(""),?,"",:,MD5ByJava.hash(costUser),;
+for(int,i=2,;i<=6,;i++){
+//????
+int,tabRoomCount,=,ChildNodes[i].getChildren().size(),;
+//????
+int,tabRoomG,=,Integer.parseInt(ChildNodes[i].getAttributeValue("g")),;
+//????
+float,tabRoomCostG,=,Float.parseFloat(ChildNodes[i].getAttributeValue("costG")),;
+//create,room
+tabIndexList[i-2],=,tabRoomCount,;
+initRoomList_createRoom(ChildNodes,i-2,tabRoomCount,
+tabRoomG,
+tabRoomCostG,roomCostU,roomCostUid,
+reconnectionTime,everyDayLogin),;
+}
+//-------------------------------------------,,,
+//
+String,tab4RoomXml,=,(new,XMLOutputter()).outputString(node.ChildNodes()[6]),;
+XmlDocument,tab4Doc,=,new,XmlDocument(),;
+tab4Doc.LoadXml(tab4RoomXml),;
+XmlNodeList,canJu,=,tab4Doc.SelectNodes("/tab4-room/incomplete"),;,,,,,,,,,,,,,,,,,,
+int,tab4Room,=,canJu.size(),;
+//tabIndexList[6],=,tab4Room,;
+//???????,?????????
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"initroomList",,exd.getMessage()),;
+}
+}
+public,void,initRoomList_createRoom(Element[],ChildNodes,int,tabIndex,
+int,tabRoomCount,
+int,tabRoomG,
+float,tabRoomCostG,,String,tabRoomCostU,String,tabRoomCostUid,,
+int,reconnectionTime,,int,everyDayLogin),throws,JDOMException,,IOException
+{
+for,(int,j,=,0,;,j,<,tabRoomCount,;,j++)
+{
+totalRoom++,;
+IRoomModel,room,;
+room,=,RoomModelFactory.Create(totalRoom,,tabIndex),;
+//refresh,room,gold,point,config
+room.setDig(tabRoomG),;
+room.setCostg(tabRoomCostG,,tabRoomCostU,,tabRoomCostUid),;
+//
+String,roomPwd,=,ChildNodes[2+tabIndex].getChildren().get(j).getAttributeValue("pwd"),;,
+String,roomName,=,ChildNodes[2+tabIndex].getChildren().get(j).getAttributeValue("n"),;
+//???VIP??
+String,vip,=,ChildNodes[2+tabIndex].getAttributeValue("vip"),;,,,,,,,,,,,,,
+room.setPwd(roomPwd),;
+room.setVip(parseInt(vip)),;
+room.setName(roomName),;
+room.setReconnectionTime(reconnectionTime),;
+room.setEveryDayLogin(everyDayLogin),;
+//save,to,list
+roomList.put(totalRoom,,room),;
+}//end,for
+}
+public,void,doorVerChk(AppSession,session,,XmlDocument,doc),throws,UnsupportedEncodingException
+{
+try
+{
+//doc
+//<msg,t='sys'><body,action='verChk',r='0'><ver,v='153',/></body></msg>
+//??????
+String,saction,=,ServerAction.apiOK,;
+//??
+Send(session,,XmlInstruction.fengBao(saction)),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+}
+catch,(UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorVerChk",,exd.getMessage()),;
+}
+}
+/**,
+?????????
+@param,session
+@param,doc
+*/
+public,void,doorLoadD(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//var,
+String,svrAction,=,"",;
+StringBuilder,contentXml,=,new,StringBuilder(),;
+//send
+svrAction,=,ServerAction.dList,;
+//
+java.util.ArrayList<String>,userStrIpPortList,=,CLIENTAcceptor.getUserList(),;
+//
+ArrayList<IUserModel>,idleList,=,new,ArrayList<>(),;
+//
+int,i,=,0,;
+int,len,=,userStrIpPortList.size(),;
+//???????
+for,(i,=,0,;,i,<,len,;,i++)
+{
+if,(logicHasUser(userStrIpPortList.get(i)))
+{
+boolean,userInRoom,=,false,;
+//--
+for,(Object,key,:,this.roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+//logicHasUserInRoom
+if,(this.logicQueryUserInRoom(userStrIpPortList.get(i),,room.getId()))
+{
+userInRoom,=,true,;
+break,;
+}
+},//end,for
+if,(!userInRoom)
+{
+idleList.add(logicGetUser(userStrIpPortList.get(i))),;
+}
+//--
+},//end,if
+},//end,for
+//????10?
+if,(idleList.size(),>,10)
+{
+java.util.Random,r,=,new,java.util.Random(RandomUtil.GetRandSeed()),;
+while,(idleList.size(),>,10)
+{
+idleList.remove(r.nextInt(idleList.size())),;
+}
+}
+//??
+len,=,idleList.size(),;
+for,(i,=,0,;,i,<,len,;,i++)
+{
+contentXml.append(((IUserModel)((idleList.get(i),instanceof,IUserModel),?,idleList.get(i),:,null)).toXMLString()),;
+}
+//??
+Send(session,,XmlInstruction.fengBao(svrAction,,contentXml.toString())),;
+//log
+Log.WriteStrBySend(svrAction,,session.getRemoteEndPoint().toString()),;
+}
+catch,(UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorLoadD",,exd.getMessage()),;
+}
+}
+/**,
+?????????
+@param,session
+@param,doc
+*/
+public,void,doorListRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//var
+String,svrAction,=,"",;
+StringBuilder,sb,=,new,StringBuilder(),;
+int,tab,=,0,;
+//read
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+//tab,=,(int)(node.ChildNodes[0].InnerText),;
+tab,=,Integer.parseInt(node.ChildNodes()[0].getText()),;
+//send
+svrAction,=,ServerAction.listHallRoom,;
+//
+sb.append("<t,autoMatchMode='0'>"),;
+for,(Object,key,:,roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+if,(room.getTab(),==,tab)
+{
+sb.append("<r,id='"),;
+sb.append(Integer.valueOf(room.getId())),;
+//???????????,???1
+sb.append("',n='"),;
+sb.append(room.getName()),;
+sb.append("',p='"),;
+sb.append(Integer.valueOf(room.getSomeBodyChairCount())),;
+sb.append("',look='"),;
+sb.append(Integer.valueOf(room.getSomeBodyLookChairCount())),;
+sb.append("',dg='"),;
+sb.append(room.getDig()),;
+sb.append("',pwdLen='"),;//?????????,0-?
+sb.append(String.valueOf(room.getPwd().length())),;
+sb.append("',/>"),;
+}
+}
+sb.append("</t>"),;
+//
+String,contentXml,=,sb.toString(),;
+//??
+Send(session,,XmlInstruction.fengBao(svrAction,,contentXml)),;
+//log
+Log.WriteStrBySend(svrAction,,session.getRemoteEndPoint().toString()),;
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorListRoom",,exd.getMessage()),;
+}
+}
+/**,
+????
+@param,clientTmp
+@param,xml
+@param,clients
+*/
+public,void,doorJoinRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//1.???????
+//2.??
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+//String,roomId,=,node.Attributes["id"].Value,;,,,,,,,,,,,,,,,,,,,,
+String,roomId,=,node.getAttributeValue("id"),;
+//???????,?????
+//String,pwd,=,node.Attributes["pwd"].Value,;
+String,pwd,=,node.getAttributeValue("pwd"),;
+//String,old,=,node.Attributes["old"].Value,;
+String,old,=,node.getAttributeValue("old"),;
+String,look,=,node.getAttributeValue("look"),;
+//
+String,saction,=,"",;
+StringBuilder,contentXml,=,new,StringBuilder(),;
+String,roomXml,=,"",;
+//??roomId???
+if,(!this.logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+//?????????
+//?????????,
+//??????old????????
+//????????????
+if,(this.logicHasRoom(Integer.parseInt(old)))
+{
+if,(this.logicHasUserInRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(old)))
+{
+logicLeaveRoom(session.getRemoteEndPoint().toString()),;
+}
+}
+//????
+//int,sitDownStatus,;//,=,ToSitDownStatus.Success0,;
+//int,tempRef_sitDownStatus,=,new,tangible.RefObject<ToSitDownStatus>(sitDownStatus),;
+String[],sitDownResult,=,this.logicHasIdleChairAndSitDown(Integer.parseInt(roomId),,session.getRemoteEndPoint().toString(),pwd,
+Boolean.valueOf(look)),;//,,tempRef_sitDownStatus),;
+boolean,sitDown,=,Boolean.valueOf(sitDownResult[0]),;
+int,sitDownStatus,=,Integer.parseInt(sitDownResult[1]),;
+if,(sitDown)
+{
+saction,=,ServerAction.joinOK,;
+//?????xml??
+IRoomModel,room,=,this.logicGetRoom(Integer.parseInt(roomId)),;
+roomXml,=,room.toXMLString(),;
+//???????status
+//contentXml.Append("<status>0</status>"),;
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+//??,uER,=,UserEnterRoom
+String,saction_uER,=,ServerAction.uER,;
+IUserModel,sitDownUser,=,logicGetUser(session.getRemoteEndPoint().toString()),;
+IChairModel,sitDownChair,=,room.getChair(sitDownUser),;
+String,chairAndUserXml,=,"",;//room.getChair(sitDownUser).toXMLString(),;
+if(null,==,sitDownChair)
+{
+ILookChairModel,sitDownLookChair,=,room.getLookChair(sitDownUser),;
+chairAndUserXml,=,sitDownLookChair.toXMLString(),;
+}else{
+chairAndUserXml,=,sitDownChair.toXMLString(),;
+}
+this.netTurnRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId),,saction_uER,,chairAndUserXml),;
+//Log.WriteStrByTurn("??",+,roomId,,"",,saction_uER),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,String.valueOf(room.getId()),,"",,saction_uER,
+sitDownUser.getNickName(),sitDownUser.getId()),;
+//??????????
+logicCheckGameStart(Integer.parseInt(roomId)),;
+}
+else
+{
+saction,=,ServerAction.joinKO,;
+//?????xml??
+roomXml,=,this.logicGetRoom(Integer.parseInt(roomId)).toXMLString(),;
+//code,?,status,?????,??as3,help???????code
+contentXml.append("<code>").append(String.valueOf(sitDownStatus)).append("</code>"),;
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+},//end,if
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorJoinRoom",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+public,void,doorJoinReconnectionRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//1.????????
+//2.??
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+//String,roomId,=,node.Attributes["id"].Value,;
+String,roomId,=,node.getAttributeValue("id"),;
+//????????
+//String,pwd,=,node.Attributes["pwd"].Value,;
+String,pwd,=,node.getAttributeValue("pwd"),;
+//String,old,=,node.Attributes["old"].Value,;
+String,old,=,node.getAttributeValue("old"),;
+//
+if,(!logicHasUser(session.getRemoteEndPoint().toString()))
+{
+return,;
+}
+IUserModel,user,=,logicGetUser(session.getRemoteEndPoint().toString()),;
+//
+String,saction,=,"",;
+StringBuilder,contentXml,=,new,StringBuilder(),;
+StringBuilder,filterContentXml,=,new,StringBuilder(),;
+String,roomXml,=,"",;
+String,filterRoomXml,=,"",;
+//???roomId??,
+roomId,=,"-1",;
+//search
+IRoomModel,room,=,null,;
+for,(Object,key,:,roomList.keySet())
+{
+//
+room,=,(IRoomModel)roomList.get(key),;
+if,(room.isWaitReconnection())
+{
+if,(room.getWaitReconnectionUser().getId().equals(user.getId()))
+{
+roomId,=,String.valueOf(room.getId()),;//room.Id.toString(),;
+break,;
+}
+}
+}
+//??????????
+//????????
+if,(!roomId.equals("-1"),&&,null,!=,room)
+{
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,????
+//ToSitDownStatus,sitDownStatus,=,ToSitDownStatus.forValue(0),;
+int,sitDownStatus,=,ToSitDownStatus.ProviderError3,;
+//tangible.RefObject<ToSitDownStatus>,tempRef_sitDownStatus,=,new,tangible.RefObject<ToSitDownStatus>(sitDownStatus),;
+String[],sitDownResult,=,logicHasIdleChairAndSitDown(Integer.parseInt(roomId),,session.getRemoteEndPoint().toString(),pwd,false),;//,,tempRef_sitDownStatus),;
+boolean,sitDown,=,Boolean.parseBoolean(sitDownResult[0]),;
+sitDownStatus,=,parseInt(sitDownResult[1]),;//tempRef_sitDownStatus.argvalue,;
+if,(sitDown)
+{
+//
+room.setWaitReconnection(null),;
+//
+saction,=,ServerAction.joinOK,;
+//?????xml??
+//IRoomModel,room,=,logicGetRoom(int.Parse(roomId)),;
+roomXml,=,room.toXMLString(),;
+roomXml,=,room.getFilterContentXml(session.getRemoteEndPoint().toString(),,roomXml),;
+//???????status
+//contentXml.Append("<status>0</status>"),;
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+//??
+Send(session,,XmlInstruction.fengBao(ServerAction.joinReconnectionOK,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+//??,uER,=,UserEnterRoom
+String,saction_uER,=,ServerAction.uER,;
+IUserModel,sitDownUser,=,logicGetUser(session.getRemoteEndPoint().toString()),;
+String,chairAndUserXml,=,room.getChair(sitDownUser).toXMLString(),;
+netTurnRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId),,saction_uER,,chairAndUserXml),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,roomId,,"",,saction_uER),;
+//??,waitReconnectionEnd
+netTurnRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId),,ServerAction.userWaitReconnectionRoomEnd,,chairAndUserXml),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,roomId,,"",,ServerAction.userWaitReconnectionRoomEnd,
+sitDownUser.getNickName(),sitDownUser.getId()),;
+}
+else
+{
+saction,=,ServerAction.joinKO,;
+//?????xml??
+roomXml,=,logicGetRoom(Integer.parseInt(roomId)).toXMLString(),;
+if,(sitDownStatus,==,ToSitDownStatus.NoIdleChair1)
+{
+//code,?,status,?????,??as3,help???????code
+contentXml.append("<code>1</code>"),;
+}
+else,if,(sitDownStatus,==,ToSitDownStatus.ErrorRoomPassword2)
+{
+contentXml.append("<code>2</code>"),;
+}
+else
+{
+contentXml.append("<code>3</code>"),;
+}
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+},//end,if
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+}
+else
+{
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,?????????
+saction,=,ServerAction.joinReconnectionKO,;
+//??
+Send(session,,XmlInstruction.fengBao(saction,,"")),;
+//
+Log.WriteStrBySend(saction,,session.getRemoteEndPoint().toString()),;
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+}
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorJoinReconnectionRoom",,exd.getMessage()),;
+}
+}
+/**,
+??????
+?????tab??,???????
+@param,session
+@param,doc
+*/
+public,void,doorAutoJoinRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//var,
+String,svrAction,=,"",;
+StringBuilder,contentXml,=,new,StringBuilder(),;
+String,roomXml,=,"",;
+int,tab,=,0,;
+//
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+//String,old,=,node.Attributes["old"].Value,;
+String,old,=,node.getAttributeValue("old"),;
+XmlNode,node2,=,doc.SelectSingleNode("/msg/body/tab"),;
+//tab,=,(int)(node2.ChildNodes[0].InnerText),;
+tab,=,Integer.parseInt(node2.InnerText()),;
+//?????????
+//?????????,
+//??????old????????
+//????????????
+if,(this.logicHasRoom(Integer.parseInt(old)))
+{
+if,(this.logicHasUserInRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(old)))
+{
+logicLeaveRoom(session.getRemoteEndPoint().toString()),;
+}
+}
+//????
+int,sitDownStatus,=,ToSitDownStatus.ProviderError3,;
+boolean,sitDown,=,false,;
+int,roomId,=,-1,;
+int,matchLvl,=,1,;
+int,matchMaxLvl,=,2,;
+//
+IUserModel,u,=,this.logicGetUser(session.getRemoteEndPoint().toString()),;
+ITabModel,t,=,this.logicGetTab(tab),;
+for(int,i=matchLvl,;i<=matchMaxLvl,;i++)
+{,,,,,,,,,,,,,,,,,,,,
+//????
+for,(Object,key,:,this.roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+if,(room.getTab(),==,tab)
+{
+if(room.getPwd().length(),==,0)
+{
+if(logicCanJoinRoom(u,room.getDig(),room.getCarryg()))
+{
+roomId,=,room.getId(),;
+//???????,?1??????
+//????????????,??????????
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,matchLvl
+String[],sitDownResult,=,logicHasIdleChairAndMatchSitDown(roomId,,i,,session.getRemoteEndPoint().toString()),;//,,tempRef_sitDownStatus),;
+sitDown,=,Boolean.valueOf(sitDownResult[0]),;
+sitDownStatus,=,Integer.parseInt(sitDownResult[1]),;//tempRef_sitDownStatus.argvalue,;
+if,(sitDown)
+{
+break,;
+},//end,if
+}
+}
+},//end,if
+},//end,for,,
+if,(sitDown)
+{
+break,;
+},//end,if
+}
+//
+if,(sitDown)
+{
+svrAction,=,ServerAction.joinOK,;
+//?????xml??
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+roomXml,=,room.toXMLString(),;
+//???????code
+//contentXml.Append("<code>0</code>"),;
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(svrAction,,contentXml.toString())),;
+//log
+Log.WriteStrBySend(svrAction,,session.getRemoteEndPoint().toString()),;
+//??,uER,=,UserEnterRoom
+String,svrAction_uER,=,ServerAction.uER,;
+IUserModel,sitDownUser,=,logicGetUser(session.getRemoteEndPoint().toString()),;
+String,chairAndUserXml,=,room.getChair(sitDownUser).toXMLString(),;
+this.netTurnRoom(session.getRemoteEndPoint().toString(),,roomId,,svrAction_uER,,chairAndUserXml),;
+//Log.WriteStrByTurn("??",,roomId.ToString(),,svrAction_uER),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,(new,Integer(room.getId())).toString(),,"",,svrAction_uER),;
+//??????????
+logicCheckGameStart(roomId),;
+}
+else
+{
+//
+svrAction,=,ServerAction.joinKO,;
+//?????xml??
+roomXml,=,this.logicGetRoom(roomId).toXMLString(),;
+//code,?,status,?????,??as3,help???????code
+contentXml.append("<code>").append(String.valueOf(sitDownStatus)).append("</code>"),;
+contentXml.append(roomXml),;
+//??
+Send(session,,XmlInstruction.fengBao(svrAction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(svrAction,,session.getRemoteEndPoint().toString()),;
+},//end,if
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorAutoJoinRoom",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+/**,
+????
+@param,session
+@param,doc
+*/
+public,void,doorLeaveRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+//1.???????
+//2.??
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+//String,roomId,=,node.Attributes["id"].Value,;
+String,roomId,=,node.getAttributeValue("id"),;
+//??roomId???
+if,(!this.logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+//sr,=,server,response
+String,srAction,=,"",;
+String,contentXml,=,"",;
+//????
+logicLeaveRoom(session.getRemoteEndPoint().toString()),;
+//??,,,,,,,,,,,,,,,,
+srAction,=,ServerAction.leaveRoom,;
+contentXml,=,"<rm,id='",+,roomId,+,"'/>",;
+Send(session,,XmlInstruction.fengBao(srAction,,contentXml)),;
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorLeaveRoom",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+/**,
+??????????
+@param,session
+@param,doc
+*/
+public,void,doorLeaveRoom_Svr(AppSession,session,,XmlDocument,doc)
+{
+try
+{
+//1.???????
+//2.??
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+//String,roomId,=,node.Attributes["id"].Value,;
+String,roomId,=,node.getAttributeValue("id"),;
+//sr,=,server,response
+String,srAction,=,"",;
+String,contentXml,=,"",;
+//????
+logicLeaveRoom_Svr(session.getRemoteEndPoint().toString()),;
+//??,,,,,,,,,,,,,,,,
+srAction,=,ServerAction.leaveRoom,;
+contentXml,=,"<rm,id='",+,roomId,+,"'/>",;
+Send(session,,XmlInstruction.fengBao(srAction,,contentXml)),;
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorLeaveRoom",,exd.getMessage()),;
+}
+}
+public,void,doorAutoMatchRoom(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+int,tab,=,0,;
+//
+XmlNode,node,=,doc.SelectSingleNode("/msg/body/room"),;
+String,old,=,node.getAttributeValue("old"),;
+XmlNode,node2,=,doc.SelectSingleNode("/msg/body/tab"),;
+tab,=,Integer.parseInt(node2.ChildNodes()[0].getText()),;
+//
+String,strIpPort,=,session.getRemoteEndPoint().toString(),;
+//
+int,roomOldId,=,Integer.parseInt(old),;
+AutoMatchRoomModel,amr,=,new,AutoMatchRoomModel(strIpPort,,tab,,roomOldId),;
+//
+if,(!getAutoMatchWaitList().containsKey(strIpPort))
+{
+getAutoMatchWaitList().put(strIpPort,,amr),;
+}
+else
+{
+getAutoMatchWaitList().put(strIpPort,,amr),;
+}
+}
+catch,(JDOMException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorAutoMatchRoom",,exd.getMessage()),;
+}
+}
+/**,
+??user,To,???user?????????
+@param,session
+@param,doc
+*/
+public,void,doorSetMvars(AppSession,session,,XmlDocument,doc,,SessionMessage,item),throws,UnsupportedEncodingException
+{
+try
+{
+String,strIpPort,=,session.getRemoteEndPoint().toString(),;
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+//String,roomId,=,node.Attributes["r"].Value,;
+String,roomId,=,node.ChildNodes()[0].getAttributeValue("r"),;
+XmlNode,node2,=,doc.SelectSingleNode("/msg/body/vars"),;
+//????
+if,(!this.logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+//
+IRoomModel,room,=,this.logicGetRoom(Integer.parseInt(roomId)),;
+//check
+if,(logicHasUser(strIpPort))
+{
+IUserModel,fromUser,=,logicGetUser(strIpPort),;
+//<val,n="5a105e8b9d40e1329780d62ea2265d8a",t="s"><![CDATA[askJoinRoom,100]]></val>
+//for,(int,i,=,0,;,i,<,node2.ChildNodes.size(),;,i++)
+for,(int,i,=,0,;,i,<,node2.ChildNodes().length,;,i++)
+{
+String,n,=,node2.ChildNodes()[i].getAttributeValue("n"),;
+String,v,=,node2.ChildNodes()[i].getText(),;//InnerText,;
+//???????
+IUserModel,fromUserCpy,=,UserModelFactory.Create(fromUser.getStrIpPort(),,fromUser.getId(),,0,,fromUser.getSex(),,fromUser.getAccountName(),,fromUser.getNickName(),,fromUser.getBbs(),,fromUser.getHeadIco()),;
+if,(logicHasUserById(v))
+{
+IUserModel,toUser,=,logicGetUserById(v),;
+IUserModel,toUserCpy,=,UserModelFactory.Create(toUser.getStrIpPort(),,toUser.getId(),,0,,toUser.getSex(),,toUser.getAccountName(),,toUser.getNickName(),,toUser.getBbs(),,toUser.getHeadIco()),;
+Mail().setMvars(fromUserCpy,,toUserCpy,,n,,room.getTab(),+,",",+,(new,Integer(room.getId())).toString()),;
+}
+else
+{
+//????
+}
+},//end,for
+},//end,if
+//??
+netSendMail(),;
+}
+catch,(JDOMException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorSetMvars",,exd.getMessage()),;
+}
+}
+/**,
+????
+?roomId?????
+?????????
+@param,session
+@param,doc
+*/
+public,void,doorSetRvars(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+String,strIpPort,=,session.getRemoteEndPoint().toString(),;
+//<vars><var,n='selectQizi',t='s'><![CDATA[red_pao_1]]></var></vars>
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+//String,roomId,=,node.Attributes["r"].Value,;
+String,roomId,=,node.getAttributeValue("r"),;
+//????
+if,(!logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+if,(!logicHasUserInRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId)))
+{
+return,;
+}
+XmlNode,nodeVars,=,doc.SelectSingleNode("/msg/body/vars"),;
+//
+IRoomModel,room,=,this.logicGetRoom(Integer.parseInt(roomId)),;
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+//save
+//????????
+int,i,;
+int,len,=,nodeVars.ChildNodes().length,;
+for,(i,=,0,;,i,<,len,;,i++)
+{
+String,n,=,nodeVars.ChildNodes()[i].getAttributeValue("n"),;//Attributes["n"].Value,;
+String,v,=,nodeVars.ChildNodes()[i].getText(),;//InnerText,;
+int,chkSta,=,room.chkVars(n,,v,user),;
+if(chkSta,!=,RvarsStatus.Success0)
+{
+//??
+String,koAction,=,ServerAction.rVarsUpdateKO,;
+String,koXml,=,"<room,id='",+,roomId,+,"'>",+,
+"<code>",+,String.valueOf(chkSta),+,"</code>",+
+"</room>",;
+Send(session,,XmlInstruction.fengBao(koAction,,koXml)),;
+//
+Log.WriteStrBySend(koAction,,session.getRemoteEndPoint().toString()),;
+return,;
+}
+}
+//
+for,(i,=,0,;,i,<,len,;,i++)
+{
+String,n,=,nodeVars.ChildNodes()[i].getAttributeValue("n"),;//Attributes["n"].Value,;
+String,v,=,nodeVars.ChildNodes()[i].getText(),;//InnerText,;
+room.setVars(n,,v),;
+}
+//
+RoomModelByChChess,r,=,(RoomModelByChChess)room,;
+//??
+String,okAction,=,ServerAction.rVarsUpdateOK,;
+String,okXml,=,"<room,id='",+,roomId,+,"'>",+,
+r.getMatchInfoXml(),+
+//nodeVars.OuterXml(),+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"</room>",;
+Send(session,,XmlInstruction.fengBao(okAction,,okXml)),;
+//
+Log.WriteStrBySend(okAction,,session.getRemoteEndPoint().toString()),;
+//??
+String,saction,=,ServerAction.rVarsUpdate,;
+String,contentXml,=,"<room,id='",+,roomId,+,"'>",+,
+r.getMatchInfoXml(),+
+nodeVars.OuterXml(),+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"</room>",;
+netTurnRoom(strIpPort,,Integer.parseInt(roomId),,saction,,contentXml),;
+//log
+//Log.WriteStrByTurn("??",,roomId,,saction),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,(new,Integer(room.getId())).toString(),,strIpPort,,saction),;
+//??,??????????
+//??????????
+logicCheckGameStart(Integer.parseInt(roomId)),;
+//??
+//??????????
+logicCheckGameOver(Integer.parseInt(roomId),,strIpPort),;
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorSetRvars",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+/**,
+????????
+??????????,?????????????
+???????????,???????
+???????????
+@param,session
+@param,doc
+*/
+public,void,doorPubMsg(AppSession,session,,XmlDocument,doc,,SessionMessage,item),throws,UnsupportedEncodingException
+{
+try
+{
+String,strIpPort,=,session.getRemoteEndPoint().toString(),;
+//<msg,t="sys"><body,action="pubMsg",r="7"><txt><![CDATA[dffddf]]></txt></body></msg>
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+//String,roomId,=,node.Attributes["r"].Value,;
+String,roomId,=,node.getAttributeValue("r"),;
+//????
+if,(!this.logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+if,(!this.logicHasUserInRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId)))
+{
+return,;
+}
+XmlNode,node2,=,doc.SelectSingleNode("/msg/body/txt"),;
+//filter
+//node2.InnerText,=,FilterWordManager.replace(node2.InnerText),;
+//node2.ChildNodes()[0].setText()
+String,saction,=,ServerAction.pubMsg,;
+String,contentXml,=,"<room,id='",+,roomId,+,"'>",+,node2.OuterXml(),+,"</room>",;
+netTurnRoom(strIpPort,,Integer.parseInt(roomId),,saction,,contentXml),;
+//log
+//Log.WriteStrByTurn("??",,roomId,,saction),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,roomId,,strIpPort,,saction),;
+}
+catch,(JDOMException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorPubMsg",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+public,void,doorPubAuMsg(AppSession,session,,XmlDocument,doc,,SessionMessage,item),throws,UnsupportedEncodingException
+{
+try
+{
+String,strIpPort,=,session.getRemoteEndPoint().toString(),;
+//<msg,t="sys"><body,action="pubMsg",r="7"><txt><![CDATA[dffddf]]></txt></body></msg>
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+//String,roomId,=,node.Attributes["r"].Value,;
+String,roomId,=,node.getAttributeValue("r"),;
+//????
+if,(!this.logicHasRoom(Integer.parseInt(roomId)))
+{
+return,;
+}
+if,(!this.logicHasUserInRoom(session.getRemoteEndPoint().toString(),,Integer.parseInt(roomId)))
+{
+return,;
+}
+XmlNode,node2,=,doc.SelectSingleNode("/msg/body/txt"),;
+String,saction,=,ServerAction.pubAuMsg,;
+String,contentXml,=,"<room,id='",+,roomId,+,"'>",+,node2.OuterXml(),+,"</room>",;
+netTurnRoom(strIpPort,,Integer.parseInt(roomId),,saction,,contentXml),;
+//log
+//Log.WriteStrByTurn("??",,roomId,,saction),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,roomId,,strIpPort,,saction),;
+}
+catch,(JDOMException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"doorPubAuMsg",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+/**,
+????,???SessionClosed
+??????session,???userList??
+@param,strIpPort
+*/
+public,void,logicLeaveRoom(String,strIpPort),throws,UnsupportedEncodingException
+{
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,logicGetUser(strIpPort),;
+boolean,hasUserInRoom,=,false,;
+//????????
+for,(Object,key,:,this.roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+hasUserInRoom,=,this.logicQueryUserInRoom(strIpPort,,room.getId()),;
+if,(hasUserInRoom)
+{
+//
+IChairModel,leave_Chair,=,room.getChair(user),;
+if(null,!=,leave_Chair)
+{
+int,leave_ChairId,=,leave_Chair.getId(),;//room.getChair(user).getId(),;
+//user,leave
+String,leave_UserStrIpPort,=,user.getStrIpPort(),;
+String,leave_saction,=,ServerAction.userGone,;
+//
+String,leave_ChairAndUserXml,;
+//?????,????????????
+leave_ChairAndUserXml,=,room.getChair(leave_ChairId).toXMLString(),;
+//send
+this.netTurnRoom(leave_UserStrIpPort,,room.getId(),,leave_saction,,leave_ChairAndUserXml),;
+//log
+//Log.WriteStrByTurn("??",,room.Id.ToString(),,leave_saction),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),,(new,Integer(room.getId())).toString(),,leave_saction),;
+if,(room.hasGamePlaying())
+{
+//????
+room.setGameOver(user),;
+//check,game,over
+logicCheckGameOver(room.getId(),,strIpPort),;
+}
+else
+{
+room.setLeaveUser(user),;
+}
+}else{
+//??????
+room.setLeaveUser(user),;
+}
+//?????,???return
+//return,;
+}
+},//end,for
+}
+}
+/**,
+??????,??????,??????,????
+@param,strIpPort,,,,,,,,
+*/
+public,void,logicLeaveRoom_Svr(String,strIpPort),throws,UnsupportedEncodingException
+{
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,logicGetUser(strIpPort),;
+boolean,hasUserInRoom,=,false,;
+//????????
+for,(Object,key,:,roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+hasUserInRoom,=,logicQueryUserInRoom(strIpPort,,room.getId()),;
+if,(hasUserInRoom)
+{
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,??????
+//
+int,leave_ChairId,=,room.getChair(user).getId(),;
+//user,leave
+String,leave_UserStrIpPort,=,user.getStrIpPort(),;
+String,leave_saction,=,ServerAction.userGone,;
+//
+String,leave_ChairAndUserXml,;
+//?????,????????????
+leave_ChairAndUserXml,=,room.getChair(leave_ChairId).toXMLString(),;
+//send
+netTurnRoom(leave_UserStrIpPort,,room.getId(),,leave_saction,,leave_ChairAndUserXml),;
+//log
+Log.WriteStrByTurn(SR.getRoom_displayName(),,String.valueOf(room.getId()),,leave_saction),;
+/*
+if,(room.hasGamePlaying())
+{,,,,,,,,,,,,,,,,,,,,,,,,,,,
+room.setGameOver(user),;
+logicCheckGameOver(room.Id,,strIpPort),;
+}
+else
+{
+room.setLeaveUser(user),;
+}*/
+room.setLeaveUser(user),;
+//?????,???return
+//return,;
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+}
+},//end,for
+}
+}
+/**,
+@param,roomId
+@param,strIpPort
+*/
+public,void,logicCheckGameStart(int,roomId),throws,UnsupportedEncodingException
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+boolean,allOk,=,room.hasAllReadyCanStart(),;
+if,(allOk)
+{
+//
+room.setGameStart(RoomStatusByChChess.GAME_START),;
+//
+String,saction,=,ServerAction.gST,;
+//?????xml??
+String,roomXml,=,this.logicGetRoom(roomId).toXMLString(),;
+//????,??????????,????,??
+this.netSendRoom(roomId,,saction,,roomXml),;
+//log
+//Log.WriteStrByMultiSend(saction,,strIpPort),;
+},//end,if
+}
+/**,
+??????????
+??????,?????
+*/
+public,void,logicCheckGameOver(int,roomId,,String,strIpPort),throws,UnsupportedEncodingException
+{
+if,(logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,game,over
+if,(room.hasGameOver())
+{
+String,game_result_saction,=,ServerAction.gOV,;
+String,game_result_xml,=,room.toXMLString(),;,//room.getMatchXml(),;
+String,game_result_xml_rc,=,room.getMatchResultXmlByRc(),;
+//send,?????,????,,,,,,,,,,,,,,,,,,,,
+RCConnector.Write(XmlInstruction.DBfengBao(RCClientAction.updG,,game_result_xml_rc)),;
+//
+Log.WriteStrByTurn(SR.getRecordServer_displayName(),,RCConnector.getRemoteEndPoint(),,RCClientAction.updG),;
+///#region,???????,check,ervery,day,login,,,,,,,,,,,,,,,,,,,,,,,,,,,
+StringBuilder,su,=,new,StringBuilder(),;
+su.append("<game,n='"),;
+su.append(Program.GAME_NAME),;
+su.append("',v='").append(room.getEveryDayLogin()),;
+su.append("',r='").append(String.valueOf(room.getId())),;
+su.append("'>"),;
+RoomModelByChChess,r,=,,(RoomModelByChChess)room,;
+java.util.ArrayList<IChairModel>,list,=,r.getChair(),;
+for,(int,c,=,0,;,c,<,list.size(),;,c++)
+{
+su.append(list.get(c).getUser().toXMLString()),;
+}
+su.append("</game>"),;
+RCConnector.Write(XmlInstruction.DBfengBao(RCClientAction.chkEveryDayLoginAndGet,,su.toString())),;
+Log.WriteStrByTurn(SR.getRecordServer_displayName(),,RCConnector.getRemoteEndPoint(),,RCClientAction.chkEveryDayLoginAndGet),;
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+						///#endregion
+//reset
+room.reset(),;
+//send
+this.netSendRoom(roomId,,game_result_saction,,game_result_xml),;
+//log
+Log.WriteStrByMultiSend(game_result_saction,,strIpPort,roomId),;
+},//end,if
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+},//end,if
+}
+/**,
+??????????
+@param,strIpPort
+@param,roomId
+@param,saction
+@param,content
+*/
+public,void,netTurnRoom(String,strIpPort,,int,roomId,,String,saction,,String,content),throws,UnsupportedEncodingException
+{
+try
+{
+//
+if,(this.logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+java.util.ArrayList<IUserModel>,allPeople,=,room.getAllPeople(),;
+for,(int,i,=,0,;,i,<,allPeople.size(),;,i++)
+{
+//??
+if,(!strIpPort.equals(allPeople.get(i).getstrIpPort()))
+{
+if,(netHasSession(allPeople.get(i).getstrIpPort()))
+{
+AppSession,userSession,=,this.netGetSession(allPeople.get(i).getstrIpPort()),;
+Send(userSession,,XmlInstruction.fengBao(saction,,content)),;
+},//end,if
+}
+},//end,for
+}
+}
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"netTurnRoom",,exd.getMessage()),;
+}
+}
+/**,
+???????????
+@param,roomId
+@param,saction
+@param,content
+*/
+public,void,netSendRoom(int,roomId,,String,saction,,String,content),throws,UnsupportedEncodingException
+{
+try
+{
+//
+if,(this.logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+java.util.ArrayList<IUserModel>,allPeople,=,room.getAllPeople(),;
+for,(int,i,=,0,;,i,<,allPeople.size(),;,i++)
+{
+AppSession,userSession,=,this.netGetSession(allPeople.get(i).getstrIpPort()),;
+Send(userSession,,XmlInstruction.fengBao(saction,,content)),;
+},//end,for
+}
+}
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"netSendRoom",,exd.getMessage()),;
+}
+}
+/**,
+????,????????,?????while
+*/
+public,void,netSendMail(),throws,UnsupportedEncodingException
+{
+try
+{
+String,svrAction,=,ServerAction.mVarsUpdate,;
+for,(int,i,=,0,;,i,<,Mail().Length(),;,i++)
+{
+Mail,m,=,Mail().GetMail(i),;
+//??
+if,(this.netHasSession(m.toUser.getStrIpPort()))
+{
+AppSession,userSession,=,this.netGetSession(m.toUser.getStrIpPort()),;
+Send(userSession,,XmlInstruction.fengBao(svrAction,,m.toXMLString())),;
+//
+Mail().DelMail(i),;
+i,=,0,;
+}
+else
+{
+//del
+int,daySpan,=,Math.abs(LocalDate.now().getDayOfYear(),-,m.dayOfYear),;
+//???????1?
+if,(daySpan,>,0)
+{
+Mail().DelMail(i),;
+i,=,0,;
+}
+}
+},//end,for
+}
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"netSendMail",,exd.getMessage()),;
+}
+}
+/**,
+	,???????????
+	,??,return,true????
+	,
+	,@param,account
+	,@return,
+	*/
+	public,boolean,logicHasUserByAccountName(String,accountName)
+	{
+		if,(this.CLIENTAcceptor.hasUserByAccountName(accountName))
+		{
+			Log.WriteStrByArgument(CLASS_NAME,,"logicHasUserByAccountName",,"accountName",,"?????????:",+,accountName),;
+			return,true,;
+		}
+		return,false,;
+	}
+/**,
+@param,id
+*/
+public,boolean,logicHasUserById(String,id)
+{
+if,(this.CLIENTAcceptor.hasUserById(id))
+{
+return,true,;
+}
+Log.WriteStrByArgument(CLASS_NAME,,"logicHasUserById",,"id",,SR.GetString(SR.getCan_not_find_id(),,id)),;
+return,false,;
+}
+/**,
+?????
+@param,roomId
+@return,
+*/
+public,boolean,logicHasRoom(int,roomId)
+{
+if,(roomList.containsKey(roomId))
+{
+return,true,;
+}
+//Log.WriteStrByArgument(CLASS_NAME,,"logicHasRoom",,"roomId",,"????roomId:",+,roomId.ToString(),+,"???"),;
+return,false,;
+}
+/**,
+?????????
+@param,strIpPort
+@param,roomId
+@return,
+*/
+public,boolean,logicHasUserInRoom(String,strIpPort,,int,roomId)
+{
+//?????
+if,(this.logicHasRoom(roomId))
+{
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+//????
+if,(this.logicHasUser(strIpPort))
+{
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+//?????????
+if,(room.hasPeople(user))
+{
+return,true,;
+},//end,if
+},//end,if
+},//end,if
+//Log.WriteStrByArgument(CLASS_NAME,,"logicHasUserInRoom",,"roomId",,"?roomId:",+,roomId.ToString(),+,"???????strIpPort:",+,strIpPort,+,"???"),;
+return,false,;
+}
+/**,
+?logicHasUserInRoom??????,?????Log.WriteStrByArgument
+?????????????
+@param,strIpPort
+@param,roomId
+@return,
+*/
+public,boolean,logicQueryUserInRoom(String,strIpPort,,int,roomId)
+{
+//?????
+if,(this.logicHasRoom(roomId))
+{
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+//????
+if,(this.logicHasUser(strIpPort))
+{
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+//?????????
+if,(room.hasPeople(user))
+{
+return,true,;
+},//end,if
+},//end,if
+},//end,if
+return,false,;
+}
+/**,
+????
+@param,strIpPort
+*/
+public,void,logicRemoveUser(String,strIpPort)
+{
+this.CLIENTAcceptor.removeUser(strIpPort),;
+}
+/**,
+???????
+@param,roomId
+@param,pos
+@return,
+*/
+public,boolean,logicHasIdleChair(int,roomId,Boolean,look)
+{
+if,(logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+if(look)
+{
+if,(room.getLookChairCount(),>,room.getSomeBodyLookChairCount())
+{
+return,true,;
+}
+else
+{
+return,false,;
+},//end,if
+}
+else
+{
+if,(room.getChairCount(),>,room.getSomeBodyChairCount())
+{
+return,true,;
+}
+else
+{
+return,false,;
+},//end,if
+}
+},//end,if
+return,false,;
+}
+/**,
+????????,???????????
+@param,roomId
+@return,
+*/
+public,int[],logicHasIdleMatchChair(int,roomId)
+{
+int[],res,=,new,int[],{0,,0},;
+if,(logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+if,(room.getChairCount(),>,room.getSomeBodyChairCount())
+{
+res[0],=,1,;,//true
+res[1],=,room.getChairCount(),-,room.getSomeBodyChairCount(),;
+return,res,;
+}
+else
+{
+res[0],=,0,;,//false
+res[1],=,0,;
+return,res,;
+},//end,if
+},//end,if
+return,res,;
+}
+/**,
+????????????
+@param,roomId
+@return,
+*/
+public,boolean,logicHasAllReadyRoom(int,roomId)
+{
+if,(logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+return,room.hasAllReadyCanStart(),;
+}
+return,false,;
+}
+/**
+*,
+*,
+*,@param,tabId
+*,@return,
+*/
+public,ITabModel,logicGetTab(int,tabId)
+{
+ITabModel,tab,=,(ITabModel)tabList.get(tabId),;
+return,tab,;
+}
+/**,
+??????
+????????,hasRoom,??????????
+@param,roomId
+@return,
+*/
+public,IRoomModel,logicGetRoom(int,roomId)
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(roomId),;
+return,room,;
+}
+/**,
+???????,?????
+*,@param,roomId
+*,@param,strIpPort
+*,@param,roomPwd
+*,@param,look
+@return,[isOk,ToSitDownStatus]
+*/
+public,String[],logicHasIdleChairAndSitDown(int,roomId,,String,strIpPort,String,roomPwd,Boolean,look)//,,int,sitDownStatus)
+{
+String[],arr,={"",""},;
+boolean,isOk,;
+if(look)
+{
+//???
+if,(this.logicHasIdleChair(roomId,look))
+{
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+//??
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+isOk,=,false,;//room.setSitDown(user),;
+//
+if(!room.getPwd().equals(roomPwd))
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ErrorRoomPassword2),;
+return,arr,;,,,,,,,,,,,,,,,,,,,,,,,,
+}
+if(room.getVip(),!=,user.getVIP())
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.VipRoom6),;
+return,arr,;,,,,
+}
+//
+isOk,=,room.setSitDown(user,look),;
+if,(isOk)
+{
+arr[0],=,Boolean.toString(true),;
+arr[1],=,String.valueOf(ToSitDownStatus.Success0),;
+return,arr,;
+}
+else{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+return,arr,;
+}
+},//end,if
+}
+else
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.NoIdleChair1),;
+return,arr,;
+}
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+}else
+{
+//???
+if,(this.logicHasIdleChair(roomId,look))
+{
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+//??
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+isOk,=,false,;//room.setSitDown(user),;
+//
+if,(room.isWaitReconnection())
+{
+if,(!room.getWaitReconnectionUser().getId().equals(user.getId()))
+{
+//sitDownStatus.argvalue,=,ToSitDownStatus.WaitReconnectioRoom5,;
+//return,false,;
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.WaitReconnectioRoom5),;
+return,arr,;
+}
+}
+//
+if(!room.getPwd().equals(roomPwd))
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ErrorRoomPassword2),;
+return,arr,;,,,,,,,,,,,,,,,,,,,,,,,,
+}
+if(room.getVip(),!=,user.getVIP())
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.VipRoom6),;
+return,arr,;,,,,
+}
+//
+isOk,=,room.setSitDown(user,look),;
+if,(isOk)
+{
+arr[0],=,Boolean.toString(true),;
+arr[1],=,String.valueOf(ToSitDownStatus.Success0),;
+return,arr,;
+}
+else{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+return,arr,;
+}
+},//end,if
+}
+else
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.NoIdleChair1),;
+return,arr,;
+}
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+}
+return,arr,;
+}
+/**,
+????????,??1?????????
+@param,roomId
+@param,strIpPort
+@param,sitDownStatus
+@return,
+*/
+public,String[],logicHasIdleChairAndMatchSitDown(int,roomId,,int,matchLvl,,String,strIpPort)//,,int,sitDownStatus)
+{
+//???
+int[],matchRes,=,this.logicHasIdleMatchChair(roomId),;
+String[],arr,=,{"",""},;,
+boolean,matchRes_0,=,0,!=,matchRes[0],;
+if,(matchRes_0,&&,matchLvl,==,matchRes[1])
+{
+IRoomModel,room,=,this.logicGetRoom(roomId),;
+//??
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,this.logicGetUser(strIpPort),;
+//????????,??????
+if(!room.getPwd().equals(""))
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ErrorRoomPassword2),;
+return,arr,;,,,,,,,,,,,,,,,,,,,,,,,,
+}
+//
+boolean,isOk,=,room.setSitDown(user,false),;
+if,(isOk)
+{
+arr[0],=,Boolean.toString(true),;
+arr[1],=,String.valueOf(ToSitDownStatus.Success0),;
+return,arr,;
+}
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+return,arr,;
+},//end,if
+}
+else
+{
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.NoIdleChair1),;
+return,arr,;
+}
+arr[0],=,Boolean.toString(false),;
+arr[1],=,String.valueOf(ToSitDownStatus.ProviderError3),;
+return,arr,;
+}
+/**,
+??????????????
+@param,roomId
+*/
+private,boolean,logicChkRoomByDeadPeople(int,roomId)
+{
+boolean,hasDeadPeople,=,false,;
+//?????
+if,(logicHasRoom(roomId))
+{
+IRoomModel,room,=,logicGetRoom(roomId),;
+java.util.ArrayList<IChairModel>,chairs,=,room.findUser(),;
+int,jLen,=,chairs.size(),;
+for,(int,j,=,0,;,j,<,jLen,;,j++)
+{
+if,(!chairs.get(j).getUser().getId().equals(""))
+{
+String,strIpPort,=,chairs.get(j).getUser().getStrIpPort(),;
+if,(!netHasSession(strIpPort))
+{
+hasDeadPeople,=,true,;
+Log.WriteStrByWarn("??",+,(new,Integer(roomId)).toString(),+,"????"),;
+break,;
+}
+}
+}
+},//end,if
+return,hasDeadPeople,;
+}
+public,Boolean,logicCanJoinRoom(IUserModel,u,int,difen,int,carry)
+{
+//??????0?,??????
+//????????
+//if(Number(g),<,difen)
+return,u.getG(),>=,carry,;
+}
+/**,
+????????,??????
+@param,strIpPort
+*/
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,Java,annotations,will,not,correspond,to,.NET,attributes:
+//[MethodImpl(MethodImplOptions.Synchronized)]
+public,void,logicSessionClosed(String,strIpPort),throws,UnsupportedEncodingException
+{
+try
+{
+if,(logicHasUser(strIpPort))
+{
+IUserModel,user,=,logicGetUser(strIpPort),;
+synchronized,(user)
+{
+boolean,hasUserInRoom,=,false,;
+//????????
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,hasUserInRoom
+for,(Object,key,:,roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(key),;
+hasUserInRoom,=,logicQueryUserInRoom(strIpPort,,room.getId()),;
+if,(hasUserInRoom)
+{
+IChairModel,leave_Chair,=,room.getChair(user),;
+if(null,!=,leave_Chair)
+{
+//
+int,leave_ChairId,=,room.getChair(user).getId(),;
+//user,leave
+String,leave_UserStrIpPort,=,user.getStrIpPort(),;
+String,leave_saction,=,ServerAction.userGone,;
+//
+String,leave_ChairAndUserXml,=,room.getChair(leave_ChairId).toXMLString(),;
+String,leave_ChairAndUserAnReconnectionTimeXml,=,leave_ChairAndUserXml,+,
+"<WaitReconnectionTime,Cur='",+,String.valueOf(room.getCurWaitReconnectionTime()),+,
+"',Max='",+,String.valueOf(room.getMaxWaitReconnectionTime()),+,"'/>",;
+if,(room.hasGamePlaying())
+{
+//?????????
+if,(room.isWaitReconnection())
+{
+IUserModel,waitUser,=,room.getWaitReconnectionUser().clone(),;
+String,waitUserIpPort,=,waitUser.getstrIpPort(),;
+room.setWaitReconnection(null),;
+//????
+room.setGameOver(waitUser),;
+room.setGameOver(user),;
+//check,game,over
+logicCheckGameOver(room.getId(),,strIpPort),;
+//
+room.setLeaveUser(waitUser),;
+}
+else
+{
+room.setWaitReconnection(user.clone()),;
+//send
+netTurnRoom(leave_UserStrIpPort,,room.getId(),,ServerAction.userWaitReconnectionRoomStart,,
+leave_ChairAndUserAnReconnectionTimeXml),;
+}
+//????
+//room.setGameOver(user),;
+//check,game,over
+//logicCheckGameOver(room.getId(),,strIpPort),;
+}
+//?????,????????????
+leave_ChairAndUserXml,=,room.getChair(leave_ChairId).toXMLString(),;
+//save
+room.setLeaveUser(user),;
+//send
+netTurnRoom(leave_UserStrIpPort,,room.getId(),,leave_saction,,leave_ChairAndUserXml),;
+//log
+//Log.WriteStrByTurn("??",,room.Id.ToString(),,leave_saction),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,(new,Integer(room.getId())).toString(),,strIpPort,,leave_saction),;
+}//end,if
+else{
+//??????
+//save
+room.setLeaveUser(user),;
+}
+//??break,?????,????
+//break,;
+}
+},//end,for
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+//remove
+logicRemoveUser(strIpPort),;
+}
+}
+}
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"logicSessionClosed",,exd.getMessage(),exd.getStackTrace()),;
+}
+}
+public,void,TimedAutoMatchRoom()
+{
+try
+{
+int,count,=,getAutoMatchWaitList().keySet().size(),;
+Object[],keysList,;//,=,new,Object[count],;
+//getAutoMatchWaitList().keySet().CopyTo(keysList,,0),;
+keysList,=,getAutoMatchWaitList().keySet().toArray(),;
+//
+int,keysLen,=,keysList.length,;
+int,i,=,0,;
+//
+IRoomModel,room,=,null,;
+IRoomModel,roomChk,=,null,;
+//foreach,(object,amrKey,in,AutoMatchWaitList().Keys)
+for,(i,=,0,;,i,<,keysLen,;,i++)
+{
+AutoMatchRoomModel,amr,=,(AutoMatchRoomModel)getAutoMatchWaitList().get(keysList[i]),;
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,????
+//??????
+if,(!netHasSession(amr.getStrIpPort()),||,!logicHasUser(amr.getStrIpPort()))
+{
+getAutoMatchWaitList().remove(amr.getStrIpPort()),;
+continue,;
+}
+IUserModel,user,=,logicGetUser(amr.getStrIpPort()),;
+AppSession,userSession,=,netGetSession(amr.getStrIpPort()),;
+//?????????
+for,(Object,roomKey,:,roomList.keySet())
+{
+roomChk,=,(IRoomModel)roomList.get(roomKey),;
+if,(logicQueryUserInRoom(user.getStrIpPort(),,roomChk.getId()))
+{
+//?????????????
+getAutoMatchWaitList().remove(amr.getStrIpPort()),;
+continue,;
+}
+}
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+//????
+//????
+//,ToSitDownStatus,sitDownStatus,=,ToSitDownStatus.ProviderError3,;
+int,sitDownStatus,=,ToSitDownStatus.ProviderError3,;
+//boolean,sitDown,=,false,;
+int,roomId,=,-1,;
+int,matchLvl,=,1,;
+Boolean,sitDown,=,TimedAutoMatchRoom_Sub_Match(amr,,user,,userSession,,matchLvl),;
+if,(sitDown)
+{
+getAutoMatchWaitList().remove(amr.getStrIpPort()),;
+continue,;
+}
+},//end,for
+}
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"TimedAutoMatchRoom",,exd.getMessage()),;
+}
+}
+private,Boolean,TimedAutoMatchRoom_Sub_Match(AutoMatchRoomModel,amr,,
+IUserModel,user,,
+AppSession,userSession,,
+int,matchLvl)
+{
+Boolean,sitDown,=,false,;
+for,(Object,roomKey,:,roomList.keySet())
+{
+IRoomModel,room,=,(IRoomModel)roomList.get(roomKey),;
+//?????1?
+if,(amr.getTab(),==,room.getTab())
+{
+int,roomId,=,room.getId(),;
+//????????,?????????????,???????
+if,(amr.getRoomOldId(),==,roomId)
+{
+continue,;
+}
+//???????????
+if,(room.hasGamePlaying())
+{
+continue,;
+}
+//???????????
+if,(room.isWaitReconnection())
+{
+continue,;
+}
+//?????????
+if,(logicChkRoomByDeadPeople(roomId))
+{
+continue,;
+}
+//???????,?1??????
+//????????????,??????????
+String[],sitDownResult,=,logicHasIdleChairAndMatchSitDown(roomId,,matchLvl,,userSession.getRemoteEndPoint().toString()),;
+int,sitDownStatus,=,Integer.parseInt(sitDownResult[0]),;//tempRef_sitDownStatus.argvalue,;
+sitDown,=,Boolean.valueOf(sitDownResult[1]),;
+if,(sitDown)
+{
+TimedAutoMatchRoom_Sub_SitDown_Ok(room,,userSession),;
+break,;
+},//end,if
+},//end,if
+},//end,for
+return,sitDown,;
+}
+/**,
+TimedAutoMatch????,????
+@param,room
+@param,userSession
+*/
+private,void,TimedAutoMatchRoom_Sub_SitDown_Ok(IRoomModel,room,,AppSession,userSession)
+{
+try
+{
+String,svrAction,=,ServerAction.joinOK,;
+//
+StringBuilder,contentXml,=,new,StringBuilder(),;
+//?????xml??
+//IRoomModel,room,=,logicGetRoom(roomId),;
+String,roomXml,=,room.toXMLString(),;
+//???????code
+//contentXml.Append("<code>0</code>"),;
+contentXml.append(roomXml),;
+//??
+Send(userSession,,XmlInstruction.fengBao(svrAction,,contentXml.toString())),;
+//log
+Log.WriteStrBySend(svrAction,,userSession.getRemoteEndPoint().toString()),;
+//??,uER,=,UserEnterRoom
+String,svrAction_uER,=,ServerAction.uER,;
+IUserModel,sitDownUser,=,logicGetUser(userSession.getRemoteEndPoint().toString()),;
+String,chairAndUserXml,=,room.getChair(sitDownUser).toXMLString(),;
+netTurnRoom(userSession.getRemoteEndPoint().toString(),,room.getId(),,svrAction_uER,,chairAndUserXml),;
+Log.WriteStrByTurn(SR.getRoom_displayName(),+,String.valueOf(room.getId()),,"",,svrAction_uER),;
+}
+catch,(UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"TimedAutoMatch_Sub_SitDown",,exd.getMessage()),;
+}
+}
+/**
+*,??
+*/
+public,void,TimedRoomJuShi()
+{
+try
+{
+IRoomModel,room,;
+for,(Object,roomKey,:,roomList.keySet())
+{
+room,=,(IRoomModel)roomList.get(roomKey),;
+String,roomStatus,=,room.getStatus(),;
+if(roomStatus.equals(RoomStatusByChChess.GAME_START))
+{
+if,(!room.isWaitReconnection())
+{
+RoomModelByChChess,r,=,(RoomModelByChChess)room,;
+String,turnUserId,=,r.getTurn(),;
+IUserModel,turnUser,=,this.logicGetUserById(turnUserId),;
+String,turnUserIpPort,=,"",;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+if(turnUser,!=,null){
+turnUserIpPort,=,turnUser.getStrIpPort(),;
+}
+String,black,=,r.getBlack(),;
+String,red,=,r.getRed(),;
+if(turnUserId.equals(red))
+{,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+//clock
+int,curRedJuShiTime,=,r.getCurRedJuShiTime(),+,GameLPU.DELAY,;
+r.setCurRedJuShiTime(curRedJuShiTime),;
+if(r.getCurRedJuShiTime(),>,r.getMaxJuShiTime())
+{
+//????,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+r.setGameOver(QiziName.red_jiang_1),;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+//check,game,over
+logicCheckGameOver(room.getId(),,turnUserIpPort),;
+}
+}else,if(turnUserId.equals(black))
+{
+//clock
+int,curBlackJuShiTime,=,r.getCurBlackJuShiTime(),+,GameLPU.DELAY,;
+r.setCurBlackJuShiTime(curBlackJuShiTime),;
+//,,,,,,,,,,,,,,,,,,,,,,,,,,>=
+if,(r.getCurBlackJuShiTime(),>,r.getMaxJuShiTime())
+{
+//????,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+r.setGameOver(QiziName.black_jiang_1),;
+//check,game,over
+logicCheckGameOver(room.getId(),,turnUserIpPort),;
+}
+}
+}
+}
+}//end,for
+},
+catch,(Exception,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"TimedRoomJuShi",,exd.getMessage()),;
+}
+}
+/**,
+??????,????????
+*/
+public,void,TimedWaitReconnection()
+{
+try
+{
+IRoomModel,room,;
+for,(Object,roomKey,:,roomList.keySet())
+{
+room,=,(IRoomModel)roomList.get(roomKey),;
+if,(room.isWaitReconnection())
+{
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,??????
+//room.CurWaitReconnectionTime,+=,GameGlobals.msgTimeDelay,;
+int,curWaitReconnectionTime,=,room.getCurWaitReconnectionTime(),+,GameLPU.DELAY,;
+room.setCurWaitReconnectionTime(curWaitReconnectionTime),;
+if,(room.getCurWaitReconnectionTime(),>=,room.getMaxWaitReconnectionTime())
+{
+//
+IUserModel,waitUser,=,room.getWaitReconnectionUser().clone(),;
+String,waitUserIpPort,=,waitUser.getStrIpPort(),;
+room.setWaitReconnection(null),;
+//????,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+room.setGameOver(waitUser),;
+//check,game,over
+logicCheckGameOver(room.getId(),,waitUserIpPort),;
+//
+room.setLeaveUser(waitUser),;
+}
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#endregion
+}
+}
+}
+catch,(UnsupportedEncodingException,exd)
+{
+Log.WriteStrByException(CLASS_NAME,,"TimedWaitReconnection",,exd.getMessage()),;
+}
+}
+public,void,trace(String,value)
+{
+System.out.println(value),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server,;
+import,net.silverfoxserver.core.socket.AppSession,;
+import,net.silverfoxserver.core.socket.SessionMessage,;
+import,net.silverfoxserver.core.log.Log,;
+import,System.Xml.XmlDocument,;
+import,java.io.UnsupportedEncodingException,;
+import,java.util.Timer,;
+import,net.silverfoxserver.core.array.QueueMethod,;
+import,net.silverfoxserver.core.array.SessionMsgQueue,;
+import,net.silverfoxserver.core.array.SmqOppResult,;
+import,net.silverfoxserver.core.protocol.ClientAction,;
+import,net.silverfoxserver.core.protocol.DBServerAction,;
+import,net.silverfoxserver.core.protocol.RCServerAction,;
+import,net.silverfoxserver.core.protocol.ServerAction,;
+import,net.silverfoxserver.core.server.GameLPU,;
+import,net.wdqipai.server.extmodel.*,;
+import,org.jboss.netty.channel.ChannelEvent,;
+import,org.jboss.netty.channel.MessageEvent,;
+/**,
+?????LPU,Logic,process
+*/
+public,class,ChChessLPU,extends,GameLPU
+{
+/**
+*,??
+*,
+*/
+private,static,ChChessLPU,_instance,=,null,;
+public,static,ChChessLPU,getInstance()
+{
+if(null,==,_instance)
+{
+_instance,=,new,ChChessLPU(),;
+}
+return,_instance,;
+},,,
+	
+@Override
+public,void,init()
+{
+getMsgTimer().schedule(new,MsgTimedTask(),,0,,GameLPU.DELAY),;
+//_msgTimer.Enabled,=,true,;
+}
+@Override
+public,void,msgTimedEvent(),throws,UnsupportedEncodingException
+{
+SmqOppResult,ruCount,=,getmsgList().Opp(QueueMethod.Count,,null),;
+int,len,=,ruCount.count,;
+for,(int,i,=,0,;,i,<,len,;,i++)
+{
+//C#,TO,JAVA,CONVERTER,TODO,TASK:,There,is,no,preprocessor,in,Java:
+///#region,?????Session
+SmqOppResult,ruShift,=,getmsgList().Opp(QueueMethod.Shift,,null),;
+if,(!ruShift.oppSucess)
+{
+Log.WriteStrByArgument(ChChessLPU.class.getName(),,"msgTimedEvent",,"QueueMethod.Shift",,"oppSucess,is,false"),;
+continue,;
+}
+if(null,==,ruShift.item)
+{
+Log.WriteStrByArgument(ChChessLPU.class.getName(),,"msgTimedEvent",,"QueueMethod.Shift",,"item,is,null"),;
+continue,;
+}
+SessionMessage,item,=,ruShift.item,;
+//
+XmlDocument,doc,=,item.doc(),;
+String,strIpPort,=,item.strIpPort(),;
+String,action,=,item.action(),;
+ChannelEvent,e,=,item.e(),;
+item.Dereference(),;
+AppSession,c,=,new,AppSession(e.getChannel(),e),;
+//Socket,session,=,null,;
+//AppSession,c,=,null,;
+//
+//,,,,,,,,,,,,,,,,,,,,if,(!item.getfromServer())
+//,,,,,,,,,,,,,,,,,,,,{
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,if,(ChChessLogic.getInstance().netHasSession(strIpPort))
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,{
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,c,=,ChChessLogic.getInstance().netGetSession(strIpPort),;
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,},//end,if
+//
+//,,,,,,,,,,,,,,,,,,,,}
+//,,,,,,,,,,,,,,,,,,,,else
+//,,,,,,,,,,,,,,,,,,,,{
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,if,(item.getfromDBServer())
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,{
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,session,=,ChChessLogic.getInstance().DBConnector.getSocket(),;
+//
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,}
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,else,if,(item.getfromRCServer())
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,{
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,session,=,ChChessLogic.getInstance().RCConnector.getSocket(),;
+//,,,,,,,,,,,,,,,,,,,,,,,,,,,,},//end,if
+//,,,,,,,,,,,,,,,,,,,,}
+if,(!item.getfromServer())
+{
+if,(action.equals(ClientAction.verChk))
+{
+ChChessLogic.getInstance().doorVerChk(c,,doc),;
+continue,;
+}
+if,(action.equals(ClientAction.loadDBType))
+{
+ChChessLogic.getInstance().doorLoadDBType(c,,doc),;
+continue,;
+}
+if,(action.equals(ClientAction.reg))
+{
+ChChessLogic.getInstance().doorReg(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.login))
+{
+ChChessLogic.getInstance().doorLogin(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.heartBeat))
+{
+ChChessLogic.getInstance().doorHeartBeat(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.loadG))
+{
+ChChessLogic.getInstance().doorLoadG(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.loadD))
+{
+ChChessLogic.getInstance().doorLoadD(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.listRoom))
+{
+ChChessLogic.getInstance().doorListRoom(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.joinRoom))
+{
+ChChessLogic.getInstance().doorJoinRoom(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.joinReconnectionRoom))
+{
+ChChessLogic.getInstance().doorJoinReconnectionRoom(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.autoJoinRoom))
+{
+ChChessLogic.getInstance().doorAutoJoinRoom(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.autoMatchRoom))
+{
+ChChessLogic.getInstance().doorAutoMatchRoom(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.pubMsg))
+{
+ChChessLogic.getInstance().doorPubMsg(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.pubAuMsg))
+{
+ChChessLogic.getInstance().doorPubAuMsg(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.setRvars))
+{
+ChChessLogic.getInstance().doorSetRvars(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.setMvars))
+{
+ChChessLogic.getInstance().doorSetMvars(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ClientAction.leaveRoom))
+{
+ChChessLogic.getInstance().doorLeaveRoom(c,,doc,,item),;
+continue,;
+}
+//if,(CLIENT_ACTION.leaveRoomAndGoHallAutoMatch,==,action)
+//{
+//,,,,ChChessLogic.getInstance().doorLeaveRoomAndGoHallAutoMatch(c,,doc,,item),;
+//,,,,continue,;
+//}
+if,(action.equals(ClientAction.sessionClosed))
+{
+ChChessLogic.getInstance().logicSessionClosed(strIpPort),;
+continue,;
+}
+						
+}else
+{
+//
+if,(action.equals(ServerAction.needProof))
+{
+ChChessRCLogic.getInstance().doorNeedProof(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.proofOK))
+{
+ChChessRCLogic.getInstance().doorProofOK(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.proofKO))
+{
+ChChessRCLogic.getInstance().doorProofKO(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.loadDBTypeOK))
+{
+ChChessRCLogic.getInstance().doorLoadDBTypeOK(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.logOK))
+{
+ChChessRCLogic.getInstance().doorLogOK(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.logKO))
+{
+ChChessRCLogic.getInstance().doorLogKO(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.regOK))
+{
+ChChessRCLogic.getInstance().doorRegOK(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.regKO))
+{
+ChChessRCLogic.getInstance().doorRegKO(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.loadGOK))
+{
+ChChessRCLogic.getInstance().doorLoadGOK(c,,doc,,item),;
+continue,;
+}
+if,(action.equals(ServerAction.chkEveryDayLoginAndGetOK))
+{
+ChChessRCLogic.getInstance().doorChkEveryDayLoginAndGetOK(c,,doc,,item),;
+continue,;
+}
+}
+}//end,for
+ChChessLogic.getInstance().TimedAutoMatchRoom(),;
+ChChessLogic.getInstance().TimedRoomJuShi(),;
+	ChChessLogic.getInstance().TimedWaitReconnection(),;
+	ChChessLogic.getInstance().TimedChkHeartBeat(),;
+}
+	
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server,;
+import,System.Xml.XmlDocument,;
+import,System.Xml.XmlNode,;
+import,java.io.UnsupportedEncodingException,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.db.DBTypeModel,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,net.silverfoxserver.core.protocol.ClientAction,;
+import,net.silverfoxserver.core.protocol.ServerAction,;
+import,net.silverfoxserver.core.server.GameLogicServer,;
+import,net.silverfoxserver.core.server.RecordLogicClientServer,;
+import,net.silverfoxserver.core.socket.AppSession,;
+import,net.silverfoxserver.core.socket.SessionMessage,;
+import,net.silverfoxserver.core.socket.XmlInstruction,;
+import,net.silverfoxserver.core.util.SR,;
+import,net.wdqipai.server.extfactory.UserModelFactory,;
+import,org.jdom2.Element,;
+import,org.jdom2.JDOMException,;
+/**
+*
+*,@author,FUX
+*/
+public,class,ChChessRCLogic,extends,RecordLogicClientServer,{
+/**
+*,
+*,@return,
+*/
+@Override
+public,String,CLASS_NAME()
+{,,,,,,,,,,,,
+return,ChChessRCLogic.class.getName(),;,,,,,,,,,,,,,,,,,
+}
+/**
+*,??
+*,
+*/
+private,static,ChChessRCLogic,_instance,=,null,;
+public,static,ChChessRCLogic,getInstance()
+{
+if(null,==,_instance)
+{
+_instance,=,new,ChChessRCLogic(),;
+}
+return,_instance,;
+}
+public,void,init(GameLogicServer,value)
+{
+super.setGameLogicServer(value),;
+}
+@Override
+public,void,doorLogOK(AppSession,session,,XmlDocument,doc,,SessionMessage,item)
+{
+try
+{
+XmlNode,node,=,doc.SelectSingleNode("/msg/body"),;
+String,userStrIpPort,=,node.ChildNodes()[0].getText(),;
+String,usersex,,,,,=,node.ChildNodes()[1].getText(),;
+String,username,=,node.ChildNodes()[2].getText(),;
+String,userpwd,=,node.ChildNodes()[3].getText(),;
+String,useremail,,,=,node.ChildNodes()[4].getText(),;
+String,bbs,=,node.ChildNodes()[5].getText(),;
+String,hico,=,node.ChildNodes()[6].getText(),;
+String,sid,=,node.ChildNodes()[7].getText(),;
+int,id_sql,=,Integer.valueOf(node.ChildNodes()[8].getText()),;
+String,id,=,node.ChildNodes()[9].getText(),;
+String,status,=,node.ChildNodes()[10].getText(),;
+//
+String,saction,=,ServerAction.logOK,;
+StringBuilder,contentXml,=,new,StringBuilder(),;
+//??
+//?????session????usersession,????????
+AppSession,userSession,=,getGameLogicServer().CLIENTAcceptor.getSession(userStrIpPort),;
+//??????,????????,????????????????,?????
+AppSession,outSession,=,getGameLogicServer().CLIENTAcceptor.getSessionByAccountName(username),;
+if,(null,!=,outSession)
+{
+//?????,??????????,??:??????????
+//????ClearSession
+String,logoutAction,=,ServerAction.logout,;
+String,logoutCode,=,"1",;
+StringBuilder,logoutXml,=,new,StringBuilder(),;
+logoutXml.append("<session>").append(userSession.getRemoteEndPoint().toString()).append("</session>"),;
+logoutXml.append("<session>").append(outSession.getRemoteEndPoint().toString()).append("</session>"),;
+logoutXml.append("<code>").append(logoutCode).append("</code>"),;
+logoutXml.append("<u></u>"),;
+getGameLogicServer().Send(outSession,,XmlInstruction.fengBao(logoutAction,,logoutXml.toString())),;
+//
+Log.WriteStrBySend(logoutAction,,outSession.getRemoteEndPoint().toString()),;
+//
+getGameLogicServer().CLIENTAcceptor.trigClearSession(outSession,,outSession.getRemoteEndPoint().toString()),;
+}
+//??????????
+if,(null,!=,userSession)
+{
+//if,(userSession.getConnected())
+//{
+//??????
+if,(getGameLogicServer().CLIENTAcceptor.getUserCount(),>=,getGameLogicServer().CLIENTAcceptor.getMaxOnlineUserConfig())
+{
+//??saction
+saction,=,ServerAction.logKO,;
+//??status
+status,=,"12",;,//??MembershipLoginStatus2.PeopleFull12
+contentXml.append("<session>").append(userStrIpPort).append("</session>"),;
+contentXml.append("<status>").append(status).append("</status>"),;
+contentXml.append("<u></u>"),;
+getGameLogicServer().Send(userSession,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,userSession.getRemoteEndPoint().toString()),;
+}
+else
+{
+IUserModel,user,=,UserModelFactory.Create(userStrIpPort,,id,,id_sql,,usersex,,username,,username,,bbs,,hico),;
+//????????
+getGameLogicServer().CLIENTAcceptor.addUser(userSession.getRemoteEndPoint().toString(),,user),;
+contentXml.append("<session>").append(userStrIpPort).append("</session>"),;
+contentXml.append("<status>").append(status).append("</status>"),;
+contentXml.append(user.toXMLString()),;
+getGameLogicServer().Send(userSession,,XmlInstruction.fengBao(saction,,contentXml.toString())),;
+//
+Log.WriteStrBySend(saction,,userSession.getRemoteEndPoint().toString()),;
+},//end,if
+//},//end,if
+},//end,if
+}
+catch,(JDOMException,|,UnsupportedEncodingException,|,RuntimeException,exd)
+{
+Log.WriteStrByException(CLASS_NAME(),,"doorLogOK",,exd.getMessage()),;
+}
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server,;
+/**
+*
+*,@author,FUX
+*/
+import,java.io.UnsupportedEncodingException,;
+import,java.time.LocalTime,;
+import,java.util.Timer,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.log.Log,;
+public,class,MsgTimedTask,extends,java.util.TimerTask{
+@Override
+public,void,run(),{
+try,{
+//,TODO,Auto-generated,method,stub
+ChChessLPU.getInstance().msgTimedEvent(),;
+},catch,(UnsupportedEncodingException,ex),{
+Log.WriteStrByException(MsgTimedTask.class.getName(),,"run",,ex.getMessage()),;
+}
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server,;
+/**
+*
+*,@author,FUX
+*/
+public,class,RoomViewBg,{
+public,static,int,getJuShiTotal(int,tab)
+{
+//var,activeTab:int,=,GameGlobals.qpc.data.activeTab,;
+//if(getBaoGanRoomTab(),==,GameGlobals.qpc.data.activeTab)
+if(0,==,tab)
+{
+return,600,;
+}else,if(1,==,tab)
+{
+return,1200,;
+}else,if(2,==,tab)
+{
+return,1500,;
+}else
+{
+return,1500,;
+}		
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extfactory,;
+import,net.silverfoxserver.core.model.IChairModel,;
+import,net.wdqipai.server.extmodel.*,;
+import,net.wdqipai.server.*,;
+//
+//
+public,final,class,ChairModelFactory
+{
+	/**,
+	,????,??,return,???
+	,
+	,@return,
+	*/
+	public,static,IChairModel,Create(int,id)
+	{
+		return,new,ChairModelByChChess(id),;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extfactory,;
+import,net.silverfoxserver.core.model.ILookChairModel,;
+import,net.wdqipai.server.extmodel.LookChairModelByChChess,;
+/**
+*
+*,@author,FUX
+*/
+public,class,LookChairModelFactory,{
+/**,
+	,????,??,return,???
+	,
+	,@return,
+	*/
+	public,static,ILookChairModel,Create(int,id)
+	{
+		return,new,LookChairModelByChChess(id),;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extfactory,;
+import,java.io.IOException,;
+import,net.silverfoxserver.core.model.IRoomModel,;
+import,net.wdqipai.server.extmodel.RoomModelByChChess,;
+import,org.jdom2.JDOMException,;
+/**
+*
+*,@author,FUX
+*/
+public,class,RoomModelFactory,{
+public,static,IRoomModel,Create(int,roomId,,int,tab),throws,JDOMException,,IOException
+{
+return,new,RoomModelByChChess(roomId,,tab,,""),;
+}
+public,static,IRoomModel,Create(int,roomId,,int,tab,,String,gridXml),throws,JDOMException,,IOException
+{
+return,new,RoomModelByChChess(roomId,,tab,,gridXml),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extfactory,;
+import,net.silverfoxserver.core.model.ITabModel,;
+import,net.wdqipai.server.extmodel.TabModelByChChess,;
+/**
+*
+*,@author,FUX
+*/
+public,class,TabModelFactory,{
+public,static,ITabModel,Create(int,tab)
+{
+return,new,TabModelByChChess(tab),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extfactory,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,net.wdqipai.server.extmodel.*,;
+import,net.wdqipai.server.*,;
+//
+//
+public,final,class,UserModelFactory
+{
+/**,
+@return,,
+*/
+public,static,IUserModel,Create(String,strIpPort,,String,id,,int,id_sql,,String,sex,,String,accountName,,String,nickName,,String,bbs,,String,headIco)
+{
+return,new,UserModelByChChess(strIpPort,,id,,id_sql,,sex,,accountName,,nickName,,bbs,,headIco),;
+}
+public,static,IUserModel,CreateEmpty()
+{
+return,new,UserModelByChChess(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+/**
+*
+*,@author,FUX
+*/
+public,class,AutoMatchRoomModel,{
+private,String,_strIpPort,;
+private,int,_tab,;
+public,final,int,getTab()
+{
+return,_tab,;
+}
+private,int,_roomOldId,;
+public,AutoMatchRoomModel(String,strIpPort,,int,roomTab,,int,roomOldId)
+{
+this._strIpPort,=,strIpPort,;
+this._tab,=,roomTab,;
+this._roomOldId,=,roomOldId,;
+}
+public,final,String,getStrIpPort()
+{
+return,_strIpPort,;
+}
+public,final,int,getRoomOldId()
+{
+return,_roomOldId,;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.silverfoxserver.core.model.IChairModel,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,net.silverfoxserver.core.util.AS3Util,;
+import,net.wdqipai.server.extmodel.*,;
+import,net.wdqipai.server.extfactory.*,;
+import,net.wdqipai.server.*,;
+//
+public,class,ChairModelByChChess,implements,IChairModel
+{
+	/**
+	,,*,????
+	,,*,
+	,*,id????????????
+	,,*/
+	private,int,_id,;
+	public,final,int,getId()
+	{
+		return,_id,;
+	}
+	/**,
+	,
+	*/
+	private,IUserModel,_user,;
+	/**,
+	,
+	*/
+	private,boolean,_ready,;
+	public,ChairModelByChChess(int,value)
+	{
+		this._id,=,value,;
+		this._user,=,UserModelFactory.CreateEmpty(),;
+		this._ready,=,false,;
+	}
+//	public,final,int,getId()
+//	{
+//		return,this._id,;
+//	}
+	public,final,IUserModel,getUser()
+	{
+		return,this._user,;
+	}
+//	public,final,IUserModel,getUser()
+//	{
+//
+//		return,this._user,;
+//
+//	}
+	/**,
+	,???????setProperty??,???????
+	,????
+	,
+	,@param,user
+	*/
+	public,final,void,setUser(IUserModel,value)
+	{
+		this._user,=,value.clone(),;
+		//this._user.setProperty(user.getStrIpPort(),,user.Id,,user.getId_SQL(),,user.getG(),user.getSex(),,user.getAccountName(),,user.getNickName(),,user.getBbs(),user.getHeadIco()),;
+	}
+	public,final,boolean,isReady()
+	{
+		return,this._ready,;
+	}
+	public,final,void,setReady(boolean,value)
+	{
+		this._ready,=,value,;
+		if,(value)
+		{
+			if,(this._user.getId().equals(""))
+			{
+				throw,new,IllegalArgumentException("setReady,must,this,chair,has,people"),;
+			}
+		}
+	}
+	public,final,String,getReadyAdd()
+	{
+		//nothing
+		return,"",;
+	}
+	public,final,void,setReadyAdd(String,value)
+	{
+		//nothing
+	}
+	public,final,void,reset()
+	{
+		//
+		setUser(new,UserModelByChChess()),;
+		//
+		this._ready,=,false,;
+	}
+	/**,
+	,
+	,
+	,@return,
+	*/
+	public,final,String,toXMLString()
+	{
+		StringBuilder,sb,=,new,StringBuilder(),;
+		//
+		sb.append("<chair,id='"),;
+		sb.append(String.valueOf(this.getId())),;
+		sb.append("',ready='"),;
+		sb.append(AS3Util.convertBoolToAS3(this.isReady())),;
+		sb.append("'>"),;
+		sb.append(this.getUser().toXMLString()),;
+		sb.append("</chair>"),;
+		return,sb.toString(),;
+	}
+	/**,
+	,AS3,0-?,1-?
+	,
+	,@param,value
+	,@return,
+	*/
+	public,final,String,convertBoolToAS3(boolean,value)
+	{
+		if,(value)
+		{
+			return,"1",;
+		}
+		return,"0",;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,System.Xml.XmlDocument,;
+import,java.io.IOException,;
+import,net.wdqipai.server.*,;
+import,org.jdom2.JDOMException,;
+/**,
+??
+?????factory
+*/
+public,class,ChessBoardByChChess
+{
+	
+	/**,
+	,??
+	*/
+	public,String[][],grid,;
+	/**,
+	,??????
+	*/
+	public,String,gridXml,;
+	/**,
+	,????????????????,?????,new,???????????????:
+	
+	VBC#C++F#JScript
+	??int[,],array5,;
+	array5,=,new,int[,],{,{,1,,2,},,{,3,,4,},,{,5,,6,},,{,7,,8,},},;,,,//,OK
+	array5,=,{{1,2},,{3,4},,{5,6},,{7,8}},;,,,//,Error
+	*/
+	public,ChessBoardByChChess(),throws,JDOMException,,IOException
+	{
+		this.gridXml,=,"",;
+		//
+		reset(),;
+	}
+	public,ChessBoardByChChess(String,gridXml),throws,JDOMException,,IOException
+	{
+		this.gridXml,=,gridXml,;
+		//
+		reset(),;
+	}
+	/**,
+	,????
+	*/
+	public,final,void,reset(),throws,JDOMException,,IOException
+	{
+		if,(gridXml.equals(""))
+		{
+			grid,=,new,String[][]{
+{QiziName.black_ju_2,QiziName.black_ma_2,QiziName.black_xiang_2,QiziName.black_shi_2,QiziName.black_jiang_1,QiziName.black_shi_1,QiziName.black_xiang_1,QiziName.black_ma_1,QiziName.black_ju_1},,
+{"","","","","","","","",""},,
+{"",QiziName.black_pao_1,"","","","","",QiziName.black_pao_2,""},,
+{QiziName.black_bing_5,"",QiziName.black_bing_4,"",QiziName.black_bing_3,"",QiziName.black_bing_2,"",QiziName.black_bing_1},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{QiziName.red_bing_1,"",QiziName.red_bing_2,"",QiziName.red_bing_3,"",QiziName.red_bing_4,"",QiziName.red_bing_5},,
+{"",QiziName.red_pao_1,"","","","","",QiziName.red_pao_2,""},,
+{"","","","","","","","",""},,
+{QiziName.red_ju_1,QiziName.red_ma_1,QiziName.red_xiang_1,QiziName.red_shi_1,QiziName.red_jiang_1,QiziName.red_shi_2,QiziName.red_xiang_2,QiziName.red_ma_2,QiziName.red_ju_2}
+},;
+		}
+		else
+		{
+			grid,=,new,String[][]{
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""},,
+{"","","","","","","","",""}
+},;
+			XmlDocument,gridDoc,=,new,XmlDocument(),;
+			gridDoc.LoadXml(gridXml),;
+			int,len,=,0,;//gridDoc.DocumentElement.ChildNodes.size(),;
+			//???????????????,?????try,catch
+			try
+			{
+				for,(int,i,=,0,;,i,<,len,;,i++)
+				{
+//					XmlNode,gridNode,=,gridDoc.DocumentElement.ChildNodes[i],;
+//
+//					String,qn,=,gridNode.Attributes["n"].Value,;
+//					int,x,=,(int)(gridNode.Attributes["x"].Value),;
+//					int,y,=,(int)(gridNode.Attributes["y"].Value),;
+//
+//					grid[x][y],=,qn,;
+				}
+			}
+			catch,(RuntimeException,exd)
+			{
+				//System.out.println("???????:",+,gridDoc.DocumentElement.Attributes["name"].Value,+,",",+,exd.getMessage()),;
+			}
+		}
+	}
+	/**,
+	,??????????????,
+	,??????,??????
+	,
+	,@param,viewName
+	,@param,h
+	,@param,v
+	*/
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,public,void,update(string,viewName,,uint,h,uint,v)
+	public,final,void,update(String,viewName,,int,h,,int,v)
+	{
+		//clear
+		for,(int,i,=,0,;,i,<,10,;,i++)
+		{
+			for,(int,j,=,0,;,j,<,9,;,j++)
+			{
+				if,(viewName.equals(grid[i][j]))
+				{
+					grid[i][j],=,"",;
+					break,;
+				}
+			}
+		}
+		//move
+		//??????
+		grid[(h,-,1)][(v,-,1)],=,viewName,;
+	}
+	/**,
+	,???????????,???????
+	,
+	,@param,name
+	,@return,
+	*/
+	public,final,Qizi,getQizi(String,viewName)
+	{
+		for,(int,i,=,0,;,i,<,10,;,i++)
+		{
+			for,(int,j,=,0,;,j,<,9,;,j++)
+			{
+				if,(viewName.equals(grid[i][j]))
+				{
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,uint,h,=,Convert.ToUInt32(i+1),;
+					int,h,=,(int)(i,+,1),;
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,uint,v,=,Convert.ToUInt32(j,+,1),;
+					int,v,=,(int)(j,+,1),;
+					return,new,Qizi(viewName,,h,,v),;
+				}
+			}
+		}
+		throw,new,IllegalArgumentException("can't,find,",+,viewName,+,",on,chess,board"),;
+	}
+	public,final,String,toXMLString()
+	{
+		StringBuilder,sb,=,new,StringBuilder(),;
+		//chessboard???item??
+		for,(int,i,=,0,;,i,<,10,;,i++)
+		{
+			for,(int,j,=,0,;,j,<,9,;,j++)
+			{
+				if,("",!=,grid[i][j])
+				{
+					//qizi???item
+					sb.append("<item,n='"),;
+					sb.append(grid[i][j]),;
+					sb.append("',h='"),;
+					int,k,=,i,+,1,;
+					sb.append((new,Integer(k)).toString()),;
+					sb.append("',v='"),;
+					int,m,=,j,+,1,;
+					sb.append((new,Integer(m)).toString()),;
+					sb.append("'/>"),;
+				}
+			}
+		},//end,for
+		return,sb.toString(),;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.silverfoxserver.core.model.ILookChairModel,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,net.wdqipai.server.extfactory.UserModelFactory,;
+/**
+*
+*,@author,FUX
+*/
+public,class,LookChairModelByChChess,implements,ILookChairModel{
+/**
+	,,*,????
+	,,*,
+	,*,id????????????
+	,,*/
+	private,int,_id,;
+	public,final,int,getId()
+	{
+		return,_id,;
+	}
+	/**,
+	,
+	*/
+	private,IUserModel,_user,;
+public,LookChairModelByChChess(int,value)
+	{
+		this._id,=,value,;
+		this._user,=,UserModelFactory.CreateEmpty(),;
+	}
+public,final,IUserModel,getUser()
+	{
+		return,this._user,;
+	}
+public,final,void,setUser(IUserModel,value)
+	{
+		this._user,=,value.clone(),;
+		
+	}
+public,final,String,toXMLString()
+	{
+		StringBuilder,sb,=,new,StringBuilder(),;
+		//
+		sb.append("<lookChair,id='"),;
+		sb.append(String.valueOf(this.getId())),;
+		//sb.append("',ready='"),;
+		//sb.append(convertBoolToAS3(this.getisReady())),;
+		sb.append("'>"),;
+		sb.append(this.getUser().toXMLString()),;
+		sb.append("</lookChair>"),;
+		return,sb.toString(),;
+	}
+public,void,reset()
+{
+//
+this._user,=,UserModelFactory.CreateEmpty(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.wdqipai.server.*,;
+public,class,MatchResultByChChess
+{
+public,final,static,String,RED_WIN,=,"red_win",;
+public,final,static,String,BLACK_WIN,=,"black_win",;
+/**,
+??
+*/
+public,final,static,String,HE,=,"he",;
+/**,
+??????
+*/
+public,final,static,String,EMPTY,=,"",;
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.wdqipai.server.*,;
+/**,
+??????????????
+*/
+public,class,Qizi
+{
+	/**,
+	,
+	*/
+	public,String,fullName,;
+	/**,
+	,
+	*/
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,public,uint,h,;
+	public,int,h,;
+	/**,
+	,
+	*/
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,public,uint,v,;
+	public,int,v,;
+	/**,
+	,
+	,
+	,@param,fullName
+	,@param,h
+	,@param,v
+	*/
+//C#,TO,JAVA,CONVERTER,WARNING:,Unsigned,integer,types,have,no,direct,equivalent,in,Java:
+//ORIGINAL,LINE:,public,Qizi(string,fullName,,uint,h,,uint,v)
+	public,Qizi(String,fullName,,int,h,,int,v)
+	{
+		this.fullName,=,fullName,;
+		this.h,=,h,;
+		this.v,=,v,;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,System.Console,;
+import,net.wdqipai.server.*,;
+/**,
+???????????,fullName,????Qizi?view.name
+?????fullName
+?????chName
+*/
+public,class,QiziMoveRecord
+{
+	/**
+	,*,p,==,point
+	,*/,
+	private,String,p1_chName,=,"",;
+	private,String,p1_fullName,=,"",;
+	private,int,p1_h,=,0,;
+	private,int,p1_v,=,0,;
+	private,String,p2_chName,=,"",;
+	private,String,p2_fullName,=,"",;
+	private,int,p2_h,=,0,;
+	private,int,p2_v,=,0,;
+private,Boolean,_isFull,=,false,;
+public,final,Qizi,getP1()
+	{
+		return,new,Qizi(p1_fullName,,p1_h,,p1_v),;
+	}
+//,,,,,,,,public,final,Qizi,getP2()
+//	{
+//		return,new,Qizi(p2_fullName,,p2_h,,p2_v),;
+//	}
+	public,final,void,setP1(String,fullName,,int,h,,int,v)
+	{
+if(_isFull)
+{
+Console.WriteLine("QiziMoveRecord,is,full!"),;
+return,;
+}
+//
+//this.p1_chName,=,chName,;
+this.p1_fullName,=,fullName,;
+this.p1_h,=,h,;
+this.p1_v,=,v,;
+//
+//,,,,,,,,,,,,this.p2_chName,=,"",;
+//,,,,,,,,,,,,this.p2_h,=,0,;
+//,,,,,,,,,,,,this.p2_v,=,0,;
+	}
+	public,final,void,setP2(String,fullName,,int,h,,int,v)
+	{
+//this.p2_chName,=,chName,;
+this.p2_fullName,=,fullName,;
+this.p2_h,=,h,;
+this.p2_v,=,v,;
+_isFull,=,true,;
+	}
+public,Boolean,isFull()
+{
+return,_isFull,;
+}
+	public,final,void,reset()
+	{
+p1_chName,=,"",;
+p1_fullName,=,"",;
+p1_h,=,0,;
+p1_v,=,0,;
+p2_chName,=,"",;
+p2_fullName,=,"",;
+p2_h,=,0,;
+p2_v,=,0,;
+	}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.wdqipai.server.*,;
+/**,
+?????State.Room.RoomModel.QiziName??
+*/
+public,class,QiziName
+{
+//En????,??
+public,final,static,String,En_Bing,=,"bing",;
+public,final,static,String,En_Pao,=,"pao",;
+public,final,static,String,En_Ju,=,"ju",;
+public,final,static,String,En_Ma,=,"ma",;
+public,final,static,String,En_Xiang,=,"xiang",;
+public,final,static,String,En_Shi,=,"shi",;
+public,final,static,String,En_Jiang,=,"jiang",;
+/**
+*,????
+*/
+public,final,static,String,red_bing_1,=,"red_bing_1",;
+public,final,static,String,red_bing_2,=,"red_bing_2",;
+public,final,static,String,red_bing_3,=,"red_bing_3",;
+public,final,static,String,red_bing_4,=,"red_bing_4",;
+public,final,static,String,red_bing_5,=,"red_bing_5",;
+public,final,static,String,red_pao_1,=,"red_pao_1",;
+public,final,static,String,red_pao_2,=,"red_pao_2",;
+public,final,static,String,red_ju_1,=,"red_ju_1",;
+public,final,static,String,red_ju_2,=,"red_ju_2",;
+public,final,static,String,red_ma_1,=,"red_ma_1",;
+public,final,static,String,red_ma_2,=,"red_ma_2",;
+public,final,static,String,red_xiang_1,=,"red_xiang_1",;
+public,final,static,String,red_xiang_2,=,"red_xiang_2",;
+public,final,static,String,red_shi_1,=,"red_shi_1",;
+public,final,static,String,red_shi_2,=,"red_shi_2",;
+public,final,static,String,red_jiang_1,=,"red_jiang_1",;
+/**
+*,????
+*/
+public,final,static,String,black_bing_1,=,"black_bing_1",;
+public,final,static,String,black_bing_2,=,"black_bing_2",;
+public,final,static,String,black_bing_3,=,"black_bing_3",;
+public,final,static,String,black_bing_4,=,"black_bing_4",;
+public,final,static,String,black_bing_5,=,"black_bing_5",;
+public,final,static,String,black_pao_1,=,"black_pao_1",;
+public,final,static,String,black_pao_2,=,"black_pao_2",;
+public,final,static,String,black_ju_1,=,"black_ju_1",;
+public,final,static,String,black_ju_2,=,"black_ju_2",;
+public,final,static,String,black_ma_1,=,"black_ma_1",;
+public,final,static,String,black_ma_2,=,"black_ma_2",;
+public,final,static,String,black_xiang_1,=,"black_xiang_1",;
+public,final,static,String,black_xiang_2,=,"black_xiang_2",;
+public,final,static,String,black_shi_1,=,"black_shi_1",;
+public,final,static,String,black_shi_2,=,"black_shi_2",;
+public,final,static,String,black_jiang_1,=,"black_jiang_1",;
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.wdqipai.server.extmodel,;
+import,net.silverfoxserver.core.model.ILookChairModel,;
+import,net.silverfoxserver.core.model.IRoomModel,;
+import,net.silverfoxserver.core.model.IChairModel,;
+import,net.silverfoxserver.core.model.IUserModel,;
+import,System.Xml.XmlDocument,;
+import,chchessserver.Program,;
+import,java.io.IOException,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.wdqipai.server.extmodel.*,;
+import,net.wdqipai.server.extfactory.*,;
+import,net.wdqipai.server.*,;
+import,org.jdom2.JDOMException,;
+//
+//
+/**,
+*/
+public,class,RoomModelByChChess,implements,IRoomModel
+{
+/**,
+	??id
+*/
+private,final,int,_id,;
+@Override
+public,final,int,getId()
+{
+return,this._id,;
+}
+/**,
+????,??
+??????tab,navigate,??
+*/
+private,final,int,_tab,;
+@Override
+public,final,int,getTab()
+{
+return,this._tab,;
+}
+/**,
+???????????
+*/
+private,int,_tabAutoMatchMode,;
+/**,
+???
+*/
+private,int,_tabQuickRoomMode,;
+@Override
+public,final,void,setTabQuickRoomMode(int,value)
+{
+this._tabQuickRoomMode,=,value,;
+}
+/**,
+??
+*/
+private,int,_diG,;
+/**,
+????
+*/
+private,int,_carryG,;
+/**,
+????,???
+*/
+private,float,_costG,;
+/**,
+?????????
+*/
+private,String,_costU,;
+private,String,_costUid,;
+/**,
+????
+*/
+private,String,_name,;
+@Override
+public,final,String,getName()
+{
+return,this._name,;
+}
+@Override
+public,final,void,setName(String,value)
+{
+_name,=,value,;
+}
+/**,
+????
+*/
+private,String,_pwd,;
+@Override
+public,final,String,getPwd()
+{

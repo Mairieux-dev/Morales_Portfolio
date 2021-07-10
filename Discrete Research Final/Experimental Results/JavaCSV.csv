@@ -1,0 +1,5909 @@
+
+public,interface,TennisGame,{,,,,,,,,,,,,,,,,
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+public,interface,TennisGame,{
+void,wonPoint(String,playerName),;
+String,getScore(),;
+}
+public,class,TennisGame1,implements,TennisGame,{
+private,int,m_score1,=,0,;
+private,int,m_score2,=,0,;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame1(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+m_score1,+=,1,;
+else
+m_score2,+=,1,;
+}
+public,String,getScore(),{
+String,score,=,"",;
+int,tempScore=0,;
+if,(m_score1==m_score2)
+{
+switch,(m_score1)
+{
+case,0:
+score,=,"Love-All",;
+break,;
+case,1:
+score,=,"Fifteen-All",;
+break,;
+case,2:
+score,=,"Thirty-All",;
+break,;
+default:
+score,=,"Deuce",;
+break,;
+}
+}
+else,if,(m_score1>=4,||,m_score2>=4)
+{
+int,minusResult,=,m_score1-m_score2,;
+if,(minusResult==1),score,="Advantage,player1",;
+else,if,(minusResult,==-1),score,="Advantage,player2",;
+else,if,(minusResult>=2),score,=,"Win,for,player1",;
+else,score,="Win,for,player2",;
+}
+else
+{
+for,(int,i=1,;,i<3,;,i++)
+{
+if,(i==1),tempScore,=,m_score1,;
+else,{,score+="-",;,tempScore,=,m_score2,;}
+switch(tempScore)
+{
+case,0:
+score+="Love",;
+break,;
+case,1:
+score+="Fifteen",;
+break,;
+case,2:
+score+="Thirty",;
+break,;
+case,3:
+score+="Forty",;
+break,;
+}
+}
+}
+return,score,;
+}
+}
+public,class,TennisGame2,implements,TennisGame
+{
+public,int,P1point,=,0,;
+public,int,P2point,=,0,;
+public,String,P1res,=,"",;
+public,String,P2res,=,"",;
+private,String,player1Name,;
+private,String,player2Name,;
+public,TennisGame2(String,player1Name,,String,player2Name),{
+this.player1Name,=,player1Name,;
+this.player2Name,=,player2Name,;
+}
+public,String,getScore(){
+String,score,=,"",;
+if,(P1point,==,P2point,&&,P1point,<,4)
+{
+if,(P1point==0)
+score,=,"Love",;
+if,(P1point==1)
+score,=,"Fifteen",;
+if,(P1point==2)
+score,=,"Thirty",;
+score,+=,"-All",;
+}
+if,(P1point==P2point,&&,P1point>=3)
+score,=,"Deuce",;
+if,(P1point,>,0,&&,P2point==0)
+{
+if,(P1point==1)
+P1res,=,"Fifteen",;
+if,(P1point==2)
+P1res,=,"Thirty",;
+if,(P1point==3)
+P1res,=,"Forty",;
+P2res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point,>,0,&&,P1point==0)
+{
+if,(P2point==1)
+P2res,=,"Fifteen",;
+if,(P2point==2)
+P2res,=,"Thirty",;
+if,(P2point==3)
+P2res,=,"Forty",;
+P1res,=,"Love",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point>P2point,&&,P1point,<,4)
+{
+if,(P1point==2)
+P1res="Thirty",;
+if,(P1point==3)
+P1res="Forty",;
+if,(P2point==1)
+P2res="Fifteen",;
+if,(P2point==2)
+P2res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P2point>P1point,&&,P2point,<,4)
+{
+if,(P2point==2)
+P2res="Thirty",;
+if,(P2point==3)
+P2res="Forty",;
+if,(P1point==1)
+P1res="Fifteen",;
+if,(P1point==2)
+P1res="Thirty",;
+score,=,P1res,+,"-",+,P2res,;
+}
+if,(P1point,>,P2point,&&,P2point,>=,3)
+{
+score,=,"Advantage,player1",;
+}
+if,(P2point,>,P1point,&&,P1point,>=,3)
+{
+score,=,"Advantage,player2",;
+}
+if,(P1point>=4,&&,P2point>=0,&&,(P1point-P2point)>=2)
+{
+score,=,"Win,for,player1",;
+}
+if,(P2point>=4,&&,P1point>=0,&&,(P2point-P1point)>=2)
+{
+score,=,"Win,for,player2",;
+}
+return,score,;
+}
+public,void,SetP1Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P1Score(),;
+}
+}
+public,void,SetP2Score(int,number){
+for,(int,i,=,0,;,i,<,number,;,i++)
+{
+P2Score(),;
+}
+}
+public,void,P1Score(){
+P1point++,;
+}
+public,void,P2Score(){
+P2point++,;
+}
+public,void,wonPoint(String,player),{
+if,(player,==,"player1")
+P1Score(),;
+else
+P2Score(),;
+}
+}
+public,class,TennisGame3,implements,TennisGame,{
+private,int,p2,;
+private,int,p1,;
+private,String,p1N,;
+private,String,p2N,;
+public,TennisGame3(String,p1N,,String,p2N),{
+this.p1N,=,p1N,;
+this.p2N,=,p2N,;
+}
+public,String,getScore(),{
+String,s,;
+if,(p1,<,4,&&,p2,<,4,&&,!(p1,+,p2,==,6)),{
+String[],p,=,new,String[]{"Love",,"Fifteen",,"Thirty",,"Forty"},;,
+s,=,p[p1],;
+return,(p1,==,p2),?,s,+,"-All",:,s,+,"-",+,p[p2],;
+},else,{
+if,(p1,==,p2)
+return,"Deuce",;
+s,=,p1,>,p2,?,p1N,:,p2N,;
+return,((p1-p2)*(p1-p2),==,1),?,"Advantage,",+,s,:,"Win,for,",+,s,;
+}
+}
+public,void,wonPoint(String,playerName),{
+if,(playerName,==,"player1")
+this.p1,+=,1,;
+else
+this.p2,+=,1,;
+}
+}
+import,static,org.junit.Assert.*,;
+import,java.util.Arrays,;
+import,java.util.Collection,;
+import,org.junit.Before,;
+import,org.junit.Test,;
+import,org.junit.runner.RunWith,;
+import,org.junit.runners.Parameterized,;
+import,org.junit.runners.Parameterized.Parameters,;
+@RunWith(Parameterized.class)
+public,class,TennisTest,{
+private,int,player1Score,;
+private,int,player2Score,;
+private,String,expectedScore,;
+public,TennisTest(int,player1Score,,int,player2Score,,String,expectedScore),{
+this.player1Score,=,player1Score,;
+this.player2Score,=,player2Score,;
+this.expectedScore,=,expectedScore,;
+}
+@Parameters
+public,static,Collection<Object[]>,getAllScores(),{
+return,Arrays.asList(new,Object[][],{
+{,0,,0,,"Love-All",},
+{,1,,1,,"Fifteen-All",},
+{,2,,2,,"Thirty-All"},
+{,3,,3,,"Deuce"},
+{,4,,4,,"Deuce"},
+{,1,,0,,"Fifteen-Love"},
+{,0,,1,,"Love-Fifteen"},
+{,2,,0,,"Thirty-Love"},
+{,0,,2,,"Love-Thirty"},
+{,3,,0,,"Forty-Love"},
+{,0,,3,,"Love-Forty"},
+{,4,,0,,"Win,for,player1"},
+{,0,,4,,"Win,for,player2"},
+{,2,,1,,"Thirty-Fifteen"},
+{,1,,2,,"Fifteen-Thirty"},
+{,3,,1,,"Forty-Fifteen"},
+{,1,,3,,"Fifteen-Forty"},
+{,4,,1,,"Win,for,player1"},
+{,1,,4,,"Win,for,player2"},
+{,3,,2,,"Forty-Thirty"},
+{,2,,3,,"Thirty-Forty"},
+{,4,,2,,"Win,for,player1"},
+{,2,,4,,"Win,for,player2"},
+{,4,,3,,"Advantage,player1"},
+{,3,,4,,"Advantage,player2"},
+{,5,,4,,"Advantage,player1"},
+{,4,,5,,"Advantage,player2"},
+{,15,,14,,"Advantage,player1"},
+{,14,,15,,"Advantage,player2"},
+{,6,,4,,"Win,for,player1"},
+{,4,,6,,"Win,for,player2"},
+{,16,,14,,"Win,for,player1"},
+{,14,,16,,"Win,for,player2"},
+}),;
+}
+public,void,checkAllScores(TennisGame,game),{
+int,highestScore,=,Math.max(this.player1Score,,this.player2Score),;
+for,(int,i,=,0,;,i,<,highestScore,;,i++),{
+if,(i,<,this.player1Score)
+game.wonPoint("player1"),;
+if,(i,<,this.player2Score)
+game.wonPoint("player2"),;
+}
+assertEquals(this.expectedScore,,game.getScore()),;
+}
+@Test
+public,void,checkAllScoresTennisGame1(),{
+TennisGame1,game,=,new,TennisGame1("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame2(),{
+TennisGame2,game,=,new,TennisGame2("player1",,"player2"),;
+checkAllScores(game),;
+}
+@Test
+public,void,checkAllScoresTennisGame3(),{
+TennisGame3,game,=,new,TennisGame3("player1",,"player2"),;
+checkAllScores(game),;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlAnagrafeMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.UserStateType,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,AnagrafeMapper,implements,IAnagrafeMapper,{
+IAnagrafeMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,AnagrafeMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+	switch,(DBMSTypes.valueOf(config.getString("type"))),{
+	,,,,case,SQL:
+		concreteMapper,=,new,SqlAnagrafeMapperDelegate(config,,sessionId),;
+		break,;
+	,,,,default:
+		throw,new,AssertionError(),;
+	}
+}
+/**
+*
+*,@param,anagrafe
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Anagrafe,anagrafe),throws,Exception,{
+	concreteMapper.insert(anagrafe),;
+}
+/**
+*
+*,@param,anagrafe
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Anagrafe,anagrafe),throws,Exception,{
+	return,concreteMapper.update(anagrafe),;
+}
+/**
+*
+*,@param,email
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Anagrafe>,getAnagrafeByEmail(String,email,,long,idAzienda,,UserStateType,state),throws,Exception,{
+	return,concreteMapper.getAnagrafeByEmail(email,idAzienda,state),;
+}
+/**
+*
+*,@param,codFis
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Anagrafe>,getAnagrafeByCodFis(String,codFis,,long,idAzienda,,UserStateType,state),throws,Exception,{
+	return,concreteMapper.getAnagrafeByCodFis(codFis,idAzienda,state),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Anagrafe,getAnagrafe(Utente,utente),throws,Exception,{
+	return,concreteMapper.getAnagrafe(utente),;
+}
+	
+	
+	
+	
+	
+	
+	
+	
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlAziendaMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,AziendaMapper,implements,IAziendaMapper,{
+IAziendaMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,AziendaMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+	switch,(DBMSTypes.valueOf(config.getString("type"))),{
+	,,,,case,SQL:
+		concreteMapper,=,new,SqlAziendaMapperDelegate(config,,sessionId),;
+		break,;
+	,,,,default:
+		throw,new,AssertionError(),;
+	}
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAzienda(Long,idAzienda),throws,Exception,{
+	return,concreteMapper.getAzienda(idAzienda),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAziendaByUtente(Utente,utente),throws,Exception,{
+	return,concreteMapper.getAziendaByUtente(utente),;
+}
+/**
+*
+*,@param,piva
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAziendaByPiva(String,piva),throws,Exception,{
+	return,concreteMapper.getAziendaByPiva(piva),;
+}
+/**
+*
+*,@param,email
+*,@return,l'azienda,la,cui,email,corrisponde,al,parametro,,null,altrimenti
+*,@throws,Exception,se,si,verifica,un,errore,di,accesso,al,database
+*/
+@Override
+public,Azienda,getAziendaByEmail(String,email),throws,Exception,{
+	return,concreteMapper.getAziendaByEmail(email),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Azienda>,getAll(),throws,Exception,{
+	return,concreteMapper.getAll(),;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Azienda,azienda),throws,Exception,{
+	return,concreteMapper.update(azienda),;
+}
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Azienda,azienda),throws,Exception,{
+	concreteMapper.insert(azienda),;
+}
+/**
+*
+*,@param,idazienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,delete(Long,idazienda),throws,Exception,{
+	return,concreteMapper.delete(idazienda),;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getUtenti(Azienda,azienda),throws,Exception,{
+	return,concreteMapper.getUtenti(azienda),;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getAdmin(Azienda,azienda),throws,Exception,{
+	return,concreteMapper.getAdmin(azienda),;
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlContrattoMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+import,com.serandp.datarise.profiling.facade.NomiDb,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,ContrattoMapper,implements,IContrattoMapper,{
+IContrattoMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,ContrattoMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+	switch,(DBMSTypes.valueOf(config.getString("type"))),{
+	,,,,case,SQL:
+		concreteMapper,=,new,SqlContrattoMapperDelegate(config,,sessionId),;
+		break,;
+	,,,,default:
+		throw,new,AssertionError(),;
+	}
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+//,@Override
+//,public,Contratto,getContratto(Azienda,azienda),throws,Exception,{
+	//,return,concreteMapper.getContratto(azienda),;
+//,}
+/**
+*
+*,@param,nomeDbFederato
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Contratto,getContratto(String,nomeDbFederato),throws,Exception,{
+	return,concreteMapper.getContratto(nomeDbFederato),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<String>,getDatabaseFederati(),throws,Exception,{
+	return,concreteMapper.getDatabaseFederati(),;
+}
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,insert(Contratto,contratto),throws,Exception,{
+	return,concreteMapper.insert(contratto),;
+}
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Contratto,contratto),throws,Exception,{
+	return,concreteMapper.update(contratto),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<NomiDb>,getDatabaseFederatiObj(),throws,Exception,{
+	return,concreteMapper.getDatabaseFederatiObj(),;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlFunzionalitaMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Funzionalita,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,FunzionalitaMapper,implements,IFunzionalitaMapper,{
+IFunzionalitaMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,FunzionalitaMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+	switch,(DBMSTypes.valueOf(config.getString("type"))),{
+	,,,,case,SQL:
+		concreteMapper,=,new,SqlFunzionalitaMapperDelegate(config,,sessionId),;
+		break,;
+	,,,,default:
+		throw,new,AssertionError(),;
+	}
+}
+/**
+*
+*,@param,ruolo
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Funzionalita>,getFunzionalitaRuolo(Ruolo,ruolo),throws,Exception,{
+	return,concreteMapper.getFunzionalitaRuolo(ruolo),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<String>,getFunzionalitaNegate(Utente,utente),throws,Exception,{
+	return,concreteMapper.getFunzionalitaNegate(utente),;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.UserStateType,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,interface,IAnagrafeMapper,{
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+Anagrafe,getAnagrafe(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,codFis
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+List<Anagrafe>,getAnagrafeByCodFis(String,codFis,,long,idAzienda,,UserStateType,state),throws,Exception,;
+/**
+*
+*,@param,email
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+List<Anagrafe>,getAnagrafeByEmail(String,email,,long,idAzienda,,UserStateType,state),throws,Exception,;
+/**
+*
+*,@param,anagrafe
+*,@throws,Exception
+*/
+void,insert(Anagrafe,anagrafe),throws,Exception,;
+/**
+*
+*,@param,anagrafe
+*,@return
+*,@throws,Exception
+*/
+boolean,update(Anagrafe,anagrafe),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,interface,IAziendaMapper,{
+/**
+*
+*,@param,idazienda
+*,@return
+*,@throws,Exception
+*/
+boolean,delete(Long,idazienda),throws,Exception,;
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+Utente,getAdmin(Azienda,azienda),throws,Exception,;
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+List<Azienda>,getAll(),throws,Exception,;
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+Azienda,getAzienda(Long,idAzienda),throws,Exception,;
+/**
+*
+*,@param,email
+*,@return
+*,@throws,Exception
+*/
+Azienda,getAziendaByEmail(String,email),throws,Exception,;
+/**
+*
+*,@param,piva
+*,@return
+*,@throws,Exception
+*/
+Azienda,getAziendaByPiva(String,piva),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+Azienda,getAziendaByUtente(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+List<Utente>,getUtenti(Azienda,azienda),throws,Exception,;
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+void,insert(Azienda,azienda),throws,Exception,;
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+boolean,update(Azienda,azienda),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+import,com.serandp.datarise.profiling.facade.NomiDb,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,interface,IContrattoMapper,extends,ISqlUsersDatabase,{
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+Contratto,getContratto(Azienda,azienda),throws,Exception,;
+/**
+*
+*,@param,nomeDbFederato
+*,@return
+*,@throws,Exception
+*/
+Contratto,getContratto(String,nomeDbFederato),throws,Exception,;
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+List<String>,getDatabaseFederati(),throws,Exception,;
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+boolean,insert(Contratto,contratto),throws,Exception,;
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+boolean,update(Contratto,contratto),throws,Exception,;
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,List<NomiDb>,getDatabaseFederatiObj(),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.profiling.entity.Funzionalita,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,interface,IFunzionalitaMapper,{
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+List<String>,getFunzionalitaNegate(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,ruolo
+*,@return
+*,@throws,Exception
+*/
+List<Funzionalita>,getFunzionalitaRuolo(Ruolo,ruolo),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,java.util.List,;
+/**
+*
+*,@author
+*,dcardone
+*/
+public,interface,IRuoloMapper,extends,ISqlUsersDatabase,{
+/**
+*
+*,@param,idAzienda
+*,@param,idRuolo
+*,@return
+*,@throws,Exception
+*/
+int,getNumRuoli(long,idAzienda,,long,idRuolo),throws,Exception,;
+/**
+*
+*,@param,idFunzionalita
+*,@return
+*,@throws,Exception
+*/
+List<Ruolo>,getRuoliFunzionalita(Long,idFunzionalita),throws,Exception,;
+/**
+*
+*,@param,idUtente
+*,@return
+*,@throws,Exception
+*/
+List<Ruolo>,getRuoliUtente(Long,idUtente),throws,Exception,;
+/**
+*
+*,@param,ruoli
+*,@param,idUtente
+*,@throws,Exception
+*/
+void,setRuoliUtente(List<Ruolo>,ruoli,,Long,idUtente),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.entity.UtenteTabella,;
+import,java.util.List,;
+/**
+*
+*,@author,dcardone
+*/
+public,interface,IUtenteMapper,{
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+void,delete(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+void,deleteTeiid(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+List<Utente>,getAll(long,idAzienda),throws,Exception,;
+/**
+*
+*,@param,username
+*,@return
+*,@throws,Exception
+*/
+Utente,getUtente(String,username),throws,Exception,;
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+Utente,getUtente(String,username,,String,password),throws,Exception,;
+/**
+*
+*,@param,idRuolo
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+List<Utente>,getUtentiRuolo(long,idRuolo,,long,idAzienda),throws,Exception,;
+/**
+*
+*,@param,id
+*,@return
+*,@throws,Exception
+*/
+Utente,getUtente(long,id),throws,Exception,;
+/**
+*
+*,@param,email
+*,@return
+*,@throws,Exception
+*/
+Utente,getUtentebyEmail(String,email),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+void,insert(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+void,insertTeiid(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+boolean,logIn(String,username,,String,password),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+boolean,update(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+boolean,updateTeiid(String,username,,String,password),throws,Exception,;
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+List<UtenteTabella>,getTabelleUtente(Utente,utente),throws,Exception,;
+/**
+*
+*,@param,idUtente
+*,@param,userTables
+*,@throws,Exception
+*/
+void,setTabelleUtente(Long,idUtente,,List<String>,userTables),throws,Exception,;
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlRuoloMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,RuoloMapper,implements,IRuoloMapper,{
+IRuoloMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,RuoloMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+	switch,(DBMSTypes.valueOf(config.getString("type"))),{
+	,,,,case,SQL:
+		concreteMapper,=,new,SqlRuoloMapperDelegate(config,,sessionId),;
+		break,;
+	,,,,default:
+		throw,new,AssertionError(),;
+	}
+}
+/**
+*
+*,@param,idFunzionalita
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Ruolo>,getRuoliFunzionalita(Long,idFunzionalita),throws,Exception,{
+	return,concreteMapper.getRuoliFunzionalita(idFunzionalita),;
+}
+/**
+*
+*,@param,idUtente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Ruolo>,getRuoliUtente(Long,idUtente),throws,Exception,{
+	return,concreteMapper.getRuoliUtente(idUtente),;
+}
+/**
+*
+*,@param,ruoli
+*,@param,idUtente
+*,@throws,Exception
+*/
+@Override
+public,void,setRuoliUtente(List<Ruolo>,ruoli,,Long,idUtente),throws,Exception,{
+	concreteMapper.setRuoliUtente(ruoli,,idUtente),;
+}
+/**
+*
+*,@param,idAzienda
+*,@param,idRuolo
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,int,getNumRuoli(long,idAzienda,,long,idRuolo),throws,Exception,{
+	return,concreteMapper.getNumRuoli(idAzienda,,idRuolo),;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper,;
+import,com.serandp.datarise.database.DBMSTypes,;
+import,com.serandp.datarise.profiling.database.mapper.delegate.sql.SqlUtenteMapperDelegate,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.entity.UtenteTabella,;
+import,java.sql.SQLException,;
+import,java.util.List,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,UtenteMapper,implements,IUtenteMapper,{
+IUtenteMapper,concreteMapper,;
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,UtenteMapper(Configuration,config,,String,sessionId),throws,SQLException,{
+switch,(DBMSTypes.valueOf(config.getString("type"))),{
+case,SQL:
+concreteMapper,=,new,SqlUtenteMapperDelegate(config,,sessionId),;
+break,;
+default:
+throw,new,AssertionError(),;
+}
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,logIn(String,username,,String,password),throws,Exception,{
+return,concreteMapper.logIn(username,,password),;
+}
+/**
+*
+*,@param,username
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(String,username),throws,Exception,{
+return,getUtente(username,,null),;
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(String,username,,String,password),throws,Exception,{
+return,concreteMapper.getUtente(username,,password),;
+}
+/**
+*
+*,@param,email
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtentebyEmail(String,email),throws,Exception,{
+return,concreteMapper.getUtentebyEmail(email),;
+}
+/**
+*
+*,@param,idRuolo
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getUtentiRuolo(long,idRuolo,,long,idAzienda),throws,Exception,{
+return,concreteMapper.getUtentiRuolo(idRuolo,,idAzienda),;
+}
+/**
+*
+*,@param,id
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(long,id),throws,Exception,{
+return,concreteMapper.getUtente(id),;
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getAll(long,idAzienda),throws,Exception,{
+return,concreteMapper.getAll(idAzienda),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Utente,utente),throws,Exception,{
+return,concreteMapper.update(utente),;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Utente,utente),throws,Exception,{
+concreteMapper.insert(utente),;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,delete(Utente,utente),throws,Exception,{
+concreteMapper.delete(utente),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<UtenteTabella>,getTabelleUtente(Utente,utente),throws,Exception,{
+return,concreteMapper.getTabelleUtente(utente),;
+}
+/**
+*
+*,@param,idUtente
+*,@param,userTables
+*,@throws,Exception
+*/
+@Override
+public,void,setTabelleUtente(Long,idUtente,,List<String>,userTables),throws,Exception,{
+concreteMapper.setTabelleUtente(idUtente,,userTables),;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,deleteTeiid(Utente,utente),throws,Exception,{
+concreteMapper.deleteTeiid(utente),;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,insertTeiid(Utente,utente),throws,Exception,{
+concreteMapper.insertTeiid(utente),;
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,updateTeiid(String,username,,String,password),throws,Exception,{
+return,concreteMapper.updateTeiid(username,,password),;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IAnagrafeMapper,;
+import,com.serandp.datarise.profiling.entity.Anagrafe,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.UserStateType,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlAnagrafeMapperDelegate,extends,SqlDataMapperDelegate,implements,ISqlUsersDatabase,IAnagrafeMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlAnagrafeMapperDelegate(Configuration,config,,String,sessionId),throws,SQLException,{
+	super(sessionId),;
+	synchronized(DATABASE),{
+	,,,,if(DATABASE.get(sessionId)==null)
+		DATABASE.putIfAbsent(sessionId,new,SqlConnectionPool(SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,,MAX_NUM_CONN,,true)),;
+	}
+}
+private,Anagrafe,getAnagrafe(ResultSet,result),throws,Exception,{
+	Anagrafe,anagrafe,=,new,Anagrafe(),;
+	anagrafe.setSessionId(sessionId),;
+	anagrafe.setIdAnagrafe(result.getLong(FIELD_ANAGRAFE_IDUTENTE)),;
+	anagrafe.setCap(result.getString(FIELD_ANAGRAFE_CAP)),;
+	anagrafe.setCitta(result.getString(FIELD_ANAGRAFE_CITTA)),;
+	anagrafe.setEmail(result.getString(FIELD_ANAGRAFE_EMAIL)),;
+	anagrafe.setIndirizzo(result.getString(FIELD_ANAGRAFE_INDIRIZZO)),;
+	anagrafe.setCodfiscale(result.getString(FIELD_ANAGRAFE_CODFISCALE)),;
+	anagrafe.setNome(result.getString(FIELD_ANAGRAFE_NOME)),;
+	anagrafe.setTelefono(result.getString(FIELD_ANAGRAFE_TELEFONO)),;
+	anagrafe.setPrefisso(result.getString(FIELD_ANAGRAFE_PREFISSO)),;
+	anagrafe.setCognome(result.getString(FIELD_ANAGRAFE_COGNOME)),;
+	anagrafe.setDatanascita(result.getDate(FIELD_ANAGRAFE_DATANASCITA)),;
+	return,anagrafe,;
+}
+/**
+*
+*,@param,anagrafe
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Anagrafe,anagrafe),throws,Exception,{
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"INSERT,INTO,",+,TABLE_ANAGRAFE
+		,,,,+,",(",+,FIELD_ANAGRAFE_CAP,+,","
+		,,,,+,FIELD_ANAGRAFE_CITTA,+,","
+		,,,,+,FIELD_ANAGRAFE_CODFISCALE,+,","
+		,,,,+,FIELD_ANAGRAFE_COGNOME,+,","
+		,,,,+,FIELD_ANAGRAFE_DATANASCITA,+,","
+		,,,,+,FIELD_ANAGRAFE_EMAIL,+,","
+		,,,,+,FIELD_ANAGRAFE_INDIRIZZO,+,","
+		,,,,+,FIELD_ANAGRAFE_NOME,+,","
+		,,,,+,FIELD_ANAGRAFE_TELEFONO,+,","
+		,,,,+,FIELD_ANAGRAFE_PREFISSO,+,","
+		,,,,+,FIELD_ANAGRAFE_IDUTENTE
+		,,,,+,"),VALUES,(?,?,?,?,?,?,?,?,?,?,?)",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.RETURN_GENERATED_KEY),;
+	,,,,pstmt.setString(1,,anagrafe.getCap()),;
+	,,,,pstmt.setString(2,,anagrafe.getCitta()),;
+	,,,,pstmt.setString(3,,anagrafe.getCodfiscale()),;
+	,,,,pstmt.setString(4,,anagrafe.getCognome()),;
+	,,,,pstmt.setDate(5,,anagrafe.getDatanascita()!=null?new,java.sql.Date(anagrafe.getDatanascita().getTime()):null),;
+	,,,,pstmt.setString(6,,anagrafe.getEmail()),;
+	,,,,pstmt.setString(7,,anagrafe.getIndirizzo()),;
+	,,,,pstmt.setString(8,,anagrafe.getNome()),;
+	,,,,pstmt.setString(9,,anagrafe.getTelefono()),;
+	,,,,pstmt.setString(10,,anagrafe.getPrefisso()),;
+	,,,,pstmt.setLong(11,,anagrafe.getIdAnagrafe()),;
+	,,,,conn.executeUpdateQuery(pstmt),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+}
+/**
+*
+*,@param,anagrafe
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Anagrafe,anagrafe),throws,Exception,{
+	boolean,inserted,=,false,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"UPDATE,",+,TABLE_ANAGRAFE
+		,,,,+,",SET,",+,FIELD_ANAGRAFE_CAP,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_CITTA,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_CODFISCALE,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_COGNOME,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_DATANASCITA,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_EMAIL,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_INDIRIZZO,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_NOME,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_TELEFONO,+,",=?,"
+		,,,,+,FIELD_ANAGRAFE_PREFISSO,+,",=?"
+		,,,,+,",WHERE,",+,FIELD_ANAGRAFE_IDUTENTE,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.UPDATE),;
+	,,,,pstmt.setString(1,,anagrafe.getCap()),;
+	,,,,pstmt.setString(2,,anagrafe.getCitta()),;
+	,,,,pstmt.setString(3,,anagrafe.getCodfiscale()),;
+	,,,,pstmt.setString(4,,anagrafe.getCognome()),;
+	,,,,pstmt.setDate(5,,anagrafe.getDatanascita()!=null?new,java.sql.Date(anagrafe.getDatanascita().getTime()):null),;
+	,,,,pstmt.setString(6,,anagrafe.getEmail()),;
+	,,,,pstmt.setString(7,,anagrafe.getIndirizzo()),;
+	,,,,pstmt.setString(8,,anagrafe.getNome()),;
+	,,,,pstmt.setString(9,,anagrafe.getTelefono()),;
+	,,,,pstmt.setString(10,,anagrafe.getPrefisso()),;
+	,,,,pstmt.setLong(11,,anagrafe.getIdAnagrafe()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,inserted,;
+}
+/**
+*
+*,@param,email
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Anagrafe>,getAnagrafeByEmail(String,email,,long,idAzienda,,UserStateType,state),throws,Exception,{
+	List<Anagrafe>,anagrafeList,=,new,ArrayList<Anagrafe>(),;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_ANAGRAFE
+		,,,,+,",",+,TABLE_UTENTE
+		,,,,+,",WHERE,",+,TABLE_ANAGRAFE,+,".",+,FIELD_ANAGRAFE_IDUTENTE
+		,,,,+,",=,",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDUTENTE
+		,,,,+,",AND,",+,FIELD_ANAGRAFE_EMAIL,,+,"=?,"
+		,,,,+,",AND,",+,FIELD_UTENTE_IDAZIENDA,+,"=?,",;
+	,,,,if(state!=null),{
+		sql,+=,"AND,",+,FIELD_UTENTE_ABILITATO,+,"=",+,state.ordinal(),;
+	,,,,}
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setString(1,,email),;
+	,,,,pstmt.setLong(2,,idAzienda),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,while,(result.next()),{
+		anagrafeList.add(getAnagrafe(result)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,anagrafeList,;
+}
+/**
+*
+*,@param,codFis
+*,@param,idAzienda
+*,@param,state
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Anagrafe>,getAnagrafeByCodFis(String,codFis,,long,idAzienda,,UserStateType,state),throws,Exception,{
+	List<Anagrafe>,anagrafeList,=,new,ArrayList<Anagrafe>(),;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_ANAGRAFE
+		,,,,+,",",+,TABLE_UTENTE
+		,,,,+,",WHERE,",+,TABLE_ANAGRAFE,+,".",+,FIELD_ANAGRAFE_IDUTENTE
+		,,,,+,",=,",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDUTENTE
+		,,,,+,",AND,",+,FIELD_ANAGRAFE_CODFISCALE,,+,"=?,"
+		,,,,+,",AND,",+,FIELD_UTENTE_IDAZIENDA,+,"=?,",;
+	,,,,if(state!=null),{
+		sql,+=,"AND,",+,FIELD_UTENTE_ABILITATO,+,"=",+,state.ordinal(),;
+	,,,,}
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setString(1,,codFis),;
+	,,,,pstmt.setLong(2,,idAzienda),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,while,(result.next()),{
+		anagrafeList.add(getAnagrafe(result)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,anagrafeList,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Anagrafe,getAnagrafe(Utente,utente),throws,Exception,{
+	Anagrafe,anagrafe,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_ANAGRAFE
+		,,,,+,",WHERE,",+,FIELD_ANAGRAFE_IDUTENTE,,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,utente.getId()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		anagrafe,=,getAnagrafe(result),;
+		anagrafe.setUtente(utente),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,anagrafe,;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IAziendaMapper,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.type.RuoloType,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlAziendaMapperDelegate,extends,SqlDataMapperDelegate,implements,ISqlUsersDatabase,IAziendaMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlAziendaMapperDelegate(Configuration,config,,String,sessionId),throws,SQLException,{
+	super(sessionId),;
+	synchronized(DATABASE),{
+	,,,,if(DATABASE.get(sessionId)==null),{
+		DATABASE.putIfAbsent(sessionId,new,SqlConnectionPool(SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,,MAX_NUM_CONN,,true)),;
+	,,,,}
+	}
+}
+private,Azienda,getAzienda(String,strSql,,Object,parameter),throws,Exception,{
+	Azienda,azienda,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,pstmt,=,conn.prepareStatement(strSql,StatementType.READ),;
+	,,,,if(parameter,instanceof,Long),{
+		pstmt.setLong(1,,(Long)parameter),;
+	,,,,}
+	,,,,else,{
+		pstmt.setString(1,,(String)parameter),;
+	,,,,}
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		azienda,=,new,Azienda(),;
+		azienda.setSessionId(sessionId),;
+		azienda.setIdazienda(result.getLong(FIELD_AZIENDA_IDAZIENDA)),;
+		azienda.setCap(result.getString(FIELD_AZIENDA_CAP)),;
+		azienda.setCitta(result.getString(FIELD_AZIENDA_CITTA)),;
+		azienda.setEmail(result.getString(FIELD_AZIENDA_EMAIL)),;
+		azienda.setIndirizzo(result.getString(FIELD_AZIENDA_INDIRIZZO)),;
+		azienda.setPiva(result.getString(FIELD_AZIENDA_PIVA)),;
+		azienda.setRagionesociale(result.getString(FIELD_AZIENDA_RAGIONESOCIALE)),;
+		azienda.setTelefono(result.getString(FIELD_AZIENDA_TELEFONO)),;
+		azienda.setPrefisso(result.getString(FIELD_AZIENDA_PREFISSO)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,azienda,;
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAzienda(Long,idAzienda),throws,Exception,{
+	String,sql,=,"SELECT,*,FROM,",+,TABLE_AZIENDA
+		,,,,+,",WHERE,",+,FIELD_AZIENDA_IDAZIENDA,+,"=?",;
+	return,getAzienda(sql,idAzienda),;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAziendaByUtente(Utente,utente),throws,Exception,{
+	String,sql,=,"SELECT,*,FROM,",+,TABLE_AZIENDA
+		+,",",+,TABLE_UTENTE
+		+,",WHERE,",+,FIELD_UTENTE_IDUTENTE,+,"=?"
+		+,",AND,",+,TABLE_AZIENDA,+,".",+,FIELD_AZIENDA_IDAZIENDA
+		+,"=",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDAZIENDA,;
+	return,getAzienda(sql,utente.getId()),;
+}
+/**
+*
+*,@param,piva
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Azienda,getAziendaByPiva(String,piva),throws,Exception,{
+	String,sql,=,"SELECT,*,FROM,",+,TABLE_AZIENDA
+		,,,,+,",WHERE,",+,FIELD_AZIENDA_PIVA,+,"=?",;
+	return,getAzienda(sql,piva),;
+}
+/**
+*
+*,@param,email
+*,@return,l'azienda,la,cui,email,corrisponde,al,parametro,,null,altrimenti
+*,@throws,Exception,se,si,verifica,un,errore,di,accesso,al,conn.connection
+*/
+@Override
+public,Azienda,getAziendaByEmail(String,email),throws,Exception,{
+	String,sql,=,"SELECT,*,FROM,",+,TABLE_AZIENDA
+		,,,,+,",WHERE,",+,FIELD_AZIENDA_EMAIL,+,"=?",;
+	return,getAzienda(sql,email),;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Azienda>,getAll(),throws,Exception,{
+	List<Azienda>,aziende,=,new,ArrayList<Azienda>(),;
+	Azienda,azienda,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_AZIENDA,;
+	,,,,ResultSet,result,=,conn.executeQuery(sql),;
+	,,,,while,(result.next()),{
+		azienda,=,new,Azienda(),;
+		azienda.setSessionId(sessionId),;
+		azienda.setIdazienda(result.getLong(FIELD_AZIENDA_IDAZIENDA)),;
+		azienda.setCap(result.getString(FIELD_AZIENDA_CAP)),;
+		azienda.setCitta(result.getString(FIELD_AZIENDA_CITTA)),;
+		azienda.setEmail(result.getString(FIELD_AZIENDA_EMAIL)),;
+		azienda.setIndirizzo(result.getString(FIELD_AZIENDA_INDIRIZZO)),;
+		azienda.setPiva(result.getString(FIELD_AZIENDA_PIVA)),;
+		azienda.setRagionesociale(result.getString(FIELD_AZIENDA_RAGIONESOCIALE)),;
+		azienda.setTelefono(result.getString(FIELD_AZIENDA_TELEFONO)),;
+		azienda.setPrefisso(result.getString(FIELD_AZIENDA_PREFISSO)),;
+		aziende.add(azienda),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,aziende,;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Azienda,azienda),throws,Exception,{
+	boolean,inserted,=,false,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"UPDATE,",+,TABLE_AZIENDA
+		,,,,+,",SET,",+,FIELD_AZIENDA_CAP,+,",=?,"
+		,,,,+,FIELD_AZIENDA_CITTA,+,",=?,"
+		,,,,+,FIELD_AZIENDA_EMAIL,+,",=?,"
+		,,,,+,FIELD_AZIENDA_INDIRIZZO,+,",=?,"
+		,,,,+,FIELD_AZIENDA_PIVA,+,",=?,"
+		,,,,+,FIELD_AZIENDA_RAGIONESOCIALE,+,",=?,"
+		,,,,+,FIELD_AZIENDA_TELEFONO,+,",=?,"
+		,,,,+,FIELD_AZIENDA_PREFISSO,+,",=?,"
+		,,,,+,",WHERE,",+,FIELD_AZIENDA_IDAZIENDA,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.UPDATE),;
+	,,,,pstmt.setString(1,,azienda.getCap()),;
+	,,,,pstmt.setString(2,,azienda.getCitta()),;
+	,,,,pstmt.setString(3,,azienda.getEmail()),;
+	,,,,pstmt.setString(4,,azienda.getIndirizzo()),;
+	,,,,pstmt.setString(5,,azienda.getPiva()),;
+	,,,,pstmt.setString(6,,azienda.getRagionesociale()),;
+	,,,,pstmt.setString(7,,azienda.getTelefono()),;
+	,,,,pstmt.setString(8,,azienda.getPrefisso()),;
+	,,,,pstmt.setLong(9,,azienda.getIdazienda()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,sql,=,"UPDATE,",+,TABLE_CONTRATTO
+		,,,,+,",SET,",+,FIELD_CONTRATTO_ABILITATO,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_DATAATTIVAZIONE,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_DATASCADENZA,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCLEAN,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCONN,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTEST,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTINTEGR,+,",=?,"
+		,,,,+,",WHERE,",+,FIELD_CONTRATTO_IDAZIENDA,,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.UPDATE),;
+	,,,,pstmt.setLong(1,,azienda.getContratto().getAbilitato()),;
+	,,,,pstmt.setDate(2,,new,java.sql.Date(azienda.getContratto().getDataattivazione().getTime())),;
+	,,,,pstmt.setDate(3,,new,java.sql.Date(azienda.getContratto().getDatascadenza().getTime())),;
+	,,,,pstmt.setInt(4,,azienda.getContratto().getNaccountclean()),;
+	,,,,pstmt.setInt(5,,azienda.getContratto().getNaccountconn()),;
+	,,,,pstmt.setInt(6,,azienda.getContratto().getNaccountest()),;
+	,,,,pstmt.setInt(7,,azienda.getContratto().getNaccountintegr()),;
+	,,,,pstmt.setLong(8,,azienda.getContratto().getAzienda().getIdazienda()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,sql,=,"UPDATE,",+,TABLE_UTENTE
+		,,,,+,",SET,",+,FIELD_UTENTE_USERNAME,+,",=,?,,"
+		,,,,+,FIELD_UTENTE_ABILITATO,+,",=,?,,"
+		,,,,+,FIELD_UTENTE_DATAATTIVAZIONE,+,",=,?,,"
+		,,,,+,FIELD_UTENTE_DATASCADENZA,+,",=,?,"
+		,,,,+,",WHERE,",+,FIELD_UTENTE_IDUTENTE,+,"=,?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.UPDATE),;
+	,,,,pstmt.setString(1,,azienda.getAdmin().getUsername()),;
+	,,,,pstmt.setShort(2,,azienda.getAdmin().getAbilitato()),;
+	,,,,pstmt.setDate(3,,new,java.sql.Date(azienda.getAdmin().getDataattivazione().getTime())),;
+	,,,,pstmt.setDate(4,,azienda.getAdmin().getDatascadenza()!=null?new,java.sql.Date(azienda.getAdmin().getDatascadenza().getTime()):null),;
+	,,,,pstmt.setLong(5,,azienda.getAdmin().getId()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted,=,false,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted,=,false,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,inserted,;
+}
+/**
+*
+*,@param,azienda
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Azienda,azienda),throws,Exception,{
+	long,id,=,-1L,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"INSERT,INTO,",+,TABLE_AZIENDA
+		,,,,+,",(",+,FIELD_AZIENDA_CAP,+,","
+		,,,,+,FIELD_AZIENDA_CITTA,+,","
+		,,,,+,FIELD_AZIENDA_EMAIL,+,","
+		,,,,+,FIELD_AZIENDA_INDIRIZZO,+,","
+		,,,,+,FIELD_AZIENDA_PIVA,+,","
+		,,,,+,FIELD_AZIENDA_RAGIONESOCIALE,+,","
+		,,,,+,FIELD_AZIENDA_TELEFONO,+,","
+		,,,,+,FIELD_AZIENDA_PREFISSO
+		,,,,+,"),VALUES,(?,?,?,?,?,?,?,?)",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.RETURN_GENERATED_KEY),;
+	,,,,pstmt.setString(1,,azienda.getCap()),;
+	,,,,pstmt.setString(2,,azienda.getCitta()),;
+	,,,,pstmt.setString(3,,azienda.getEmail()),;
+	,,,,pstmt.setString(4,,azienda.getIndirizzo()),;
+	,,,,pstmt.setString(5,,azienda.getPiva()),;
+	,,,,pstmt.setString(6,,azienda.getRagionesociale()),;
+	,,,,pstmt.setString(7,,azienda.getTelefono()),;
+	,,,,pstmt.setString(8,,azienda.getPrefisso()),;
+	,,,,id,=,conn.executeCreateQuery(pstmt),;
+	,,,,if(id>-1),{
+		azienda.setIdazienda(id),;
+	,,,,}
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+}
+/**
+*
+*,@param,idazienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,delete(Long,idazienda),throws,Exception,{
+	boolean,deleted,=,true,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,//,tutti,i,record,correlati,(contratto,,utenti,,etc.),sono,eliminati,in,cascata,dal,dbms
+	,,,,sql,=,"DELETE,FROM,",+,TABLE_AZIENDA
+		,,,,+,",WHERE,",+,FIELD_AZIENDA_IDAZIENDA,+,",=,",+,idazienda,;
+	,,,,deleted,=,conn.executeDeleteAllRowsQuery(sql),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,deleted,=,false,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,deleted,=,false,;
+	},finally,{
+	,,,,if(conn!=null),{
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,deleted,;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getUtenti(Azienda,azienda),throws,Exception,{
+	List<Utente>,utenti,=,new,ArrayList<Utente>(),;
+	Utente,utente,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
+		,,,,+,",WHERE,",+,FIELD_UTENTE_IDAZIENDA,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,azienda.getIdazienda()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,while,(result.next()),{
+		utente,=,new,Utente(),;
+		utente.setSessionId(sessionId),;
+		utente.setAzienda(azienda),;
+		utente.setAbilitato(result.getShort(FIELD_UTENTE_ABILITATO)),;
+		utente.setId(result.getLong(FIELD_UTENTE_IDUTENTE)),;
+		utente.setPassword(result.getString(FIELD_UTENTE_PASSWORD)),;
+		utente.setUsername(result.getString(FIELD_UTENTE_USERNAME)),;
+		utente.setDataattivazione(result.getDate(FIELD_UTENTE_DATAATTIVAZIONE)),;
+		utente.setDatascadenza(result.getDate(FIELD_UTENTE_DATASCADENZA)),;
+		utenti.add(utente),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,utenti,=,new,ArrayList<Utente>(),;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,utenti,;
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getAdmin(Azienda,azienda),throws,Exception,{
+	Utente,utente,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
+		,,,,+,",",+,TABLE_UTENTE_RUOLO
+		,,,,+,",WHERE,",+,FIELD_UTENTE_IDAZIENDA,+,"=?,"
+		,,,,+,",AND,",+,FIELD_UTENTE_RUOLO_IDRUOLO,+,"=?,"
+		,,,,+,",AND,",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDUTENTE,+,"="
+		,,,,+,TABLE_UTENTE_RUOLO,+,".",+,FIELD_UTENTE_RUOLO_IDUTENTE,;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,azienda.getIdazienda()),;
+	,,,,pstmt.setLong(2,,RuoloType.ADMIN.ordinal()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		utente,=,new,Utente(),;
+		utente.setSessionId(sessionId),;
+		utente.setAzienda(azienda),;
+		utente.setAbilitato(result.getShort(FIELD_UTENTE_ABILITATO)),;
+		utente.setId(result.getLong(FIELD_UTENTE_IDUTENTE)),;
+		utente.setPassword(result.getString(FIELD_UTENTE_PASSWORD)),;
+		utente.setUsername(result.getString(FIELD_UTENTE_USERNAME)),;
+		utente.setDataattivazione(result.getDate(FIELD_UTENTE_DATAATTIVAZIONE)),;
+		utente.setDatascadenza(result.getDate(FIELD_UTENTE_DATASCADENZA)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,utente,=,null,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,utente,;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IContrattoMapper,;
+import,com.serandp.datarise.profiling.entity.Azienda,;
+import,com.serandp.datarise.profiling.entity.Contratto,;
+import,com.serandp.datarise.profiling.facade.NomiDb,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlContrattoMapperDelegate,extends,SqlDataMapperDelegate,implements,ISqlUsersDatabase,IContrattoMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlContrattoMapperDelegate(Configuration,config,,String,sessionId),throws,SQLException,{
+	super(sessionId),;
+	synchronized(DATABASE),{
+	,,,,if(DATABASE.get(sessionId)==null),{
+		DATABASE.putIfAbsent(sessionId,new,SqlConnectionPool(SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,,MAX_NUM_CONN,,true)),;
+	,,,,}
+	}
+}
+/**
+*
+*,@param,azienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Contratto,getContratto(Azienda,azienda),throws,Exception,{
+	Contratto,contratto,=,new,Contratto(),;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_CONTRATTO
+		,,,,+,",WHERE,",+,FIELD_CONTRATTO_IDAZIENDA,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,azienda.getIdazienda()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		contratto.setSessionId(sessionId),;
+		contratto.setAzienda(azienda),;
+		contratto.setIdcontratto(result.getLong(FIELD_CONTRATTO_IDAZIENDA)),;
+		contratto.setAbilitato(result.getShort(FIELD_CONTRATTO_ABILITATO)),;
+		contratto.setDataattivazione(result.getDate(FIELD_CONTRATTO_DATAATTIVAZIONE)),;
+		contratto.setDatascadenza(result.getDate(FIELD_CONTRATTO_DATASCADENZA)),;
+		contratto.setNaccountclean(result.getInt(FIELD_CONTRATTO_NACCOUNTCLEAN)),;
+		contratto.setNaccountconn(result.getInt(FIELD_CONTRATTO_NACCOUNTCONN)),;
+		contratto.setNaccountest(result.getInt(FIELD_CONTRATTO_NACCOUNTEST)),;
+		contratto.setNaccountintegr(result.getInt(FIELD_CONTRATTO_NACCOUNTINTEGR)),;
+		contratto.setNomedbfederato(result.getString(FIELD_CONTRATTO_NOMEDBFEDERATO)),;
+		contratto.setNomedbrepository(result.getString(FIELD_CONTRATTO_NOMEDBREPOSITORY)),;
+		contratto.setNomedbcleansing(result.getString(FIELD_CONTRATTO_NOMEDBCLEANSING)),;
+	,,,,},else,{
+		throw,new,Exception("Nessuna,contratto,è,associato,all'azienda:",+,azienda.getRagionesociale()),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,contratto,=,null,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,contratto,;
+}
+/**
+*
+*,@param,nomeDbFederato
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Contratto,getContratto(String,nomeDbFederato),throws,Exception,{
+	Contratto,contratto,=,null,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_CONTRATTO
+		,,,,+,",WHERE,",+,FIELD_CONTRATTO_NOMEDBFEDERATO,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setString(1,,nomeDbFederato),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		contratto,=,new,Contratto(),;
+		contratto.setSessionId(sessionId),;
+		contratto.setAbilitato(result.getShort(FIELD_CONTRATTO_ABILITATO)),;
+		contratto.setDataattivazione(result.getDate(FIELD_CONTRATTO_DATAATTIVAZIONE)),;
+		contratto.setDatascadenza(result.getDate(FIELD_CONTRATTO_DATASCADENZA)),;
+		contratto.setNaccountclean(result.getInt(FIELD_CONTRATTO_NACCOUNTCLEAN)),;
+		contratto.setNaccountconn(result.getInt(FIELD_CONTRATTO_NACCOUNTCONN)),;
+		contratto.setNaccountest(result.getInt(FIELD_CONTRATTO_NACCOUNTEST)),;
+		contratto.setNaccountintegr(result.getInt(FIELD_CONTRATTO_NACCOUNTINTEGR)),;
+		contratto.setNomedbfederato(result.getString(FIELD_CONTRATTO_NOMEDBFEDERATO)),;
+		contratto.setNomedbrepository(result.getString(FIELD_CONTRATTO_NOMEDBREPOSITORY)),;
+		contratto.setNomedbcleansing(result.getString(FIELD_CONTRATTO_NOMEDBCLEANSING)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,contratto,=,null,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,contratto,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<String>,getDatabaseFederati(),throws,Exception,{
+	List<String>,databases,=,new,ArrayList<String>(),;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,",+,FIELD_CONTRATTO_NOMEDBFEDERATO,+,",FROM,",+,TABLE_CONTRATTO,;
+	,,,,ResultSet,result,=,conn.executeQuery(sql),;
+	,,,,while,(result.next()),{
+		databases.add(result.getString(FIELD_CONTRATTO_NOMEDBFEDERATO)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,databases,=,new,ArrayList<String>(),;
+	},finally,{
+	,,,,if(conn!=null),{
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,databases,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<NomiDb>,getDatabaseFederatiObj(),throws,Exception,{
+	List<NomiDb>,databases,=,new,ArrayList<NomiDb>(),;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,",+,FIELD_CONTRATTO_NOMEDBFEDERATO,+,",",
+		,,,,+,FIELD_CONTRATTO_NOMEDBREPOSITORY,+,","
+		,,,,+,FIELD_CONTRATTO_NOMEDBCLEANSING
+		,,,,+,",FROM,",+,TABLE_CONTRATTO,;
+	,,,,ResultSet,result,=,conn.executeQuery(sql),;
+	,,,,while,(result.next()),{
+		NomiDb,current,=,new,NomiDb(),;
+		current.setNomeFDB(result.getString(FIELD_CONTRATTO_NOMEDBFEDERATO)),;
+		current.setCleansing(result.getString(FIELD_CONTRATTO_NOMEDBCLEANSING)),;
+		current.setNomeRepository(result.getString(FIELD_CONTRATTO_NOMEDBREPOSITORY)),;
+		
+		databases.add(current),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,//databases,=,ArrayList<NomiDb>,;
+	},finally,{
+	,,,,if(conn!=null),{
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,databases,;
+}
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,insert(Contratto,contratto),throws,Exception,{
+	boolean,inserted,=,false,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.disableAutoCommit(),;
+	,,,,sql,=,"INSERT,INTO,",+,TABLE_CONTRATTO
+		,,,,+,",(",+,FIELD_CONTRATTO_ABILITATO,+,","
+		,,,,+,FIELD_CONTRATTO_DATAATTIVAZIONE,+,","
+		,,,,+,FIELD_CONTRATTO_DATASCADENZA,+,","
+		,,,,+,FIELD_CONTRATTO_IDAZIENDA,+,","
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCLEAN,+,","
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCONN,+,","
+		,,,,+,FIELD_CONTRATTO_NACCOUNTEST,+,","
+		,,,,+,FIELD_CONTRATTO_NACCOUNTINTEGR,+,","
+		,,,,+,FIELD_CONTRATTO_NOMEDBFEDERATO,+,","
+		,,,,+,FIELD_CONTRATTO_NOMEDBCLEANSING,+,","
+		,,,,+,FIELD_CONTRATTO_NOMEDBREPOSITORY
+		,,,,+,"),VALUES,(?,?,?,?,?,?,?,?,?,?,?)",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.RETURN_GENERATED_KEY),;
+	,,,,pstmt.setLong(1,,contratto.getAbilitato()),;
+	,,,,pstmt.setDate(2,,new,java.sql.Date(contratto.getDataattivazione().getTime())),;
+	,,,,pstmt.setDate(3,,new,java.sql.Date(contratto.getDatascadenza().getTime())),;
+	,,,,pstmt.setLong(4,,contratto.getAzienda().getIdazienda()),;
+	,,,,pstmt.setInt(5,,contratto.getNaccountclean()),;
+	,,,,pstmt.setInt(6,,contratto.getNaccountconn()),;
+	,,,,pstmt.setInt(7,,contratto.getNaccountest()),;
+	,,,,pstmt.setInt(8,,contratto.getNaccountintegr()),;
+	,,,,pstmt.setString(9,,contratto.getNomedbfederato()),;
+	,,,,pstmt.setString(10,,contratto.getNomedbcleansing()),;
+	,,,,pstmt.setString(11,,contratto.getNomedbrepository()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,inserted,;
+}
+/**
+*
+*,@param,contratto
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Contratto,contratto),throws,Exception,{
+	boolean,inserted,=,false,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"UPDATE,",+,TABLE_CONTRATTO
+		,,,,+,",SET,",+,FIELD_CONTRATTO_ABILITATO,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_DATAATTIVAZIONE,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_DATASCADENZA,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCLEAN,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTCONN,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTEST,+,",=?,"
+		,,,,+,FIELD_CONTRATTO_NACCOUNTINTEGR,+,",=?,"
+		,,,,+,",WHERE,",+,FIELD_CONTRATTO_IDAZIENDA,,+,"=?",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.UPDATE),;
+	,,,,pstmt.setLong(1,,contratto.getAbilitato()),;
+	,,,,pstmt.setDate(2,,new,java.sql.Date(contratto.getDataattivazione().getTime())),;
+	,,,,pstmt.setDate(3,,new,java.sql.Date(contratto.getDatascadenza().getTime())),;
+	,,,,pstmt.setInt(4,,contratto.getNaccountclean()),;
+	,,,,pstmt.setInt(5,,contratto.getNaccountconn()),;
+	,,,,pstmt.setInt(6,,contratto.getNaccountest()),;
+	,,,,pstmt.setInt(7,,contratto.getNaccountintegr()),;
+	,,,,pstmt.setLong(8,,contratto.getAzienda().getIdazienda()),;
+	,,,,inserted,=,conn.executeUpdateQuery(pstmt),;
+	,,,,conn.commit(),;
+	},catch,(SQLException,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+},catch,(Exception,e),{
+	,,,,conn.rollback(),;
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,inserted=false,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,inserted,;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IFunzionalitaMapper,;
+import,com.serandp.datarise.profiling.entity.Funzionalita,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlFunzionalitaMapperDelegate,extends,SqlDataMapperDelegate,implements,ISqlUsersDatabase,IFunzionalitaMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlFunzionalitaMapperDelegate(Configuration,config,,String,sessionId),throws,SQLException,{
+	super(sessionId),;
+	synchronized(DATABASE),{
+	,,,,if(DATABASE.get(sessionId)==null)
+		DATABASE.putIfAbsent(sessionId,new,SqlConnectionPool(SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,,MAX_NUM_CONN,,true)),;
+	}
+}
+/**
+*
+*,@param,ruolo
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Funzionalita>,getFunzionalitaRuolo(Ruolo,ruolo),throws,Exception,{
+	List<Funzionalita>,listaFunzionalit,=,new,ArrayList<Funzionalita>(),;
+	Funzionalita,funzionalita,;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,*,FROM,",+,TABLE_FUNZIONALITA,+,",",+,TABLE_RUOLO_FUNZIONALITA
+		,,,,+,",WHERE,",+,FIELD_RUOLO_FUNZIONALITA_RUOLO_IDRUOLO,+,"=?"
+		,,,,+,",AND,",+,TABLE_FUNZIONALITA,+,".",+,FIELD_FUNZIONALITA_IDFUNZIONALITA,+,"="
+		,,,,+,TABLE_RUOLO_FUNZIONALITA,,+,".",+,FIELD_RUOLO_FUNZIONALITA_FUNZIONALITA_IDFUNZIONALITA,;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,ruolo.getIdruolo()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,if,(result.next()),{
+		funzionalita,=,new,Funzionalita(),;
+		funzionalita.setSessionId(sessionId),;
+		funzionalita.setIdfunzionalita(result.getLong(FIELD_FUNZIONALITA_IDFUNZIONALITA)),;
+		funzionalita.setNome(result.getString(FIELD_FUNZIONALITA_NOME)),;
+		funzionalita.setXul(result.getString(FIELD_FUNZIONALITA_XUL)),;
+		listaFunzionalit.add(funzionalita),;
+	,,,,},else,{
+		throw,new,Exception("Nessuna,funzionalità,è,associato,al,ruolo:,",+,ruolo.getRuolo()),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,throw,e,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,listaFunzionalit,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<String>,getFunzionalitaNegate(Utente,utente),throws,Exception,{
+	List<String>,listaFunzionalit,=,new,ArrayList<String>(),;
+	PreparedStatement,pstmt,=,null,;
+	ISqlDatabase,conn,=,null,;
+	String,sql,;
+	try,{
+	,,,,conn,=,DATABASE.get(this.sessionId).getConnection(),;
+	,,,,conn.enableAutoCommit(),;
+	,,,,sql,=,"SELECT,",+,FIELD_FUNZIONALITA_XUL,+,",FROM,",+,TABLE_FUNZIONALITA
+		,,,,+,",WHERE,",+,FIELD_FUNZIONALITA_XUL,+,",NOT,IN,(SELECT,"
+		,,,,+,FIELD_FUNZIONALITA_XUL,+,",FROM,",+,TABLE_UTENTE_RUOLO
+		,,,,+,",INNER,JOIN,",+,TABLE_RUOLO_FUNZIONALITA
+		,,,,+,",ON,",+,TABLE_UTENTE_RUOLO,+,".",+,FIELD_UTENTE_RUOLO_IDRUOLO,+,"=",+,TABLE_RUOLO_FUNZIONALITA,+,".",+,FIELD_RUOLO_FUNZIONALITA_RUOLO_IDRUOLO
+		,,,,+,",INNER,JOIN,",+,TABLE_FUNZIONALITA,+,",ON,",+,TABLE_RUOLO_FUNZIONALITA,+,".",+,FIELD_RUOLO_FUNZIONALITA_FUNZIONALITA_IDFUNZIONALITA,+,"=",+,TABLE_FUNZIONALITA,+,".",+,FIELD_FUNZIONALITA_IDFUNZIONALITA
+		,,,,+,",WHERE,",+,TABLE_UTENTE_RUOLO,+,".",+,FIELD_UTENTE_RUOLO_IDUTENTE,+,"=?)",;
+	,,,,pstmt,=,conn.prepareStatement(sql,StatementType.READ),;
+	,,,,pstmt.setLong(1,,utente.getId()),;
+	,,,,ResultSet,result,=,conn.executeQuery(pstmt),;
+	,,,,while(result.next()),{
+		listaFunzionalit.add(result.getString(FIELD_FUNZIONALITA_XUL)),;
+	,,,,}
+	,,,,result.close(),;
+	},catch,(Exception,e),{
+	,,,,LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+	,,,,listaFunzionalit,=,null,;
+	},finally,{
+	,,,,if(conn!=null),{
+		if,(pstmt,!=,null),{
+		,,,,pstmt.close(),;
+		}
+		DATABASE.get(this.sessionId).free(conn),;
+	,,,,}
+	}
+	return,listaFunzionalit,;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IRuoloMapper,;
+import,com.serandp.datarise.profiling.entity.Ruolo,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlRuoloMapperDelegate,extends,SqlDataMapperDelegate,implements,ISqlUsersDatabase,,IRuoloMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlRuoloMapperDelegate(Configuration,config,,String,sessionId),throws,SQLException,{
+super(sessionId),;
+synchronized,(DATABASE),{
+if,(DATABASE.get(sessionId),==,null),{
+DATABASE.putIfAbsent(sessionId,,new,SqlConnectionPool(
+SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,
+MAX_NUM_CONN,,true)),;
+}
+}
+}
+private,void,deleteRuoliUtente(Long,idUtente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"DELETE,FROM,",+,TABLE_UTENTE_RUOLO
++,",WHERE,",+,FIELD_UTENTE_RUOLO_IDUTENTE,+,"=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setLong(1,,idUtente),;
+conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,idFunzionalita
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Ruolo>,getRuoliFunzionalita(Long,idFunzionalita),throws,Exception,{
+List<Ruolo>,ruoli,=,new,ArrayList<Ruolo>(),;
+Ruolo,ruolo,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_RUOLO,+,",",+,TABLE_RUOLO_FUNZIONALITA
++,",WHERE,",+,FIELD_RUOLO_FUNZIONALITA_FUNZIONALITA_IDFUNZIONALITA,+,"=?"
++,",AND,",+,TABLE_RUOLO,+,".",+,FIELD_RUOLO_IDRUOLO,+,"="
++,TABLE_RUOLO_FUNZIONALITA,+,".",+,FIELD_RUOLO_FUNZIONALITA_RUOLO_IDRUOLO,;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,idFunzionalita),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+if,(result.next()),{
+ruolo,=,new,Ruolo(),;
+ruolo.setSessionId(sessionId),;
+ruolo.setIdruolo(result.getLong(FIELD_RUOLO_IDRUOLO)),;
+ruolo.setRuolo(result.getString(FIELD_RUOLO_RUOLO)),;
+ruoli.add(ruolo),;
+},else,{
+throw,new,Exception(
+"Nessun,ruolo,è,associato,alla,funzionalita,con,id:",+,idFunzionalita),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,ruoli,;
+}
+/**
+*
+*,@param,idUtente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Ruolo>,getRuoliUtente(Long,idUtente),throws,Exception,{
+List<Ruolo>,ruoli,=,new,ArrayList<Ruolo>(),;
+Ruolo,ruolo,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,",+,TABLE_RUOLO,+,".*,FROM,",+,TABLE_RUOLO,+,",",+,TABLE_UTENTE_RUOLO
++,",WHERE,",+,FIELD_UTENTE_RUOLO_IDUTENTE,+,"=?"
++,",AND,",+,TABLE_RUOLO,+,".",+,FIELD_RUOLO_IDRUOLO,+,"="
++,TABLE_UTENTE_RUOLO,+,".",+,FIELD_UTENTE_RUOLO_IDRUOLO,;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,idUtente),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+while,(result.next()),{
+ruolo,=,new,Ruolo(),;
+ruolo.setSessionId(sessionId),;
+ruolo.setIdruolo(result.getLong(FIELD_RUOLO_IDRUOLO)),;
+ruolo.setRuolo(result.getString(FIELD_RUOLO_RUOLO)),;
+ruoli.add(ruolo),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,ruoli,;
+}
+/**
+*
+*,@param,ruoli
+*,@param,idUtente
+*,@throws,Exception
+*/
+@Override
+public,void,setRuoliUtente(List<Ruolo>,ruoli,,Long,idUtente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+deleteRuoliUtente(idUtente),;
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"INSERT,INTO,",+,TABLE_UTENTE_RUOLO
++,",(",+,FIELD_UTENTE_RUOLO_IDRUOLO,+,","
++,FIELD_UTENTE_RUOLO_IDUTENTE
++,"),VALUES,(?,?)",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+for,(Ruolo,ruolo,:,ruoli),{
+pstmt.clearParameters(),;
+pstmt.setLong(1,,ruolo.getIdruolo()),;
+pstmt.setLong(2,,idUtente),;
+conn.executeUpdateQuery(pstmt),;
+}
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,idAzienda
+*,@param,idRuolo
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,int,getNumRuoli(long,idAzienda,,long,idRuolo),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+StringBuilder,sql,=,new,StringBuilder(),;
+int,count,=,0,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql.append("SELECT,count(*),FROM,")
+.append(TABLE_UTENTE).append(",").append(TABLE_UTENTE_RUOLO)
+.append(",WHERE,")
+.append(TABLE_UTENTE).append(".").append(FIELD_UTENTE_IDAZIENDA)
+.append("=?,AND,")
+.append(TABLE_UTENTE_RUOLO).append(".")
+.append(FIELD_UTENTE_RUOLO_IDRUOLO)
+.append("=?,AND,")
+.append(TABLE_UTENTE).append(".").append(FIELD_UTENTE_ABILITATO)
+.append("<2,AND,")
+.append(TABLE_UTENTE).append(".").append(FIELD_UTENTE_IDUTENTE)
+.append("=").append(TABLE_UTENTE_RUOLO).append(".")
+.append(FIELD_UTENTE_RUOLO_IDUTENTE)
+.append(",AND,").append(TABLE_UTENTE).append(".")
+.append(FIELD_UTENTE_IDUTENTE)
+.append(",NOT,IN,(SELECT,")
+.append(TABLE_UTENTE_RUOLO).append(".")
+.append(FIELD_UTENTE_RUOLO_IDUTENTE)
+.append(",FROM,").append(TABLE_UTENTE_RUOLO).append(",WHERE,")
+.append(FIELD_UTENTE_RUOLO_IDRUOLO).append("=1)"),;
+pstmt,=,conn.prepareStatement(sql.toString(),,StatementType.READ),;
+pstmt.setLong(1,,idAzienda),;
+pstmt.setLong(2,,idRuolo),;
+count,=,conn.executeCountQuery(pstmt),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,count,;
+}
+}
+package,com.serandp.datarise.profiling.database.mapper.delegate.sql,;
+import,com.serandp.datarise.database.mapper.delegate.sql.SqlDataMapperDelegate,;
+import,com.serandp.datarise.database.profiling.sql.ISqlUsersDatabase,;
+import,com.serandp.datarise.database.profiling.sql.SqlUsersDatabaseFactory,;
+import,com.serandp.datarise.database.sql.ISqlDatabase,;
+import,com.serandp.datarise.database.sql.StatementType,;
+import,com.serandp.datarise.database.sql.pool.SqlConnectionPool,;
+import,com.serandp.datarise.profiling.database.mapper.IUtenteMapper,;
+import,com.serandp.datarise.profiling.entity.Utente,;
+import,com.serandp.datarise.profiling.entity.UtenteTabella,;
+import,com.serandp.datarise.profiling.type.UserStateType,;
+import,java.sql.PreparedStatement,;
+import,java.sql.ResultSet,;
+import,java.sql.SQLException,;
+import,java.util.ArrayList,;
+import,java.util.List,;
+import,java.util.logging.Level,;
+import,org.apache.commons.codec.digest.DigestUtils,;
+import,org.apache.commons.configuration.Configuration,;
+/**
+*
+*,@author,dcardone
+*/
+public,class,SqlUtenteMapperDelegate,extends,SqlDataMapperDelegate,implements
+ISqlUsersDatabase,,IUtenteMapper,{
+/**
+*
+*,@param,config
+*,@param,sessionId
+*,@throws,SQLException
+*/
+public,SqlUtenteMapperDelegate(Configuration,config,,String,sessionId),throws
+SQLException,{
+super(sessionId),;
+synchronized,(DATABASE),{
+if,(DATABASE.get(sessionId),==,null),{
+DATABASE.putIfAbsent(sessionId,,new,SqlConnectionPool(
+SqlUsersDatabaseFactory.class,,null,,config,,INIT_NUM_CONN,
+MAX_NUM_CONN,
+true)),;
+}
+}
+}
+private,Utente,getUtente(ResultSet,result,,boolean,withPwd),throws,Exception,{
+Utente,_utente,=,new,Utente(),;
+_utente.setAbilitato(result.getShort(FIELD_UTENTE_ABILITATO)),;
+_utente.setId(result.getLong(FIELD_UTENTE_IDUTENTE)),;
+if,(withPwd),{
+_utente.setPassword(decript(result.getString(FIELD_UTENTE_PASSWORD))),;
+}
+_utente.setUsername(result.getString(FIELD_UTENTE_USERNAME)),;
+_utente.setDataattivazione(result.getDate(FIELD_UTENTE_DATAATTIVAZIONE)),;
+_utente.setDatascadenza(result.getDate(FIELD_UTENTE_DATASCADENZA)),;
+_utente.setSessionId(sessionId),;
+return,_utente,;
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,logIn(String,username,,String,password),throws,Exception,{
+boolean,loggedIn,=,false,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
++,",WHERE,",+,FIELD_UTENTE_USERNAME,+,"=?,AND,"
++,FIELD_UTENTE_PASSWORD,+,"=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setString(1,,username),;
+pstmt.setString(2,,encript(password)),;
+if,(conn.executeCountRows(pstmt),>,0),{
+loggedIn,=,true,;
+}
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,loggedIn,;
+}
+/**
+*
+*,@param,username
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(String,username),throws,Exception,{
+return,getUtente(username,,null),;
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(String,username,,String,password),throws,Exception,{
+Utente,utente,=,null,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
++,",WHERE,",+,FIELD_UTENTE_USERNAME,+,"=?,",;
+if,(password,!=,null),{
+sql,+=,",AND,",+,FIELD_UTENTE_PASSWORD,+,"=?",;
+}
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setString(1,,username),;
+if,(password,!=,null),{
+pstmt.setString(2,,encript(password)),;
+}
+ResultSet,result,=,conn.executeQuery(pstmt),;
+if,(result.next()),{
+utente,=,this.getUtente(result,,true),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+utente,=,null,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,utente,;
+}
+/**
+*
+*,@param,email
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtentebyEmail(String,email),throws,Exception,{
+Utente,utente,=,null,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE,+,",",+,TABLE_ANAGRAFE
++,",WHERE,",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDUTENTE,+,"=",+,TABLE_ANAGRAFE,+,".",+,FIELD_ANAGRAFE_IDUTENTE
++,",AND,",+,FIELD_ANAGRAFE_EMAIL,+,"=?,"
++,",AND,",+,FIELD_UTENTE_ABILITATO,+,"=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setString(1,,email),;
+pstmt.setInt(2,,UserStateType.ABILITATO.ordinal()),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+if,(result.next()),{
+utente,=,getUtente(result,,true),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+utente,=,null,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,utente,;
+}
+/**
+*
+*,@param,idRuolo
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getUtentiRuolo(long,idRuolo,,long,idAzienda),throws
+Exception,{
+List<Utente>,utenti,=,new,ArrayList<Utente>(),;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
++,",",+,TABLE_UTENTE_RUOLO
++,",WHERE,",+,FIELD_UTENTE_RUOLO_IDRUOLO,+,"=?"
++,",AND,",+,FIELD_UTENTE_IDAZIENDA,+,"=?"
++,",AND,",+,FIELD_UTENTE_ABILITATO,+,"=1"
++,",AND,",+,TABLE_UTENTE,+,".",+,FIELD_UTENTE_IDUTENTE
++,"=",+,TABLE_UTENTE_RUOLO,+,".",+,FIELD_UTENTE_RUOLO_IDUTENTE,;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,idRuolo),;
+pstmt.setLong(2,,idAzienda),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+while,(result.next()),{
+utenti.add(getUtente(result,,false)),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+utenti,=,null,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,utenti,;
+}
+/**
+*
+*,@param,id
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,Utente,getUtente(long,id),throws,Exception,{
+Utente,utente,=,null,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
++,",WHERE,",+,FIELD_UTENTE_IDUTENTE,+,",=,?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,id),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+if,(result.next()),{
+utente,=,getUtente(result,,true),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+utente,=,null,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,utente,;
+}
+/**
+*
+*,@param,idAzienda
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<Utente>,getAll(long,idAzienda),throws,Exception,{
+List<Utente>,utenti,=,new,ArrayList<Utente>(),;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE
++,",WHERE,",+,FIELD_UTENTE_ABILITATO,+,",<2,"
++,",AND,",+,FIELD_UTENTE_IDAZIENDA,+,",=,?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,idAzienda),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+while,(result.next()),{
+utenti.add(getUtente(result,,false)),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+utenti,=,new,ArrayList<Utente>(),;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,utenti,;
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,update(Utente,utente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+boolean,updated,;
+String,sql,;
+ISqlDatabase,conn,=,null,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"UPDATE,",+,TABLE_UTENTE
++,",SET,",+,FIELD_UTENTE_USERNAME,+,",=,?,,"
++,FIELD_UTENTE_ABILITATO,+,",=,?,,"
++,FIELD_UTENTE_DATAATTIVAZIONE,+,",=,?,,"
++,FIELD_UTENTE_DATASCADENZA,+,",=,?,,"
++,FIELD_UTENTE_PASSWORD,+,",=,?,"
++,",WHERE,",+,FIELD_UTENTE_IDUTENTE,+,"=,?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setString(1,,utente.getUsername()),;
+pstmt.setShort(2,,utente.getAbilitato()),;
+pstmt.setDate(3,,new,java.sql.Date(utente.getDataattivazione().
+getTime())),;
+pstmt.setDate(4,
+utente.getDatascadenza(),!=,null,?,new,java.sql.Date(
+utente.getDatascadenza().getTime()),:,null),;
+pstmt.setString(5,,encript(utente.getPassword())),;
+pstmt.setLong(6,,utente.getId()),;
+updated,=,conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+if,(e.getErrorCode(),==,-803),{
+throw,new,Exception(
+"Modificare,il,nome,utente,perchè,quello,inserito,non,è,consentito."),;
+},else,{
+throw,e,;
+}
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,updated,;
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,insert(Utente,utente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+long,id,=,-1L,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"INSERT,INTO,",+,TABLE_UTENTE
++,",(",+,FIELD_UTENTE_USERNAME,+,","
++,FIELD_UTENTE_ABILITATO,+,","
++,FIELD_UTENTE_DATAATTIVAZIONE,+,","
++,FIELD_UTENTE_DATASCADENZA,+,","
++,FIELD_UTENTE_PASSWORD,+,","
++,FIELD_UTENTE_IDAZIENDA
++,"),VALUES,(?,?,?,?,?,?)",;
+pstmt,=,conn.prepareStatement(sql,
+StatementType.RETURN_GENERATED_KEY),;
+pstmt.setString(1,,utente.getUsername()),;
+pstmt.setShort(2,,utente.getAbilitato()),;
+pstmt.setDate(3,,new,java.sql.Date(utente.getDataattivazione().
+getTime())),;
+pstmt.setDate(4,
+utente.getDatascadenza(),!=,null,?,new,java.sql.Date(
+utente.getDatascadenza().getTime()),:,null),;
+pstmt.setString(5,,encript(utente.getPassword())),;
+pstmt.setLong(6,,utente.getAzienda().getIdazienda()),;
+id,=,conn.executeCreateQuery(pstmt),;
+if,(id,>,-1L),{
+utente.setId(id),;
+}
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+if,(e.getErrorCode(),==,-803),{
+throw,new,Exception(
+"Modificare,il,nome,utente,perchè,quello,inserito,non,è,consentito."),;
+},else,{
+throw,e,;
+}
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,delete(Utente,utente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"DELETE,FROM,",+,TABLE_UTENTE
++,",WHERE,",+,FIELD_UTENTE_IDUTENTE,+,",=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setLong(1,,utente.getId()),;
+conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+private,void,deleteTabelleUtente(Long,idUtente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"DELETE,FROM,",+,TABLE_UTENTE_TABELLA
++,",WHERE,",+,FIELD_UTENTE_TABELLA_IDUTENTE,+,"=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setLong(1,,idUtente),;
+conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,utente
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,List<UtenteTabella>,getTabelleUtente(Utente,utente),throws,Exception,{
+List<UtenteTabella>,tabelle,=,new,ArrayList<UtenteTabella>(),;
+UtenteTabella,tabella,;
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.enableAutoCommit(),;
+sql,=,"SELECT,*,FROM,",+,TABLE_UTENTE_TABELLA
++,",WHERE,",+,FIELD_UTENTE_TABELLA_IDUTENTE,+,",=,?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.READ),;
+pstmt.setLong(1,,utente.getId()),;
+ResultSet,result,=,conn.executeQuery(pstmt),;
+while,(result.next()),{
+tabella,=,new,UtenteTabella(),;
+tabella.setIdTabellaUtente(result.getLong(
+FIELD_UTENTE_TABELLA_ID_TABELLA_UTENTE)),;
+tabella.setUtente(utente),;
+tabella.setTabella(
+result.getString(FIELD_UTENTE_TABELLA_TABELLA)),;
+tabella.setSelected(true),;
+tabelle.add(tabella),;
+}
+result.close(),;
+},catch,(Exception,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,tabelle,;
+}
+/**
+*
+*,@param,idUtente
+*,@param,userTables
+*,@throws,Exception
+*/
+@Override
+public,void,setTabelleUtente(Long,idUtente,,List<String>,userTables),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+deleteTabelleUtente(idUtente),;
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"INSERT,INTO,",+,TABLE_UTENTE_TABELLA
++,",(",+,FIELD_UTENTE_TABELLA_IDUTENTE,+,","
++,FIELD_UTENTE_TABELLA_TABELLA
++,"),VALUES,(?,?)",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+for,(String,userTable,:,userTables),{
+pstmt.clearParameters(),;
+pstmt.setLong(1,,idUtente),;
+pstmt.setString(2,,userTable),;
+conn.executeUpdateQuery(pstmt),;
+}
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},catch,(Exception,e),{
+conn.rollback(),;
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,deleteTeiid(Utente,utente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"DELETE,FROM,",+,TABLE_UTENTE_TEIID
++,",WHERE,",+,FIELD_UTENTE_TEIID_PRINCIPAL_ID,+,",=?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setString(1,,utente.getUsername()),;
+conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},catch,(Exception,e),{
+if,(conn,!=,null),{
+conn.rollback(),;
+}
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,utente
+*,@throws,Exception
+*/
+@Override
+public,void,insertTeiid(Utente,utente),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+ISqlDatabase,conn,=,null,;
+String,sql,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"INSERT,INTO,",+,TABLE_UTENTE_TEIID
++,",(",+,FIELD_UTENTE_TEIID_PRINCIPAL_ID,+,","
++,FIELD_UTENTE_TEIID_PASSWORD
++,"),VALUES,(?,?)",;
+pstmt,=,conn.prepareStatement(sql,
+StatementType.RETURN_GENERATED_KEY),;
+pstmt.setString(1,,utente.getUsername()),;
+pstmt.setString(2,,DigestUtils.md5Hex(utente.getPassword())),;
+conn.executeCreateQuery(pstmt),;
+sql,=,"INSERT,INTO,",+,TABLE_RUOLO_TEIID
++,",(",+,FIELD_RUOLO_TEIID_PRINCIPAL_ID,+,","
++,FIELD_RUOLO_TEIID_ROLE,+,","
++,FIELD_RUOLO_TEIID_ROLE_GROUP
++,"),VALUES,(?,?,?)",;
+pstmt,=,conn.prepareStatement(sql,
+StatementType.RETURN_GENERATED_KEY),;
+pstmt.setString(1,,utente.getUsername()),;
+pstmt.setString(2,,utente.getUsername()),;
+pstmt.setString(3,,utente.getUsername()),;
+conn.executeCreateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+if,(e.getErrorCode(),==,-803),{
+throw,new,Exception(
+"Modificare,il,nome,utente,perchè,quello,inserito,non,è,consentito."),;
+},else,{
+throw,e,;
+}
+},catch,(Exception,e),{
+if,(conn,!=,null),{
+conn.rollback(),;
+}
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+}
+/**
+*
+*,@param,username
+*,@param,password
+*,@return
+*,@throws,Exception
+*/
+@Override
+public,boolean,updateTeiid(String,username,,String,password),throws,Exception,{
+PreparedStatement,pstmt,=,null,;
+boolean,updated,;
+String,sql,;
+ISqlDatabase,conn,=,null,;
+try,{
+conn,=,DATABASE.get(this.sessionId).getConnection(),;
+conn.disableAutoCommit(),;
+sql,=,"UPDATE,",+,TABLE_UTENTE_TEIID
++,",SET,",+,FIELD_UTENTE_TEIID_PASSWORD,+,",=,?,"
++,",WHERE,",+,FIELD_UTENTE_TEIID_PRINCIPAL_ID,+,"=,?",;
+pstmt,=,conn.prepareStatement(sql,,StatementType.UPDATE),;
+pstmt.setString(1,,DigestUtils.md5Hex(password)),;
+pstmt.setString(2,,username),;
+updated,=,conn.executeUpdateQuery(pstmt),;
+conn.commit(),;
+},catch,(SQLException,e),{
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+if,(e.getErrorCode(),==,-803),{
+throw,new,Exception(
+"Modificare,il,nome,utente,perchè,quello,inserito,non,è,consentito."),;
+},else,{
+throw,e,;
+}
+},catch,(Exception,e),{
+if,(conn,!=,null),{
+conn.rollback(),;
+}
+LOGGER.log(Level.SEVERE,,e.getMessage(),,e),;
+throw,e,;
+},finally,{
+if,(conn,!=,null),{
+if,(pstmt,!=,null),{
+pstmt.close(),;
+}
+DATABASE.get(this.sessionId).free(conn),;
+}
+}
+return,updated,;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,com.serandp.datarise.profiling.facade.UtenteFacade,;
+import,java.io.Serializable,;
+import,java.util.Date,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Anagrafe,implements,Serializable,,Comparable<Anagrafe>,{
+private,Long,idanagrafe,;
+private,String,nome,;
+private,String,cognome,;
+private,Date,datanascita,;
+private,String,codfiscale,;
+private,String,citta,;
+private,String,indirizzo,;
+private,String,cap,;
+private,String,email,;
+private,String,telefono,;
+private,String,prefisso,;
+private,Utente,utente,;
+private,String,sessionId,;
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+	this.sessionId,=,sessionId,;
+}
+/**
+*
+*/
+public,Anagrafe(),{
+}
+/**
+*
+*,@param,idanagrafe
+*/
+public,Anagrafe(Long,idanagrafe),{
+	this.idanagrafe,=,idanagrafe,;
+}
+/**
+*
+*,@param,idutente
+*,@param,nome
+*,@param,cognome
+*,@param,datanascita
+*,@param,codfiscale
+*,@param,citta
+*,@param,indirizzo
+*,@param,cap
+*,@param,email
+*,@param,telefono
+*,@param,prefisso
+*/
+public,Anagrafe(Long,idutente,,String,nome,,String,cognome,,Date,datanascita,,String,codfiscale,,String,citta,,String,indirizzo,,String,cap,,String,email,,String,telefono,,String,prefisso),{
+	this.idanagrafe,=,idutente,;
+	this.nome,=,nome,;
+	this.cognome,=,cognome,;
+	this.datanascita,=,datanascita,;
+	this.codfiscale,=,codfiscale,;
+	this.citta,=,citta,;
+	this.indirizzo,=,indirizzo,;
+	this.cap,=,cap,;
+	this.email,=,email,;
+	this.telefono,=,telefono,;
+	this.prefisso,=,prefisso,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdAnagrafe(),{
+	return,idanagrafe,;
+}
+/**
+*
+*,@param,idutente
+*/
+public,void,setIdAnagrafe(Long,idutente),{
+	this.idanagrafe,=,idutente,;
+}
+/**
+*
+*,@return
+*/
+public,String,getNome(),{
+	return,nome,;
+}
+/**
+*
+*,@param,nome
+*/
+public,void,setNome(String,nome),{
+	this.nome,=,nome,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCognome(),{
+	return,cognome,;
+}
+/**
+*
+*,@param,cognome
+*/
+public,void,setCognome(String,cognome),{
+	this.cognome,=,cognome,;
+}
+/**
+*
+*,@return
+*/
+public,Date,getDatanascita(),{
+	return,datanascita,;
+}
+/**
+*
+*,@param,datanascita
+*/
+public,void,setDatanascita(Date,datanascita),{
+	this.datanascita,=,datanascita,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCodfiscale(),{
+	return,codfiscale,;
+}
+/**
+*
+*,@param,codfiscale
+*/
+public,void,setCodfiscale(String,codfiscale),{
+	this.codfiscale,=,codfiscale,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCitta(),{
+	return,citta,;
+}
+/**
+*
+*,@param,citta
+*/
+public,void,setCitta(String,citta),{
+	this.citta,=,citta,;
+}
+/**
+*
+*,@return
+*/
+public,String,getIndirizzo(),{
+	return,indirizzo,;
+}
+/**
+*
+*,@param,indirizzo
+*/
+public,void,setIndirizzo(String,indirizzo),{
+	this.indirizzo,=,indirizzo,;
+}
+/**
+*
+*,@return
+*/
+public,String,getCap(),{
+	return,cap,;
+}
+/**
+*
+*,@param,cap
+*/
+public,void,setCap(String,cap),{
+	this.cap,=,cap,;
+}
+/**
+*
+*,@return
+*/
+public,String,getEmail(),{
+	return,email,;
+}
+/**
+*
+*,@param,email
+*/
+public,void,setEmail(String,email),{
+	this.email,=,email,;
+}
+/**
+*
+*,@return
+*/
+public,String,getTelefono(),{
+	return,telefono,;
+}
+/**
+*
+*,@param,telefono
+*/
+public,void,setTelefono(String,telefono),{
+	this.telefono,=,telefono,;
+}
+/**
+*
+*,@return
+*/
+public,String,getPrefisso(),{
+	return,prefisso,;
+}
+/**
+*
+*,@param,prefisso
+*/
+public,void,setPrefisso(String,prefisso),{
+	this.prefisso,=,prefisso,;
+}
+/**
+*
+*,@return
+*,@throws,Exception
+*/
+public,Utente,getUtente(),throws,Exception,{
+	if,(utente,==,null),{
+	,,,,try,{
+		UserSession,session,=,UserSession.getUserSession(sessionId),;
+		UtenteFacade,facade,=,new,UtenteFacade(session),;
+		utente,=,facade.getUtente(this.idanagrafe),;
+	,,,,},catch,(Exception,ex),{
+		throw,ex,;
+	,,,,}
+	}
+	return,utente,;
+}
+/**
+*
+*,@param,utente
+*/
+public,void,setUtente(Utente,utente),{
+	this.utente,=,utente,;
+}
+@Override
+public,int,hashCode(),{
+	int,hash,=,0,;
+	hash,+=,(idanagrafe,!=,null,?,idanagrafe.hashCode(),:,0),;
+	return,hash,;
+}
+@Override
+public,boolean,equals(Object,object),{
+	//,TODO:,Warning,-,this,method,won't,work,in,the,case,the,id,fields,are,not,set
+	if,(!(object,instanceof,Anagrafe)),{
+	,,,,return,false,;
+	}
+	Anagrafe,other,=,(Anagrafe),object,;
+	if,((this.idanagrafe,==,null,&&,other.idanagrafe,!=,null),||,(this.idanagrafe,!=,null,&&,!this.idanagrafe.equals(other.idanagrafe))),{
+	,,,,return,false,;
+	}
+	return,true,;
+}
+@Override
+public,String,toString(),{
+	return,"com.serandp.datarise.profiling.entity.Anagrafe[,idutente=",+,idanagrafe,+,",]",;
+}
+@Override
+public,int,compareTo(Anagrafe,t),{
+	int,compCognome,=,t.getCognome().compareToIgnoreCase(this.cognome),;
+	if,(compCognome,==,0),{
+	,,,,return,t.getNome().compareToIgnoreCase(this.cognome),;
+	}
+	return,compCognome,;
+}
+}
+/*
+*,To,change,this,template,,choose,Tools,|,Templates
+*,and,open,the,template,in,the,editor.
+*/
+package,com.serandp.datarise.profiling.entity,;
+import,com.serandp.datarise.profiling.facade.AziendaFacade,;
+import,com.serandp.datarise.profiling.facade.ContrattoFacade,;
+import,com.serandp.datarise.profiling.facade.UserSession,;
+import,java.io.Serializable,;
+import,java.util.Formatter,;
+import,java.util.List,;
+/**
+*
+*
+*,@author,dcardone
+*/
+public,class,Azienda,implements,Serializable,{
+private,Long,idazienda,;
+private,String,ragionesociale,;
+private,String,piva,;
+private,String,telefono,;
+private,String,prefisso,;
+private,String,email,;
+private,String,citta,;
+private,String,indirizzo,;
+private,String,cap,;
+private,Utente,admin,;
+private,List<Utente>,utenti,=,null,;
+private,Contratto,contratto,=,null,;
+private,String,sessionId,;
+/**
+*
+*/
+public,Azienda(),{
+}
+/**
+*
+*,@param,idazienda
+*/
+public,Azienda(Long,idazienda),{
+this.idazienda,=,idazienda,;
+}
+/**
+*
+*,@param,idazienda
+*,@param,ragionesociale
+*,@param,piva
+*,@param,telefono
+*,@param,prefisso
+*,@param,email
+*,@param,citta
+*,@param,indirizzo
+*,@param,cap
+*/
+public,Azienda(Long,idazienda,,String,ragionesociale,,String,piva,
+String,telefono,,String,prefisso,,String,email,,String,citta,
+String,indirizzo,,String,cap),{
+this.idazienda,=,idazienda,;
+this.ragionesociale,=,ragionesociale,;
+this.piva,=,piva,;
+this.telefono,=,telefono,;
+this.prefisso,=,prefisso,;
+this.email,=,email,;
+this.citta,=,citta,;
+this.indirizzo,=,indirizzo,;
+this.cap,=,cap,;
+}
+/**
+*
+*,@param,sessionId
+*/
+public,void,setSessionId(String,sessionId),{
+this.sessionId,=,sessionId,;
+}
+/**
+*
+*,@return
+*/
+public,Long,getIdazienda(),{
+return,idazienda,;
+}
+/**
+*
+*,@param,idazienda
+*/
+public,void,setIdazienda(Long,idazienda),{
+this.idazienda,=,idazienda,;
+}
+public,final,String,getAccountName()
+{
+return,this._accountName,;
+}
+public,final,String,getNickName()
+{
+return,this._nickName,;
+}
+public,final,String,getSex()
+{
+return,this._sex,;
+}
+public,final,String,getBbs()
+{
+return,this._bbs,;
+}
+public,final,String,getHeadIco()
+{
+//
+if,(this._bbs.toLowerCase().equals("discuz"))
+{
+if,((new,Long(this._id_sql)).toString().equals("0"))
+{
+//??
+return,"please,use,client,QiPaiIco,class,,getHeadPhotoPath,function",;
+}
+//return,"/uc_server/avatar.php?uid=",+,this._id_sql.ToString(),+,"&size=middle",;	
+//xml??????
+return,"/uc_server/avatar.php?uid=",+,(new,Long(this._id_sql)).toString(),+,"&amp,;size=middle",;
+}
+//
+if,(this._bbs.toLowerCase().equals("dvbbs"))
+{
+return,this._headIco,;
+}
+//
+if,(this._bbs.toLowerCase().equals("phpwind"))
+{
+return,this._headIco,;
+}
+return,this._headIco,;
+}
+public,final,String,toXMLString()
+{
+String,s,=,"<u,id='",+,String.valueOf(this._id),+,
+"',id_sql='",+,String.valueOf(this._id_sql),+,
+"',n='",+,this._nickName,+,
+"',s='",+,String.valueOf(this._sex),+,
+"',g='",+,String.valueOf(this._g),+,
+"',bbs='",+,this._bbs,+,
+"',hico='",+,this._headIco,+,
+"',session='",+,this._strIpPort,+,"',></u>",;
+return,s,;
+}
+public,final,IUserModel,clone()
+{
+UserModelByDdz,u,=,new,UserModelByDdz(_strIpPort,,_id,,_id_sql,,_sex,,_accountName,,_nickName,,_bbs,,_headIco),;
+u.setG(_g),;
+return,u,;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.silverfoxserver.handler,;
+import,System.Xml.XmlDocument,;
+import,System.Xml.XmlHelper,;
+import,java.io.IOException,;
+import,java.net.InetAddress,;
+import,java.net.InetSocketAddress,;
+import,java.net.SocketAddress,;
+import,java.util.logging.Level,;
+import,java.util.logging.Logger,;
+import,net.silverfoxserver.core.array.QueueMethod,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.silverfoxserver.core.protocol.ClientAction,;
+import,net.silverfoxserver.core.service.IoHandler,;
+import,net.silverfoxserver.core.socket.SessionMessage,;
+import,net.silverfoxserver.core.util.SHA1ByAdobe,;
+import,net.silverfoxserver.DdzLPU,;
+import,org.jboss.netty.channel.Channel,;
+import,org.jboss.netty.channel.ChannelEvent,;
+import,org.jboss.netty.channel.ChannelFuture,;
+import,org.jboss.netty.channel.ChannelFutureListener,;
+import,org.jboss.netty.channel.ChannelHandlerContext,;
+import,org.jboss.netty.channel.ChannelStateEvent,;
+import,org.jboss.netty.channel.ExceptionEvent,;
+import,org.jboss.netty.channel.MessageEvent,;
+import,org.jboss.netty.channel.SimpleChannelUpstreamHandler,;
+import,org.jboss.netty.channel.group.ChannelGroup,;
+import,org.jboss.netty.channel.group.DefaultChannelGroup,;
+import,org.jboss.netty.handler.ssl.SslHandler,;
+import,org.jdom2.Attribute,;
+import,org.jdom2.JDOMException,;
+/*
+*,@author,FUX
+*/
+public,class,DdzGameClientHandler,implements,IoHandler{
+static,final,ChannelGroup,channels,=,new,DefaultChannelGroup(),;
+public,void,handleUpstream(ChannelHandlerContext,ctx,,ChannelEvent,e){
+if,(e,instanceof,ChannelStateEvent),{
+System.err.println(e),;
+}
+//super.handleUpstream(ctx,,e),;
+}
+public,void,sessionCreated(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+//,Get,the,SslHandler,in,the,current,pipeline.
+//,We,added,it,in,SecureChatPipelineFactory.
+//final,SslHandler,sslHandler,=,ctx.getPipeline().get(SslHandler.class),;
+//,Get,notified,when,SSL,handshake,is,done.
+//,ChannelFuture,handshakeFuture,=,sslHandler.handshake(),;
+//handshakeFuture.addListener(new,Greeter(sslHandler)),;
+}
+public,void,channelDisconnected(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+//,Unregister,the,channel,from,the,global,channel,list
+//,so,the,channel,does,not,receive,messages,anymore.
+channels.remove(e.getChannel()),;
+}
+@Override
+public,void,messageReceived(ChannelHandlerContext,ctx,,MessageEvent,e,XmlDocument,d),{
+MessageEvent,s,=,e,;,,,,,,,,
+//,Convert,to,a,String,first.,,,,,,,,
+XmlDocument,doc,=,d,;//new,XmlDocument(),;
+//doc.LoadXml((String)message),;
+//String,cAction,=,doc.DocumentElement.ChildNodes[0].Attributes["action"].Value,;
+String,cAction,=,doc.getDocumentElement().getChildren().get(0).getAttribute("action").getValue(),;
+InetSocketAddress,remoteAddress,=,(InetSocketAddress)s.getChannel().getRemoteAddress(),;
+	String,strIpPort,=,remoteAddress.getAddress().getHostAddress(),+,":",+,String.valueOf(remoteAddress.getPort()),;
+//
+//,,,,,,,,//create,item
+SessionMessage,item,=,new,SessionMessage(e,,doc,,false,,false),;
+//
+//,,,,,,,,//save
+DdzLPU.getInstance().getmsgList().Opp(QueueMethod.Add,,item),;
+//
+//,,,,,,,,//
+if,(cAction.equals(ClientAction.heartBeat))
+{
+//???
+}
+else
+{
+//log
+Log.WriteStrByRecv(cAction,,strIpPort),;
+}
+}
+@Override
+public,void,exceptionCaught(ChannelHandlerContext,ctx,,ExceptionEvent,e),{
+e.getCause().printStackTrace(),;
+e.getChannel().close(),;
+}
+@Override
+public,void,sessionOpened(),{
+//throw,new,UnsupportedOperationException("Not,supported,yet."),;,//To,change,body,of,generated,methods,,choose,Tools,|,Templates.
+}
+@Override
+public,void,sessionClosed(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+try
+{
+Channel,c,=,e.getChannel(),;
+InetSocketAddress,remoteAddress,=,(InetSocketAddress)c.getRemoteAddress(),;
+String,strIpPort,=,remoteAddress.getAddress().getHostAddress(),+,":",+,String.valueOf(remoteAddress.getPort()),;
+XmlDocument,doc,=,new,XmlDocument(),;
+//
+String,packeXml,=,"<msg,t='sys'><body,action='sessionClosed'>",+,strIpPort,+,"</body></msg>",;
+doc.LoadXml(packeXml),;
+//create,item
+SessionMessage,item,=,new,SessionMessage(e,,doc,,false,,false),;
+//save
+DdzLPU.getInstance().getmsgList().Opp(QueueMethod.Add,,item),;
+}
+catch,(JDOMException,|,IOException,|RuntimeException,exd)
+{
+Log.WriteStrByException("ChChessGameClientHandler",,"sessionClosed",,exd.getMessage()),;
+},
+}
+	
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,net.silverfoxserver.handler,;
+import,System.Xml.XmlDocument,;
+import,java.net.InetSocketAddress,;
+import,net.silverfoxserver.core.array.QueueMethod,;
+import,net.silverfoxserver.core.log.Log,;
+import,net.silverfoxserver.core.protocol.ClientAction,;
+import,net.silverfoxserver.core.service.IoHandler,;
+import,net.silverfoxserver.core.socket.SessionMessage,;
+import,net.silverfoxserver.DdzLogic,;
+import,net.silverfoxserver.DdzLPU,;
+import,org.jboss.netty.channel.ChannelEvent,;
+import,org.jboss.netty.channel.ChannelHandlerContext,;
+import,org.jboss.netty.channel.ChannelStateEvent,;
+import,org.jboss.netty.channel.ExceptionEvent,;
+import,org.jboss.netty.channel.MessageEvent,;
+import,org.jboss.netty.channel.group.ChannelGroup,;
+import,org.jboss.netty.channel.group.DefaultChannelGroup,;
+/**
+*
+*,@author,FUX
+*/
+public,class,DdzRCClientHandler,implements,IoHandler{
+static,final,ChannelGroup,channels,=,new,DefaultChannelGroup(),;
+public,void,handleUpstream(ChannelHandlerContext,ctx,,ChannelEvent,e){
+if,(e,instanceof,ChannelStateEvent),{
+System.err.println(e),;
+}
+//super.handleUpstream(ctx,,e),;
+}
+public,void,sessionCreated(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+//,Get,the,SslHandler,in,the,current,pipeline.
+//,We,added,it,in,SecureChatPipelineFactory.
+//final,SslHandler,sslHandler,=,ctx.getPipeline().get(SslHandler.class),;
+//,Get,notified,when,SSL,handshake,is,done.
+//,ChannelFuture,handshakeFuture,=,sslHandler.handshake(),;
+//handshakeFuture.addListener(new,Greeter(sslHandler)),;
+}
+public,void,channelDisconnected(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+//,Unregister,the,channel,from,the,global,channel,list
+//,so,the,channel,does,not,receive,messages,anymore.
+channels.remove(e.getChannel()),;
+}
+@Override
+public,void,messageReceived(ChannelHandlerContext,ctx,,MessageEvent,e,XmlDocument,d),{
+MessageEvent,s,=,e,;,,,,,,,,
+//,Convert,to,a,String,first.,,,,,,,,
+XmlDocument,doc,=,d,;//new,XmlDocument(),;
+//doc.LoadXml((String)message),;
+//String,cAction,=,doc.DocumentElement.ChildNodes[0].Attributes["action"].Value,;
+String,cAction,=,doc.getDocumentElement().getChildren().get(0).getAttribute("action").getValue(),;
+InetSocketAddress,remoteAddress,=,(InetSocketAddress)s.getChannel().getRemoteAddress(),;
+	String,strIpPort,=,remoteAddress.getAddress().getHostAddress(),+,":",+,String.valueOf(remoteAddress.getPort()),;
+//
+//,,,,,,,,//create,item
+SessionMessage,item,=,new,SessionMessage(e,,doc,,false,,true),;
+//
+//,,,,,,,,//save
+DdzLPU.getInstance().getmsgList().Opp(QueueMethod.Add,,item),;
+//
+//,,,,,,,,//
+if,(cAction.equals(ClientAction.heartBeat))
+{
+//???
+}
+else
+{
+//log
+Log.WriteStrByRecv(cAction,,strIpPort),;
+}
+}
+@Override
+public,void,exceptionCaught(ChannelHandlerContext,ctx,,ExceptionEvent,e),{
+e.getCause().printStackTrace(),;
+e.getChannel().close(),;
+}
+@Override
+public,void,sessionOpened(),{
+//throw,new,UnsupportedOperationException("Not,supported,yet."),;,//To,change,body,of,generated,methods,,choose,Tools,|,Templates.
+}
+@Override
+public,void,sessionClosed(ChannelHandlerContext,ctx,,ChannelStateEvent,e),{
+//throw,new,UnsupportedOperationException("Not,supported,yet."),;,//To,change,body,of,generated,methods,,choose,Tools,|,Templates.
+DdzLogic.getInstance().RCConnector.retryConnect(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,org.json,;
+/*
+Copyright,(c),2002,JSON.org
+Permission,is,hereby,granted,,free,of,charge,,to,any,person,obtaining,a,copy
+of,this,software,and,associated,documentation,files,(the,"Software"),,to,deal
+in,the,Software,without,restriction,,including,without,limitation,the,rights
+to,use,,copy,,modify,,merge,,publish,,distribute,,sublicense,,and/or,sell
+copies,of,the,Software,,and,to,permit,persons,to,whom,the,Software,is
+furnished,to,do,so,,subject,to,the,following,conditions:
+The,above,copyright,notice,and,this,permission,notice,shall,be,included,in,all
+copies,or,substantial,portions,of,the,Software.
+The,Software,shall,be,used,for,Good,,not,Evil.
+THE,SOFTWARE,IS,PROVIDED,"AS,IS",,WITHOUT,WARRANTY,OF,ANY,KIND,,EXPRESS,OR
+IMPLIED,,INCLUDING,BUT,NOT,LIMITED,TO,THE,WARRANTIES,OF,MERCHANTABILITY,
+FITNESS,FOR,A,PARTICULAR,PURPOSE,AND,NONINFRINGEMENT.,IN,NO,EVENT,SHALL,THE
+AUTHORS,OR,COPYRIGHT,HOLDERS,BE,LIABLE,FOR,ANY,CLAIM,,DAMAGES,OR,OTHER
+LIABILITY,,WHETHER,IN,AN,ACTION,OF,CONTRACT,,TORT,OR,OTHERWISE,,ARISING,FROM,
+OUT,OF,OR,IN,CONNECTION,WITH,THE,SOFTWARE,OR,THE,USE,OR,OTHER,DEALINGS,IN,THE
+SOFTWARE.
+*/
+/**
+*,This,provides,static,methods,to,convert,comma,delimited,text,into,a
+*,JSONArray,,and,to,covert,a,JSONArray,into,comma,delimited,text.,Comma
+*,delimited,text,is,a,very,popular,format,for,data,interchange.,It,is
+*,understood,by,most,database,,spreadsheet,,and,organizer,programs.
+*,<p>
+*,Each,row,of,text,represents,a,row,in,a,table,or,a,data,record.,Each,row
+*,ends,with,a,NEWLINE,character.,Each,row,contains,one,or,more,values.
+*,Values,are,separated,by,commas.,A,value,can,contain,any,character,except
+*,for,comma,,unless,is,is,wrapped,in,single,quotes,or,double,quotes.
+*,<p>
+*,The,first,row,usually,contains,the,names,of,the,columns.
+*,<p>
+*,A,comma,delimited,list,can,be,converted,into,a,JSONArray,of,JSONObjects.
+*,The,names,for,the,elements,in,the,JSONObjects,can,be,taken,from,the,names
+*,in,the,first,row.
+*,@author,JSON.org
+*,@version,2014-05-03
+*/
+public,class,CDL,{
+/**
+*,Get,the,next,value.,The,value,can,be,wrapped,in,quotes.,The,value,can
+*,be,empty.
+*,@param,x,A,JSONTokener,of,the,source,text.
+*,@return,The,value,string,,or,null,if,empty.
+*,@throws,JSONException,if,the,quoted,string,is,badly,formed.
+*/
+private,static,String,getValue(JSONTokener,x),throws,JSONException,{
+char,c,;
+char,q,;
+StringBuffer,sb,;
+do,{
+c,=,x.next(),;
+},while,(c,==,',',||,c,==,'\t'),;
+switch,(c),{
+case,0:
+return,null,;
+case,'"':
+case,'\'':
+q,=,c,;
+sb,=,new,StringBuffer(),;
+for,(,;,;),{
+c,=,x.next(),;
+if,(c,==,q),{
+break,;
+}
+if,(c,==,0,||,c,==,'\n',||,c,==,'\r'),{
+throw,x.syntaxError("Missing,close,quote,'",+,q,+,"'."),;
+}
+sb.append(c),;
+}
+return,sb.toString(),;
+case,',':
+x.back(),;
+return,"",;
+default:
+x.back(),;
+return,x.nextTo(','),;
+}
+}
+/**
+*,Produce,a,JSONArray,of,strings,from,a,row,of,comma,delimited,values.
+*,@param,x,A,JSONTokener,of,the,source,text.
+*,@return,A,JSONArray,of,strings.
+*,@throws,JSONException
+*/
+public,static,JSONArray,rowToJSONArray(JSONTokener,x),throws,JSONException,{
+JSONArray,ja,=,new,JSONArray(),;
+for,(,;,;),{
+String,value,=,getValue(x),;
+char,c,=,x.next(),;
+if,(value,==,null,||
+(ja.length(),==,0,&&,value.length(),==,0,&&,c,!=,',')),{
+return,null,;
+}
+ja.put(value),;
+for,(,;,;),{
+if,(c,==,','),{
+break,;
+}
+if,(c,!=,','),{
+if,(c,==,'\n',||,c,==,'\r',||,c,==,0),{
+return,ja,;
+}
+throw,x.syntaxError("Bad,character,'",+,c,+,"',(",+
+(int)c,+,")."),;
+}
+c,=,x.next(),;
+}
+}
+}
+/**
+*,Produce,a,JSONObject,from,a,row,of,comma,delimited,text,,using,a
+*,parallel,JSONArray,of,strings,to,provides,the,names,of,the,elements.
+*,@param,names,A,JSONArray,of,names.,This,is,commonly,obtained,from,the
+*,,first,row,of,a,comma,delimited,text,file,using,the,rowToJSONArray
+*,,method.
+*,@param,x,A,JSONTokener,of,the,source,text.
+*,@return,A,JSONObject,combining,the,names,and,values.
+*,@throws,JSONException
+*/
+public,static,JSONObject,rowToJSONObject(JSONArray,names,,JSONTokener,x)
+throws,JSONException,{
+JSONArray,ja,=,rowToJSONArray(x),;
+return,ja,!=,null,?,ja.toJSONObject(names),:,,null,;
+}
+/**
+*,Produce,a,comma,delimited,text,row,from,a,JSONArray.,Values,containing
+*,the,comma,character,will,be,quoted.,Troublesome,characters,may,be
+*,removed.
+*,@param,ja,A,JSONArray,of,strings.
+*,@return,A,string,ending,in,NEWLINE.
+*/
+public,static,String,rowToString(JSONArray,ja),{
+StringBuilder,sb,=,new,StringBuilder(),;
+for,(int,i,=,0,;,i,<,ja.length(),;,i,+=,1),{
+if,(i,>,0),{
+sb.append(','),;
+}
+Object,object,=,ja.opt(i),;
+if,(object,!=,null),{
+String,string,=,object.toString(),;
+if,(string.length(),>,0,&&,(string.indexOf(','),>=,0,||
+string.indexOf('\n'),>=,0,||,string.indexOf('\r'),>=,0,||
+string.indexOf(0),>=,0,||,string.charAt(0),==,'"')),{
+sb.append('"'),;
+int,length,=,string.length(),;
+for,(int,j,=,0,;,j,<,length,;,j,+=,1),{
+char,c,=,string.charAt(j),;
+if,(c,>=,',',&&,c,!=,'"'),{
+sb.append(c),;
+}
+}
+sb.append('"'),;
+},else,{
+sb.append(string),;
+}
+}
+}
+sb.append('\n'),;
+return,sb.toString(),;
+}
+/**
+*,Produce,a,JSONArray,of,JSONObjects,from,a,comma,delimited,text,string,
+*,using,the,first,row,as,a,source,of,names.
+*,@param,string,The,comma,delimited,text.
+*,@return,A,JSONArray,of,JSONObjects.
+*,@throws,JSONException
+*/
+public,static,JSONArray,toJSONArray(String,string),throws,JSONException,{
+return,toJSONArray(new,JSONTokener(string)),;
+}
+/**
+*,Produce,a,JSONArray,of,JSONObjects,from,a,comma,delimited,text,string,
+*,using,the,first,row,as,a,source,of,names.
+*,@param,x,The,JSONTokener,containing,the,comma,delimited,text.
+*,@return,A,JSONArray,of,JSONObjects.
+*,@throws,JSONException
+*/
+public,static,JSONArray,toJSONArray(JSONTokener,x),throws,JSONException,{
+return,toJSONArray(rowToJSONArray(x),,x),;
+}
+/**
+*,Produce,a,JSONArray,of,JSONObjects,from,a,comma,delimited,text,string
+*,using,a,supplied,JSONArray,as,the,source,of,element,names.
+*,@param,names,A,JSONArray,of,strings.
+*,@param,string,The,comma,delimited,text.
+*,@return,A,JSONArray,of,JSONObjects.
+*,@throws,JSONException
+*/
+public,static,JSONArray,toJSONArray(JSONArray,names,,String,string)
+throws,JSONException,{
+return,toJSONArray(names,,new,JSONTokener(string)),;
+}
+/**
+*,Produce,a,JSONArray,of,JSONObjects,from,a,comma,delimited,text,string
+*,using,a,supplied,JSONArray,as,the,source,of,element,names.
+*,@param,names,A,JSONArray,of,strings.
+*,@param,x,A,JSONTokener,of,the,source,text.
+*,@return,A,JSONArray,of,JSONObjects.
+*,@throws,JSONException
+*/
+public,static,JSONArray,toJSONArray(JSONArray,names,,JSONTokener,x)
+throws,JSONException,{
+if,(names,==,null,||,names.length(),==,0),{
+return,null,;
+}
+JSONArray,ja,=,new,JSONArray(),;
+for,(,;,;),{
+JSONObject,jo,=,rowToJSONObject(names,,x),;
+if,(jo,==,null),{
+break,;
+}
+ja.put(jo),;
+}
+if,(ja.length(),==,0),{
+return,null,;
+}
+return,ja,;
+}
+/**
+*,Produce,a,comma,delimited,text,from,a,JSONArray,of,JSONObjects.,The
+*,first,row,will,be,a,list,of,names,obtained,by,inspecting,the,first
+*,JSONObject.
+*,@param,ja,A,JSONArray,of,JSONObjects.
+*,@return,A,comma,delimited,text.
+*,@throws,JSONException
+*/
+public,static,String,toString(JSONArray,ja),throws,JSONException,{
+JSONObject,jo,=,ja.optJSONObject(0),;
+if,(jo,!=,null),{
+JSONArray,names,=,jo.names(),;
+if,(names,!=,null),{
+return,rowToString(names),+,toString(names,,ja),;
+}
+}
+return,null,;
+}
+/**
+*,Produce,a,comma,delimited,text,from,a,JSONArray,of,JSONObjects,using
+*,a,provided,list,of,names.,The,list,of,names,is,not,included,in,the
+*,output.
+*,@param,names,A,JSONArray,of,strings.
+*,@param,ja,A,JSONArray,of,JSONObjects.
+*,@return,A,comma,delimited,text.
+*,@throws,JSONException
+*/
+public,static,String,toString(JSONArray,names,,JSONArray,ja)
+throws,JSONException,{
+if,(names,==,null,||,names.length(),==,0),{
+return,null,;
+}
+StringBuffer,sb,=,new,StringBuffer(),;
+for,(int,i,=,0,;,i,<,ja.length(),;,i,+=,1),{
+JSONObject,jo,=,ja.optJSONObject(i),;
+if,(jo,!=,null),{
+sb.append(rowToString(jo.toJSONArray(names))),;
+}
+}
+return,sb.toString(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,org.json,;
+/*
+Copyright,(c),2002,JSON.org
+Permission,is,hereby,granted,,free,of,charge,,to,any,person,obtaining,a,copy
+of,this,software,and,associated,documentation,files,(the,"Software"),,to,deal
+in,the,Software,without,restriction,,including,without,limitation,the,rights
+to,use,,copy,,modify,,merge,,publish,,distribute,,sublicense,,and/or,sell
+copies,of,the,Software,,and,to,permit,persons,to,whom,the,Software,is
+furnished,to,do,so,,subject,to,the,following,conditions:
+The,above,copyright,notice,and,this,permission,notice,shall,be,included,in,all
+copies,or,substantial,portions,of,the,Software.
+The,Software,shall,be,used,for,Good,,not,Evil.
+THE,SOFTWARE,IS,PROVIDED,"AS,IS",,WITHOUT,WARRANTY,OF,ANY,KIND,,EXPRESS,OR
+IMPLIED,,INCLUDING,BUT,NOT,LIMITED,TO,THE,WARRANTIES,OF,MERCHANTABILITY,
+FITNESS,FOR,A,PARTICULAR,PURPOSE,AND,NONINFRINGEMENT.,IN,NO,EVENT,SHALL,THE
+AUTHORS,OR,COPYRIGHT,HOLDERS,BE,LIABLE,FOR,ANY,CLAIM,,DAMAGES,OR,OTHER
+LIABILITY,,WHETHER,IN,AN,ACTION,OF,CONTRACT,,TORT,OR,OTHERWISE,,ARISING,FROM,
+OUT,OF,OR,IN,CONNECTION,WITH,THE,SOFTWARE,OR,THE,USE,OR,OTHER,DEALINGS,IN,THE
+SOFTWARE.
+*/
+/**
+*,Convert,a,web,browser,cookie,specification,to,a,JSONObject,and,back.
+*,JSON,and,Cookies,are,both,notations,for,name/value,pairs.
+*,@author,JSON.org
+*,@version,2014-05-03
+*/
+public,class,Cookie,{
+/**
+*,Produce,a,copy,of,a,string,in,which,the,characters,'+',,'%',,'=',,',;'
+*,and,control,characters,are,replaced,with,"%hh".,This,is,a,gentle,form
+*,of,URL,encoding,,attempting,to,cause,as,little,distortion,to,the
+*,string,as,possible.,The,characters,'=',and,',;',are,meta,characters,in
+*,cookies.,By,convention,,they,are,escaped,using,the,URL-encoding.,This,is
+*,only,a,convention,,not,a,standard.,Often,,cookies,are,expected,to,have
+*,encoded,values.,We,encode,'=',and,',;',because,we,must.,We,encode,'%',and
+*,'+',because,they,are,meta,characters,in,URL,encoding.
+*,@param,string,The,source,string.
+*,@return,,,,,,,The,escaped,result.
+*/
+public,static,String,escape(String,string),{
+char,,,,,,,,,,,,c,;
+String,,,,,,,,,,s,=,string.trim(),;
+int,,,,,,,,,,,,,length,=,s.length(),;
+StringBuilder,,,sb,=,new,StringBuilder(length),;
+for,(int,i,=,0,;,i,<,length,;,i,+=,1),{
+c,=,s.charAt(i),;
+if,(c,<,',',||,c,==,'+',||,c,==,'%',||,c,==,'=',||,c,==,',;'),{
+sb.append('%'),;
+sb.append(Character.forDigit((char)((c,>>>,4),&,0x0f),,16)),;
+sb.append(Character.forDigit((char)(c,&,0x0f),,16)),;
+},else,{
+sb.append(c),;
+}
+}
+return,sb.toString(),;
+}
+/**
+*,Convert,a,cookie,specification,string,into,a,JSONObject.,The,string
+*,will,contain,a,name,value,pair,separated,by,'='.,The,name,and,the,value
+*,will,be,unescaped,,possibly,converting,'+',and,'%',sequences.,The
+*,cookie,properties,may,follow,,separated,by,',;',,also,represented,as
+*,name=value,(except,the,secure,property,,which,does,not,have,a,value).
+*,The,name,will,be,stored,under,the,key,"name",,and,the,value,will,be
+*,stored,under,the,key,"value".,This,method,does,not,do,checking,or
+*,validation,of,the,parameters.,It,only,converts,the,cookie,string,into
+*,a,JSONObject.
+*,@param,string,The,cookie,specification,string.
+*,@return,A,JSONObject,containing,"name",,"value",,and,possibly,other
+*,,members.
+*,@throws,JSONException
+*/
+public,static,JSONObject,toJSONObject(String,string),throws,JSONException,{
+String,,,,,,,,,name,;
+JSONObject,,,,,jo,=,new,JSONObject(),;
+Object,,,,,,,,,value,;
+JSONTokener,x,=,new,JSONTokener(string),;
+jo.put("name",,x.nextTo('=')),;
+x.next('='),;
+jo.put("value",,x.nextTo(',;')),;
+x.next(),;
+while,(x.more()),{
+name,=,unescape(x.nextTo("=,;")),;
+if,(x.next(),!=,'='),{
+if,(name.equals("secure")),{
+value,=,Boolean.TRUE,;
+},else,{
+throw,x.syntaxError("Missing,'=',in,cookie,parameter."),;
+}
+},else,{
+value,=,unescape(x.nextTo(',;')),;
+x.next(),;
+}
+jo.put(name,,value),;
+}
+return,jo,;
+}
+/**
+*,Convert,a,JSONObject,into,a,cookie,specification,string.,The,JSONObject
+*,must,contain,"name",and,"value",members.
+*,If,the,JSONObject,contains,"expires",,"domain",,"path",,or,"secure"
+*,members,,they,will,be,appended,to,the,cookie,specification,string.
+*,All,other,members,are,ignored.
+*,@param,jo,A,JSONObject
+*,@return,A,cookie,specification,string
+*,@throws,JSONException
+*/
+public,static,String,toString(JSONObject,jo),throws,JSONException,{
+StringBuilder,sb,=,new,StringBuilder(),;
+sb.append(escape(jo.getString("name"))),;
+sb.append("="),;
+sb.append(escape(jo.getString("value"))),;
+if,(jo.has("expires")),{
+sb.append(",;expires="),;
+sb.append(jo.getString("expires")),;
+}
+if,(jo.has("domain")),{
+sb.append(",;domain="),;
+sb.append(escape(jo.getString("domain"))),;
+}
+if,(jo.has("path")),{
+sb.append(",;path="),;
+sb.append(escape(jo.getString("path"))),;
+}
+if,(jo.optBoolean("secure")),{
+sb.append(",;secure"),;
+}
+return,sb.toString(),;
+}
+/**
+*,Convert,<code>%</code><i>hh</i>,sequences,to,single,characters,,and
+*,convert,plus,to,space.
+*,@param,string,A,string,that,may,contain
+*,,,,,,<code>+</code>&nbsp,;<small>(plus)</small>,and
+*,,,,,,<code>%</code><i>hh</i>,sequences.
+*,@return,The,unescaped,string.
+*/
+public,static,String,unescape(String,string),{
+int,length,=,string.length(),;
+StringBuilder,sb,=,new,StringBuilder(length),;
+for,(int,i,=,0,;,i,<,length,;,++i),{
+char,c,=,string.charAt(i),;
+if,(c,==,'+'),{
+c,=,',',;
+},else,if,(c,==,'%',&&,i,+,2,<,length),{
+int,d,=,JSONTokener.dehexchar(string.charAt(i,+,1)),;
+int,e,=,JSONTokener.dehexchar(string.charAt(i,+,2)),;
+if,(d,>=,0,&&,e,>=,0),{
+c,=,(char)(d,*,16,+,e),;
+i,+=,2,;
+}
+}
+sb.append(c),;
+}
+return,sb.toString(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,org.json,;
+/*
+Copyright,(c),2002,JSON.org
+Permission,is,hereby,granted,,free,of,charge,,to,any,person,obtaining,a,copy
+of,this,software,and,associated,documentation,files,(the,"Software"),,to,deal
+in,the,Software,without,restriction,,including,without,limitation,the,rights
+to,use,,copy,,modify,,merge,,publish,,distribute,,sublicense,,and/or,sell
+copies,of,the,Software,,and,to,permit,persons,to,whom,the,Software,is
+furnished,to,do,so,,subject,to,the,following,conditions:
+The,above,copyright,notice,and,this,permission,notice,shall,be,included,in,all
+copies,or,substantial,portions,of,the,Software.
+The,Software,shall,be,used,for,Good,,not,Evil.
+THE,SOFTWARE,IS,PROVIDED,"AS,IS",,WITHOUT,WARRANTY,OF,ANY,KIND,,EXPRESS,OR
+IMPLIED,,INCLUDING,BUT,NOT,LIMITED,TO,THE,WARRANTIES,OF,MERCHANTABILITY,
+FITNESS,FOR,A,PARTICULAR,PURPOSE,AND,NONINFRINGEMENT.,IN,NO,EVENT,SHALL,THE
+AUTHORS,OR,COPYRIGHT,HOLDERS,BE,LIABLE,FOR,ANY,CLAIM,,DAMAGES,OR,OTHER
+LIABILITY,,WHETHER,IN,AN,ACTION,OF,CONTRACT,,TORT,OR,OTHERWISE,,ARISING,FROM,
+OUT,OF,OR,IN,CONNECTION,WITH,THE,SOFTWARE,OR,THE,USE,OR,OTHER,DEALINGS,IN,THE
+SOFTWARE.
+*/
+import,java.util.Iterator,;
+/**
+*,Convert,a,web,browser,cookie,list,string,to,a,JSONObject,and,back.
+*,@author,JSON.org
+*,@version,2014-05-03
+*/
+public,class,CookieList,{
+/**
+*,Convert,a,cookie,list,into,a,JSONObject.,A,cookie,list,is,a,sequence
+*,of,name/value,pairs.,The,names,are,separated,from,the,values,by,'='.
+*,The,pairs,are,separated,by,',;'.,The,names,and,the,values
+*,will,be,unescaped,,possibly,converting,'+',and,'%',sequences.
+*
+*,To,add,a,cookie,to,a,cooklist,
+*,cookielistJSONObject.put(cookieJSONObject.getString("name"),
+*,,,,,cookieJSONObject.getString("value")),;
+*,@param,string,,A,cookie,list,string
+*,@return,A,JSONObject
+*,@throws,JSONException
+*/
+public,static,JSONObject,toJSONObject(String,string),throws,JSONException,{
+JSONObject,jo,=,new,JSONObject(),;
+JSONTokener,x,=,new,JSONTokener(string),;
+while,(x.more()),{
+String,name,=,Cookie.unescape(x.nextTo('=')),;
+x.next('='),;
+jo.put(name,,Cookie.unescape(x.nextTo(',;'))),;
+x.next(),;
+}
+return,jo,;
+}
+/**
+*,Convert,a,JSONObject,into,a,cookie,list.,A,cookie,list,is,a,sequence
+*,of,name/value,pairs.,The,names,are,separated,from,the,values,by,'='.
+*,The,pairs,are,separated,by,',;'.,The,characters,'%',,'+',,'=',,and,',;'
+*,in,the,names,and,values,are,replaced,by,"%hh".
+*,@param,jo,A,JSONObject
+*,@return,A,cookie,list,string
+*,@throws,JSONException
+*/
+public,static,String,toString(JSONObject,jo),throws,JSONException,{
+boolean,,,,,,,,,,,,,b,=,false,;
+Iterator<String>,,,,keys,=,jo.keys(),;
+String,,,,,,,,,,,,,,string,;
+StringBuilder,sb,=,new,StringBuilder(),;
+while,(keys.hasNext()),{
+string,=,keys.next(),;
+if,(!jo.isNull(string)),{
+if,(b),{
+sb.append(',;'),;
+}
+sb.append(Cookie.escape(string)),;
+sb.append("="),;
+sb.append(Cookie.escape(jo.getString(string))),;
+b,=,true,;
+}
+}
+return,sb.toString(),;
+}
+}
+/*
+*,SilverFoxServer:,massive,multiplayer,game,server,for,Flash,,...
+*,VERSION:3.0
+*,PUBLISH,DATE:2015-9-2,
+*,GITHUB:github.com/wdmir/521266750_qq_com
+*,UPDATES,AND,DOCUMENTATION,AT:,http://www.silverfoxserver.net
+*,COPYRIGHT,2009-2015,SilverFoxServer.NET.,All,rights,reserved.
+*,MAIL:521266750@qq.com
+*/
+package,org.json,;
+/*
+Copyright,(c),2002,JSON.org
+Permission,is,hereby,granted,,free,of,charge,,to,any,person,obtaining,a,copy
+of,this,software,and,associated,documentation,files,(the,"Software"),,to,deal
+in,the,Software,without,restriction,,including,without,limitation,the,rights
+to,use,,copy,,modify,,merge,,publish,,distribute,,sublicense,,and/or,sell
+copies,of,the,Software,,and,to,permit,persons,to,whom,the,Software,is
+furnished,to,do,so,,subject,to,the,following,conditions:
+The,above,copyright,notice,and,this,permission,notice,shall,be,included,in,all
+copies,or,substantial,portions,of,the,Software.
+The,Software,shall,be,used,for,Good,,not,Evil.
+THE,SOFTWARE,IS,PROVIDED,"AS,IS",,WITHOUT,WARRANTY,OF,ANY,KIND,,EXPRESS,OR
+IMPLIED,,INCLUDING,BUT,NOT,LIMITED,TO,THE,WARRANTIES,OF,MERCHANTABILITY,
+FITNESS,FOR,A,PARTICULAR,PURPOSE,AND,NONINFRINGEMENT.,IN,NO,EVENT,SHALL,THE
+AUTHORS,OR,COPYRIGHT,HOLDERS,BE,LIABLE,FOR,ANY,CLAIM,,DAMAGES,OR,OTHER
+LIABILITY,,WHETHER,IN,AN,ACTION,OF,CONTRACT,,TORT,OR,OTHERWISE,,ARISING,FROM,
+OUT,OF,OR,IN,CONNECTION,WITH,THE,SOFTWARE,OR,THE,USE,OR,OTHER,DEALINGS,IN,THE
+SOFTWARE.
+*/
+import,java.util.Iterator,;
+/**
+*,Convert,an,HTTP,header,to,a,JSONObject,and,back.
+*,@author,JSON.org
+*,@version,2014-05-03
+*/
+public,class,HTTP,{
+/**,Carriage,return/line,feed.,*/
+public,static,final,String,CRLF,=,"\r\n",;
+/**
+*,Convert,an,HTTP,header,string,into,a,JSONObject.,It,can,be,a,request
+*,header,or,a,response,header.,A,request,header,will,contain
+*,<pre>{
+*,,,,Method:,"POST",(for,example),
+*,,,,"Request-URI":,"/",(for,example),
+*,,,,"HTTP-Version":,"HTTP/1.1",(for,example)
+*,}</pre>
+*,A,response,header,will,contain
+*,<pre>{
+*,,,,"HTTP-Version":,"HTTP/1.1",(for,example),
+*,,,,"Status-Code":,"200",(for,example),
+*,,,,"Reason-Phrase":,"OK",(for,example)
+*,}</pre>
+*,In,addition,,the,other,parameters,in,the,header,will,be,captured,,using
+*,the,HTTP,field,names,as,JSON,names,,so,that,<pre>
+*,,,,Date:,Sun,,26,May,2002,18:06:04,GMT
+*,,,,Cookie:,Q=q2=PPEAsg--,;,B=677gi6ouf29bn&b=2&f=s
+*,,,,Cache-Control:,no-cache</pre>
+*,become
+*,<pre>{...
+*,,,,Date:,"Sun,,26,May,2002,18:06:04,GMT",
+*,,,,Cookie:,"Q=q2=PPEAsg--,;,B=677gi6ouf29bn&b=2&f=s",
+*,,,,"Cache-Control":,"no-cache",
+*,...}</pre>
+*,It,does,no,further,checking,or,conversion.,It,does,not,parse,dates.
+*,It,does,not,do,'%',transforms,on,URLs.
+*,@param,string,An,HTTP,header,string.
+*,@return,A,JSONObject,containing,the,elements,and,attributes
+*,of,the,XML,string.
+*,@throws,JSONException
+*/
+public,static,JSONObject,toJSONObject(String,string),throws,JSONException,{
+JSONObject,,,,,jo,=,new,JSONObject(),;
+HTTPTokener,,,,x,=,new,HTTPTokener(string),;
+String,,,,,,,,,token,;
+token,=,x.nextToken(),;
+if,(token.toUpperCase().startsWith("HTTP")),{
+//,Response
