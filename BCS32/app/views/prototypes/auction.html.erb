@@ -1,0 +1,86 @@
+<% @body_id = 'product-details' %>
+
+<div class="container">
+  <%= spree_breadcrumbs(@taxon, '', @product) %>
+</div>
+
+  <div class="container pt-4 product-details">
+    <div class="row" data-hook="product_show">
+
+      <%= render partial: 'prototypes/shared/gallery2' %>
+      <div class="col-12 col-md-5" data-hook="product_right_part">
+        <div id="product-description" data-hook="product_right_part_wrap">
+          <h1 class="mt-3 mt-md-0 text-center text-md-left product-details-title">
+            PlayStation 5 Console 
+          </h1>
+            <div id="inside-product-cart-form" data-hook="inside_product_cart_form">
+              <div id="product-price" class="mb-2 text-center text-md-left add-to-cart-form-price" data-hook="product_price">
+                <span class="price selling" content="100.0">
+                  Current Bid: ₱10,000.00
+                </span>
+                <span content="PHP"></span>
+              </div>
+              
+              <div class="text-center text-md-left add-to-cart-form-general-availability text-uppercase">
+                Time Left:
+                  <span class="add-to-cart-form-general-availability-value">10 Hours Left</span>
+                  </div>
+                  <hr>
+                    <ul id="product-variants" class="product-variants">
+                        <li>
+                            <h3 class="pt-4 font-weight-bold text-uppercase product-details-subtitle">Details</h3>
+                              <span class="text-break">Contents: 1x PS5 Console, 1x DS5 Controller</span><br>
+                              <span class="text-break"></span>
+                              <span class="text-break">Condition: Slighly Used - Box intact</span>
+                              <span class="text-break"></span>
+    
+                              <hr>
+                            <div class="product-variants-variant product-variants-variant--color" data-option-type-id="1">
+                              Total Bids (12)<br>
+                              Previous bid: ₱9,500.00<br><br>
+                              <strong>Buy now for: ₱30,000.00</strong>
+                            </div>
+                          </li>
+                          
+                        </ul>
+
+                    <input type="hidden" name="variant_id" id="variant_id" value="">
+
+                    <hr>
+                    <div>
+                      <div class="mb-5 mt-4">
+                      </div>
+                      <button name="button" type="submit" class="btn btn-primary w-100 text-uppercase font-weight-bold add-to-cart-button" id="add-to-cart-button">
+                      Bid Now
+                      </button> 
+                      <br><br>
+                      <button name="button" type="submit" class="btn btn-primary w-100 text-uppercase font-weight-bold add-to-cart-button" id="add-to-cart-button">
+                      Buy Now 
+                      </button>  
+      
+                      
+                       </div>
+                </div>
+        </div>
+      </div>
+    </div>
+    <div class="pb-4 pt-md-5 row" data-hook="product_description">
+      <div class="col-12 col-md-7 col-lg-6">
+        
+    <strong>Description</strong>
+    <hr>
+    <p style="font-size: 14px;">
+    Lightning Speed - Harness the power of a custom CPU, GPU, and SSD with Integrated I/O that rewrite the rules of what a PlayStation console can do.<br>
+    Stunning Games - Marvel at incredible graphics and experience new PS5 features.<br>
+    Breathtaking Immersion - Discover a deeper gaming experience with support for haptic feedback, adaptive triggers, and 3D Audio technology.<br>
+    </p>
+
+      </div>
+      <div class="d-none d-lg-block col-lg-1"></div>
+      <div class="col-12 col-md-5" data-hook="product_properties">
+        <%= render partial: 'prototypes/shared/properties' %>
+      </div>
+    </div>
+  </div>
+  <div id="related-products"></div>
+

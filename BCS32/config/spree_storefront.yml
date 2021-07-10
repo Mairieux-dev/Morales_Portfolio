@@ -1,0 +1,67 @@
+default:
+  navigation:
+    - title: Clothes
+      subtitle: Categories
+      url: /t/clothes
+      items:
+        - :title: Men
+          :url: /t/clothes/men
+        - :title: Women
+          :url: /t/clothes/women
+        - :title: Infants
+          :url: /t/clothes/infants
+        - :title: Winter
+          :url: /t/clothes/winter
+        - :title: Summer
+          :url: /t/clothes/summer
+        - :title: Formal
+          :url: /t/clothes/formal
+      promo_banners:
+        - subtitle: New collection
+          title: Summer 2020
+          url: /t/clothes/summer
+          image: 'meganav/promo_banner_left-first-category.jpg'
+        - subtitle: Special Offers
+          title: Get up to 30% off
+          url: /t/clothes #change this in the future (backend) if ever 
+          image: 'meganav/promo_banner_right-first-category.jpg'
+    - title: Electronics
+      subtitle: Categories
+      url: /t/electronics
+      items:
+        - :title: Laptops
+          :url: /t/electronics/laptops
+        - :title: Mobile
+          :url: /t/electronics/mobile
+        - :title: Tablets
+          :url: /t/electronics/tablets
+        - :title: Digital Cameras
+          :url: /t/electronics/digitalcameras
+      promo_banners:
+        - subtitle: New collection
+          title: Get the latest phones
+          url: /t/electronics/mobile
+          image: 'meganav/promo_banner_left-second-category.jpg'
+        - subtitle: Level up your game!
+          title: Hottest laptop deals
+          url: /t/electronics/laptop #/t/special-offers/30-off old taxon url for references only
+          image: 'meganav/promo_banner_right-second-category.jpg'
+    - title: Outdoors
+      subtitle: Categories
+      url: /t/outdoors
+      items:
+        - :title: Bikes
+          :url: /t/outdoors/bikes
+        - :title: Tents
+          :url: /t/outdoors/tents
+        - :title: Sleeping Gear
+          :url: /t/outdoors/sleepinggear
+      promo_banners:
+        - subtitle: New arrival
+          title: Latest Hammocks
+          url: /t/outdoors/sleepinggear
+          image: 'meganav/promo_banner_left-third-category.jpg'
+        - subtitle: Flash deal
+          title: Get bonus items!
+          url: /t/outdoors/tents
+          image: 'meganav/promo_banner_right-third-category.jpg'
